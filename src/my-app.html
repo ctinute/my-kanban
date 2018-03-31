@@ -9,7 +9,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
@@ -21,6 +20,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="my-icons.html">
+<link rel="import" href="shared-styles.html">
+
+<link rel="import" href="./mk-app-drawer/mk-app-drawer.html">
 
 <link rel="lazy-import" href="my-view1.html">
 <link rel="lazy-import" href="my-view2.html">
@@ -29,21 +31,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <dom-module id="my-app">
   <template>
-    <style>
+    <style include="shared-styles">
       :host {
-        --app-primary-color: #4285f4;
-        --app-secondary-color: black;
-
         display: block;
+        color: var(--mk-primary-color);
+        --app-drawer-width: 300px;
       }
 
-      app-drawer-layout:not([narrow]) [drawer-toggle] {
+      /* app-drawer-layout {
+        --app-drawer-width: var(--mk-drawer-width);
+      } */
+
+      app-drawer-layout[narrow] {
         display: none;
       }
 
       app-header {
         color: #fff;
-        background-color: var(--app-primary-color);
+        background-color: var(--mk-primary-color);
       }
 
       app-header paper-icon-button {
@@ -58,7 +63,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: block;
         padding: 0 16px;
         text-decoration: none;
-        color: var(--app-secondary-color);
+        color: var(--mk-secondary-color);
         line-height: 40px;
       }
 
@@ -80,10 +85,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         tail="{{subroute}}">
     </app-route>
 
-    <app-drawer-layout fullbleed narrow="{{narrow}}">
+    <app-drawer-layout fullbleed narrow="{{isDrawerClosed}}">
       <!-- Drawer content -->
-      <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
-        <app-toolbar>Menu</app-toolbar>
+      <app-drawer id="drawer" slot="drawer" opened="[[!isDrawerClosed]]">
+        <app-toolbar on-click="toggleDrawerMinimization">Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a name="view1" href="[[rootPath]]view1">View One</a>
           <a name="view2" href="[[rootPath]]view2">View Two</a>
@@ -96,7 +101,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <app-header slot="header" condenses reveals effects="waterfall">
           <app-toolbar>
-            <paper-icon-button icon="my-icons:menu" drawer-toggle></paper-icon-button>
+            <paper-icon-button icon="my-icons:menu" on-click="toggleDrawer"></paper-icon-button>
             <div main-title>My App</div>
           </app-toolbar>
         </app-header>
@@ -132,9 +137,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
           routeData: Object,
           subroute: Object,
-          // This shouldn't be neccessary, but the Analyzer isn't picking up
-          // Polymer.Element#rootPath
           rootPath: String,
+          isOnMobile: {
+            type:Boolean,
+            value: false
+          },
+          isDrawerMinimized: {
+            type: Boolean,
+            value: false
+          },
+          isDrawerClosed: {
+            type: Boolean,
+            value: false
+          }
         };
       }
 
@@ -145,18 +160,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _routePageChanged(page) {
-        // If no page was found in the route data, page will be an empty string.
-        // Default to 'view1' in that case.
         this.page = page || 'view1';
-
-        // Close a non-persistent drawer when the page & route are changed.
         if (!this.$.drawer.persistent) {
           this.$.drawer.close();
         }
       }
 
       _pageChanged(page) {
-        // Load page import on demand. Show 404 page if fails
         const resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
         Polymer.importHref(
             resolvedPageUrl,
@@ -167,6 +177,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _showPage404() {
         this.page = 'view404';
+      }
+
+      toggleDrawer() {
+        this.isDrawerClosed = !this.isDrawerClosed;
+      }
+
+      toggleDrawerMinimization() {
+        this.isDrawerMinimized = !this.isDrawerMinimized;
       }
     }
 

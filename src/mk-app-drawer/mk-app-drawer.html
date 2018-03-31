@@ -1,0 +1,58 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../shared-styles.html">
+
+<dom-module id="mk-app-drawer">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        --app-drawer-width: var(--drawer-width);
+      }
+
+      :host([isHidden]) {
+        display: none;
+      }
+
+      :host([isMinimized]) {
+        --app-drawer-width: var(--drawer-minimized-width);
+      }
+    </style>
+
+    <app-drawer id="drawer" swipe-open="[[isOnMobile]]" openned="!isHidden">
+      <slot></slot>
+    </app-drawer>
+
+  </template>
+
+  <script>
+    class MkAppDrawer extends Polymer.Element {
+      static get is() {
+        return 'mk-app-drawer';
+      }
+
+      static get properties() {
+        return {
+          isOnMobile: {
+            type: Boolean,
+            value: false
+          },
+          isMinimized: {
+            type: Boolean,
+            value: false
+          },
+          isHidden: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
+
+      close() {
+        this.$.drawer.close();
+      }
+    }
+
+    window.customElements.define(MkAppDrawer.is, MkAppDrawer);
+  </script>
+</dom-module>
