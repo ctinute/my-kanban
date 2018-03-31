@@ -1,13 +1,3 @@
-<!--
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
@@ -90,9 +80,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-drawer id="drawer" slot="drawer" opened="[[!isDrawerClosed]]">
         <app-toolbar on-click="toggleDrawerMinimization">Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="view1" href="[[rootPath]]view1">View One</a>
-          <a name="view2" href="[[rootPath]]view2">View Two</a>
-          <a name="view3" href="[[rootPath]]view3">View Three</a>
+          <a name="my-view1" href="[[rootPath]]my-view1">View One</a>
+          <a name="my-view2" href="[[rootPath]]my-view2">View Two</a>
+          <a name="my-view3" href="[[rootPath]]my-view3">View Three</a>
         </iron-selector>
       </app-drawer>
 
@@ -109,12 +99,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-pages
             selected="[[page]]"
             attr-for-selected="name"
-            fallback-selection="view404"
+            fallback-selection="my-view404"
             role="main">
-          <my-view1 name="view1"></my-view1>
-          <my-view2 name="view2"></my-view2>
-          <my-view3 name="view3"></my-view3>
-          <my-view404 name="view404"></my-view404>
+          <my-view1 name="my-view1"></my-view1>
+          <my-view2 name="my-view2"></my-view2>
+          <my-view3 name="my-view3"></my-view3>
+          <my-view404 name="my-view404"></my-view404>
         </iron-pages>
       </app-header-layout>
     </app-drawer-layout>
@@ -160,14 +150,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _routePageChanged(page) {
-        this.page = page || 'view1';
+        this.page = page || 'my-view1';
+
         if (!this.$.drawer.persistent) {
           this.$.drawer.close();
         }
+        console.log(page);
       }
 
       _pageChanged(page) {
-        const resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
+        const resolvedPageUrl = this.resolveUrl(page + '.html');
         Polymer.importHref(
             resolvedPageUrl,
             null,
@@ -176,7 +168,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _showPage404() {
-        this.page = 'view404';
+        this.page = 'my-view404';
       }
 
       toggleDrawer() {
