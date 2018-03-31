@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
@@ -9,10 +10,8 @@
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="my-icons.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="shared-styles.html">
-
-<link rel="import" href="./mk-app-drawer/mk-app-drawer.html">
 
 <link rel="lazy-import" href="my-view1.html">
 <link rel="lazy-import" href="my-view2.html">
@@ -20,166 +19,176 @@
 <link rel="lazy-import" href="my-view404.html">
 
 <dom-module id="my-app">
-  <template>
-    <style include="shared-styles">
-      :host {
-        display: block;
-        color: var(--mk-primary-color);
-        --app-drawer-width: 300px;
-      }
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+                color: var(--mk-primary-color);
+                --app-drawer-width: 256px; 
+            }
 
-      /* app-drawer-layout {
-        --app-drawer-width: var(--mk-drawer-width);
-      } */
+            :host([drawer-minimized]) {
+                --app-drawer-width: 48px; 
+            }
 
-      app-drawer-layout[narrow] {
-        display: none;
-      }
+            :host([narrow]) {
+                --app-drawer-width: 256px; 
+            }
 
-      app-header {
-        color: #fff;
-        background-color: var(--mk-primary-color);
-      }
+            app-drawer,
+            app-header {
+                transition: all 0.5s;
+            }
 
-      app-header paper-icon-button {
-        --paper-icon-button-ink-color: white;
-      }
+            app-drawer {
+                overflow: hidden;
+            }
 
-      .drawer-list {
-        margin: 0 20px;
-      }
+            app-header {
+                color: #fff;
+                background-color: var(--mk-primary-color);
+            }
 
-      .drawer-list a {
-        display: block;
-        padding: 0 16px;
-        text-decoration: none;
-        color: var(--mk-secondary-color);
-        line-height: 40px;
-      }
+            app-header paper-icon-button {
+                --paper-icon-button-ink-color: white;
+            }
 
-      .drawer-list a.iron-selected {
-        color: black;
-        font-weight: bold;
-      }
-    </style>
+            .drawer-list {
+                margin: 0 20px;
+            }
 
-    <app-location
-        route="{{route}}"
-        url-space-regex="^[[rootPath]]">
-    </app-location>
+            .drawer-list a {
+                display: block;
+                padding: 0 16px;
+                text-decoration: none;
+                color: var(--mk-secondary-color);
+                line-height: 40px;
+            }
 
-    <app-route
-        route="{{route}}"
-        pattern="[[rootPath]]:page"
-        data="{{routeData}}"
-        tail="{{subroute}}">
-    </app-route>
+            .drawer-list a.iron-selected {
+                color: black;
+                font-weight: bold;
+            }
+        </style>
 
-    <app-drawer-layout fullbleed narrow="{{isDrawerClosed}}">
-      <!-- Drawer content -->
-      <app-drawer id="drawer" slot="drawer" opened="[[!isDrawerClosed]]">
-        <app-toolbar on-click="toggleDrawerMinimization">Menu</app-toolbar>
-        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="my-view1" href="[[rootPath]]my-view1">View One</a>
-          <a name="my-view2" href="[[rootPath]]my-view2">View Two</a>
-          <a name="my-view3" href="[[rootPath]]my-view3">View Three</a>
-        </iron-selector>
-      </app-drawer>
+        <app-location route="{{route}}" url-space-regex="^[[rootPath]]">
+        </app-location>
 
-      <!-- Main content -->
-      <app-header-layout has-scrolling-region>
+        <app-route route="{{route}}" pattern="[[rootPath]]:page" data="{{routeData}}" tail="{{subroute}}">
+        </app-route>
 
-        <app-header slot="header" condenses reveals effects="waterfall">
-          <app-toolbar>
-            <paper-icon-button icon="my-icons:menu" on-click="toggleDrawer"></paper-icon-button>
-            <div main-title>My App</div>
-          </app-toolbar>
-        </app-header>
+        <app-drawer-layout fullbleed narrow="{{narrow}}">
+            <!-- Drawer content -->
+            <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
+                <app-toolbar>Menu</app-toolbar>
+                
+                <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+                    <a name="my-view1" href="[[rootPath]]my-view1">View One</a>
+                    <a name="my-view2" href="[[rootPath]]my-view2">View Two</a>
+                    <a name="my-view3" href="[[rootPath]]my-view3">View Three</a>
+                </iron-selector>
+                <template is="dom-if" if="{{!narrow}}">
+                    <paper-icon-button icon="icons:chevron-left" on-click="toggleDrawerMinimization"></paper-icon-button>
+                </template>
+            </app-drawer>
 
-        <iron-pages
-            selected="[[page]]"
-            attr-for-selected="name"
-            fallback-selection="my-view404"
-            role="main">
-          <my-view1 name="my-view1"></my-view1>
-          <my-view2 name="my-view2"></my-view2>
-          <my-view3 name="my-view3"></my-view3>
-          <my-view404 name="my-view404"></my-view404>
-        </iron-pages>
-      </app-header-layout>
-    </app-drawer-layout>
-  </template>
+            <!-- Main content -->
+            <app-header-layout has-scrolling-region>
 
-  <script>
-    // Gesture events like tap and track generated from touch will not be
-    // preventable, allowing for better scrolling performance.
-    Polymer.setPassiveTouchGestures(true);
+                <app-header slot="header" condenses reveals effects="waterfall">
+                    <app-toolbar>
+                        <template is="dom-if" if="{{narrow}}">
+                            <paper-icon-button icon="icons:menu" drawer-toggle></paper-icon-button>
+                        </template>
+                        <div main-title>My App</div>
+                    </app-toolbar>
+                </app-header>
 
-    class MyApp extends Polymer.Element {
-      static get is() { return 'my-app'; }
+                <iron-pages selected="[[page]]" attr-for-selected="name" fallback-selection="my-view404" role="main">
+                    <my-view1 name="my-view1"></my-view1>
+                    <my-view2 name="my-view2"></my-view2>
+                    <my-view3 name="my-view3"></my-view3>
+                    <my-view404 name="my-view404"></my-view404>
+                </iron-pages>
+            </app-header-layout>
+        </app-drawer-layout>
+    </template>
 
-      static get properties() {
-        return {
-          page: {
-            type: String,
-            reflectToAttribute: true,
-            observer: '_pageChanged',
-          },
-          routeData: Object,
-          subroute: Object,
-          rootPath: String,
-          isOnMobile: {
-            type:Boolean,
-            value: false
-          },
-          isDrawerMinimized: {
-            type: Boolean,
-            value: false
-          },
-          isDrawerClosed: {
-            type: Boolean,
-            value: false
-          }
-        };
-      }
+    <script>
+        // Gesture events like tap and track generated from touch will not be
+        // preventable, allowing for better scrolling performance.
+        Polymer.setPassiveTouchGestures(true);
 
-      static get observers() {
-        return [
-          '_routePageChanged(routeData.page)',
-        ];
-      }
+        class MyApp extends Polymer.Element {
+            static get is() {
+                return 'my-app';
+            }
 
-      _routePageChanged(page) {
-        this.page = page || 'my-view1';
+            static get properties() {
+                return {
+                    page: {
+                        type: String,
+                        reflectToAttribute: true,
+                        observer: '_pageChanged',
+                    },
+                    routeData: Object,
+                    subroute: Object,
+                    rootPath: String,
+                    narrow: {
+                        type: Boolean,
+                        value: false,
+                        observer: '_narrowChanged'
+                    },
+                    drawerMinimized: {
+                        type: Boolean,
+                        value: false,
+                        reflectToAttribute: true
+                    }
+                };
+            }
 
-        if (!this.$.drawer.persistent) {
-          this.$.drawer.close();
+            static get observers() {
+                return [
+                    '_routePageChanged(routeData.page)',
+                    '_narrowChanged(value)'
+                ];
+            }
+
+            _routePageChanged(page) {
+                this.page = page || 'my-view1';
+
+                if (!this.$.drawer.persistent) {
+                    this.$.drawer.close();
+                }
+            }
+
+            _pageChanged(page) {
+                const resolvedPageUrl = this.resolveUrl(page + '.html');
+                Polymer.importHref(
+                    resolvedPageUrl,
+                    null,
+                    this._showPage404.bind(this),
+                    true);
+            }
+
+            _narrowChanged(value) {
+                console.log('_narrowChanged: ' + value);
+            }
+
+            _showPage404() {
+                this.page = 'my-view404';
+            }
+
+            toggleDrawer() {
+                this.drawerClosed = !this.drawerClosed;
+            }
+
+            toggleDrawerMinimization() {
+                this.drawerMinimized = !this.drawerMinimized;
+                console.log(this.drawerMinimized);
+            }
         }
-        console.log(page);
-      }
 
-      _pageChanged(page) {
-        const resolvedPageUrl = this.resolveUrl(page + '.html');
-        Polymer.importHref(
-            resolvedPageUrl,
-            null,
-            this._showPage404.bind(this),
-            true);
-      }
-
-      _showPage404() {
-        this.page = 'my-view404';
-      }
-
-      toggleDrawer() {
-        this.isDrawerClosed = !this.isDrawerClosed;
-      }
-
-      toggleDrawerMinimization() {
-        this.isDrawerMinimized = !this.isDrawerMinimized;
-      }
-    }
-
-    window.customElements.define(MyApp.is, MyApp);
-  </script>
+        window.customElements.define(MyApp.is, MyApp);
+    </script>
 </dom-module>
