@@ -1,0 +1,79 @@
+<!-- 
+
+-->
+
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../shared-styles.html">
+
+<dom-module id="drawer-item">
+  <template>
+    <style include="shared-styles">
+      :host {
+        /* display: flex;
+        flex-flow: row; */
+        width: 256px;
+        height: 48px;
+        overflow: hidden;
+      }
+
+      #icon {
+        display: inline-block;
+        align-items: center;
+        width: 24px;
+        height: 24px;
+        margin: 12px;
+      }
+
+      #item {
+        display: inline-block;
+        align-items: center;
+        width: 196px;
+        height: 48px;
+        line-height: 48px;
+      }
+
+      
+    </style>
+
+
+    <div id="icon">
+      <slot name="icon"></slot>
+    </div>
+    <template is="dom-if" if="{{!minimized}}">
+      <div id="item">
+        <slot name="item"></slot>
+      </div>
+    </template>
+
+  </template>
+
+  <script>
+    class DrawerItem extends Polymer.Element {
+      static get is() {
+        return 'drawer-item';
+      }
+
+      static get properties() {
+        return {
+          minimized: {
+            type: Boolean,
+            value: false,
+            observer: '_minimizationChanged'
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_minimizationChanged(value)'
+        ];
+      }
+
+      _minimizationChanged(value) {
+        console.log(value);
+      }
+    }
+
+    window.customElements.define(DrawerItem.is, DrawerItem);
+  </script>
+</dom-module>

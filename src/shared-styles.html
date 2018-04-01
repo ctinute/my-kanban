@@ -10,15 +10,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/paper-styles/color.html">
-
+<link rel="import" href="../bower_components/paper-styles/shadow.html">
 <!-- shared styles for all views -->
 <dom-module id="shared-styles">
   <template>
     <style>
       * {
-        --mk-primary-color: var(--paper-blue-grey-500);
-        --mk-secondary-color: var(--paper-blue-grey-900);
+        --mk-primary-color: var(--paper-light-blue-500);
+        --mk-secondary-color: var(--paper-blue-grey-700);
         --mk-accent-color: var(--paper-green-800);
+      }
+
+      .app-shadow-0 {
+        box-shadow: none;
+      }
+      .app-shadow-2 {
+        @apply --shadow-elevation-2dp;
+      }
+      .app-shadow-4 {
+        @apply --shadow-elevation-4dp;
+      }
+      .app-shadow-8 {
+        @apply --shadow-elevation-8dp;
+      }
+      .app-shadow-16 {
+        @apply --shadow-elevation-16dp;
+      }
+      .app-shadow-24 {
+        @apply --shadow-elevation-24dp;
       }
     </style>
   </template>
