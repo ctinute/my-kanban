@@ -11,12 +11,14 @@
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="shared-styles.html">
+<link rel="import" href="./shared-styles.html">
 
-<link rel="lazy-import" href="my-view1.html">
-<link rel="lazy-import" href="my-view2.html">
-<link rel="lazy-import" href="my-view3.html">
-<link rel="lazy-import" href="my-view404.html">
+<link rel="import" href="./components/drawer/drawer-item.html">
+
+<link rel="lazy-import" href="./my-view1.html">
+<link rel="lazy-import" href="./my-view2.html">
+<link rel="lazy-import" href="./my-view3.html">
+<link rel="lazy-import" href="./my-view404.html">
 
 <dom-module id="my-app">
     <template>
@@ -25,6 +27,8 @@
                 display: block;
                 color: var(--mk-primary-color);
                 --app-drawer-width: 256px; 
+
+                --app-header-height: 48px;
             }
 
             :host([drawer-minimized]) {
@@ -38,9 +42,6 @@
             app-drawer,
             app-header {
                 transition: all 0.5s;
-            }
-
-            app-drawer {
                 overflow: hidden;
             }
 
@@ -49,25 +50,42 @@
                 background-color: var(--mk-primary-color);
             }
 
+            app-header,
+            app-toolbar {
+                height: var(--app-header-height);
+            }
+
             app-header paper-icon-button {
                 --paper-icon-button-ink-color: white;
             }
 
-            .drawer-list {
-                margin: 0 20px;
+            app-drawer > #drawer-content {
+                width: 100%;
+                height: 100%;
+                color: white;
+                background-color: var(--mk-secondary-color);
+                display: flex;
+                flex-flow: column;
+            }
+
+            #drawer-content-top {
+                flex-grow: 1;
+            }
+
+            #drawer-logo,
+            #drawer-content-bottom {
+                background-color: var(--paper-blue-grey-800);
             }
 
             .drawer-list a {
                 display: block;
-                padding: 0 16px;
                 text-decoration: none;
-                color: var(--mk-secondary-color);
-                line-height: 40px;
+                color: white;
             }
 
             .drawer-list a.iron-selected {
-                color: black;
                 font-weight: bold;
+                background-color: var(--paper-blue-grey-500);
             }
         </style>
 
@@ -80,22 +98,47 @@
         <app-drawer-layout fullbleed narrow="{{narrow}}">
             <!-- Drawer content -->
             <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
-                <app-toolbar>Menu</app-toolbar>
-                
-                <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-                    <a name="my-view1" href="[[rootPath]]my-view1">View One</a>
-                    <a name="my-view2" href="[[rootPath]]my-view2">View Two</a>
-                    <a name="my-view3" href="[[rootPath]]my-view3">View Three</a>
-                </iron-selector>
-                <template is="dom-if" if="{{!narrow}}">
-                    <paper-icon-button icon="icons:chevron-left" on-click="toggleDrawerMinimization"></paper-icon-button>
-                </template>
+                <div id="drawer-content">
+                    <div id="drawer-content-top">
+                        <div id="drawer-logo" class="app-shadow-4">
+                            <app-toolbar>mKanban</app-toolbar>
+                        </div>
+                        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+                            <a name="my-view1" href="[[rootPath]]my-view1">
+                                <drawer-item  minimized="{{drawerMinimized}}">
+                                    <iron-icon slot="icon" icon="icons:menu"></iron-icon>
+                                    <div slot="item">Link One</div>
+                                </drawer-item>
+                            </a>
+                            <a name="my-view2" href="[[rootPath]]my-view2">
+                                <drawer-item  minimized="{{drawerMinimized}}">
+                                    <iron-icon slot="icon" icon="icons:menu"></iron-icon>
+                                    <div slot="item">Link One</div>
+                                </drawer-item>
+                            </a>
+                            <a name="my-view3" href="[[rootPath]]my-view3">
+                                <drawer-item  minimized="{{drawerMinimized}}">
+                                    <iron-icon slot="icon" icon="icons:menu"></iron-icon>
+                                    <div slot="item">Link One</div>
+                                </drawer-item>
+                            </a>
+                        </iron-selector>
+                    </div>
+                    
+                    <template is="dom-if" if="{{!narrow}}">
+                        <drawer-item id="drawer-content-bottom" minimized="{{drawerMinimized}}" on-click="toggleDrawerMinimization">
+                            <iron-icon slot="icon" icon="icons:chevron-left"></iron-icon>
+                            <span slot="item">Minimize</span>
+                        </drawer-item>
+                    </template>
+                                      
+                </div>
             </app-drawer>
 
             <!-- Main content -->
             <app-header-layout has-scrolling-region>
 
-                <app-header slot="header" condenses reveals effects="waterfall">
+                <app-header  class="app-shadow-4" slot="header" condenses reveals effects="waterfall">
                     <app-toolbar>
                         <template is="dom-if" if="{{narrow}}">
                             <paper-icon-button icon="icons:menu" drawer-toggle></paper-icon-button>
@@ -115,8 +158,6 @@
     </template>
 
     <script>
-        // Gesture events like tap and track generated from touch will not be
-        // preventable, allowing for better scrolling performance.
         Polymer.setPassiveTouchGestures(true);
 
         class MyApp extends Polymer.Element {
