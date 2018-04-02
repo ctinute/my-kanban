@@ -1,0 +1,94 @@
+<!-- 
+
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+
+<link rel="import" href="shared-styles.html">
+
+
+<dom-module id="mk-login-form">
+    <template>
+        <style include="shared-styles">
+            :host {
+                /* display: flex;
+        flex-flow: row; */
+                width: 256px;
+                height: 48px;
+                white-space: nowrap;
+                overflow: hidden;
+            }
+
+            #icon {
+                display: inline-block;
+                align-items: center;
+                width: 24px;
+                height: 24px;
+                margin: 12px;
+            }
+
+            #item {
+                display: inline-block;
+                align-items: center;
+                width: 196px;
+                height: 48px;
+                line-height: 48px;
+            }
+        </style>
+
+
+        <firebase-auth id="auth" user="{{user}}" provider="google" on-error="_handleLoginError"></firebase-auth>
+
+        <paper-button raised on-click="_login">Login</paper-button>
+
+    </template>
+
+    <script>
+        class MkLoginForm extends Polymer.Element {
+            static get is() {
+                return 'mk-login-form';
+            }
+
+            static get properties() {
+                return {
+                    user: {
+                        type: Object,
+                        default: null,
+                        observer: '_userChanged',
+                        reflectedToAttribute: true
+                    }
+                };
+            }
+
+            static get observers() {
+                return [
+                    '_userChanged(value)'
+                ];
+            }
+
+            _userChanged(value) {
+                console.log('_userChanged: ');
+                console.log(value);
+            }
+
+            _login() {
+                this.$.auth.signInWithPopup()
+                    .then(function (response) {
+                        console.log(response);
+                    })
+                    .catch(function (error) { 
+                        console.log(error);
+                    });
+            }
+
+            _handleLoginError(e) {
+                console.log('Login error !!!');
+                console.log(e);
+            }
+        }
+
+        window.customElements.define(MkLoginForm.is, MkLoginForm);
+    </script>
+</dom-module>
