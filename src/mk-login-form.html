@@ -13,35 +13,22 @@
     <template>
         <style include="shared-styles">
             :host {
-                /* display: flex;
-        flex-flow: row; */
-                width: 256px;
-                height: 48px;
-                white-space: nowrap;
-                overflow: hidden;
-            }
-
-            #icon {
-                display: inline-block;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: center;
                 align-items: center;
-                width: 24px;
-                height: 24px;
-                margin: 12px;
             }
-
-            #item {
-                display: inline-block;
-                align-items: center;
-                width: 196px;
-                height: 48px;
-                line-height: 48px;
+            paper-button {
+                text-transform: none;
+                background-color: white;
             }
         </style>
 
 
         <firebase-auth id="auth" user="{{user}}" provider="google" on-error="_handleLoginError"></firebase-auth>
 
-        <paper-button raised on-click="_login">Login</paper-button>
+        <paper-button raised on-click="_login">Login with Google<img src="../images/google-24x24.png" alt="google-icon"></paper-button>
 
     </template>
 
@@ -56,21 +43,9 @@
                     user: {
                         type: Object,
                         default: null,
-                        observer: '_userChanged',
-                        reflectedToAttribute: true
+                        reflectToAttribute: true
                     }
                 };
-            }
-
-            static get observers() {
-                return [
-                    '_userChanged(value)'
-                ];
-            }
-
-            _userChanged(value) {
-                console.log('_userChanged: ');
-                console.log(value);
             }
 
             _login() {

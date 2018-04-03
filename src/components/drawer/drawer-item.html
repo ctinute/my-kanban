@@ -56,20 +56,9 @@
         return {
           minimized: {
             type: Boolean,
-            value: false,
-            observer: '_minimizationChanged'
+            value: false
           }
         };
-      }
-
-      static get observers() {
-        return [
-          '_minimizationChanged(value)'
-        ];
-      }
-
-      _minimizationChanged(value) {
-        console.log(value);
       }
     }
 
