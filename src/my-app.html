@@ -30,17 +30,25 @@
             :host {
                 display: block;
                 color: var(--mk-primary-color);
-                --app-drawer-width: 256px; 
+                --app-drawer-width: 256px;
 
                 --app-header-height: 48px;
             }
 
             :host([drawer-minimized]) {
-                --app-drawer-width: 48px; 
+                --app-drawer-width: 48px;
+            }
+
+            #minimizeIcon {
+                transition: transform 0.5s;
+            }
+
+            :host([drawer-minimized]) #minimizeIcon {
+                transform: rotate(180deg);
             }
 
             :host([narrow]) {
-                --app-drawer-width: 256px; 
+                --app-drawer-width: 256px;
             }
 
             app-drawer,
@@ -63,7 +71,7 @@
                 --paper-icon-button-ink-color: white;
             }
 
-            app-drawer > #drawer-content {
+            app-drawer>.drawer-content {
                 width: 100%;
                 height: 100%;
                 color: white;
@@ -72,12 +80,12 @@
                 flex-flow: column;
             }
 
-            #drawer-content-top {
+            .drawer-content-top {
                 flex-grow: 1;
             }
 
-            #drawer-logo,
-            #drawer-content-bottom {
+            .drawer-logo,
+            .drawer-content-bottom {
                 background-color: var(--paper-blue-grey-800);
             }
 
@@ -85,6 +93,10 @@
                 display: block;
                 text-decoration: none;
                 color: white;
+            }
+
+            .drawer-list a:hover {
+                @apply --shadow-elevation-2dp;
             }
 
             .drawer-list a.iron-selected {
@@ -98,15 +110,11 @@
             }
         </style>
 
-        <firebase-app
-            auth-domain="projectmykanban.firebaseapp.com"
-            database-url="https://projectmykanban.firebaseio.com/"
-            api-key="AIzaSyBSuh-1xzT6XsxP7CGNZxzjSdP-0wyFvgk"
-            storage-bucket="projectmykanban.appspot.com"
-            messaging-sender-id="63907430852"></firebase-app>
+        <firebase-app auth-domain="projectmykanban.firebaseapp.com" database-url="https://projectmykanban.firebaseio.com/" api-key="AIzaSyBSuh-1xzT6XsxP7CGNZxzjSdP-0wyFvgk"
+            storage-bucket="projectmykanban.appspot.com" messaging-sender-id="63907430852"></firebase-app>
 
         <firebase-auth id="auth" user="{{user}}"></firebase-auth>
-        
+
 
         <app-location route="{{route}}" url-space-regex="^[[rootPath]]">
         </app-location>
@@ -117,10 +125,10 @@
         <app-drawer-layout fullbleed narrow="{{narrow}}">
             <!-- Drawer content -->
             <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
-                <div id="drawer-content">
-                    <div id="drawer-content-top">
-                        <div id="drawer-logo" class="app-shadow-4">
-                            <drawer-item  minimized="{{drawerMinimized}}">
+                <div class="drawer-content">
+                    <div class="drawer-content-top">
+                        <div class="drawer-logo" class="app-shadow-4">
+                            <drawer-item minimized="{{drawerMinimized}}">
                                 <img slot="icon" src="../images/icon.svg">
                                 <div slot="item">myKanban</div>
                             </drawer-item>
@@ -129,55 +137,55 @@
                         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
                             <template is="dom-if" if="[[!user]]">
                                 <a name="mk-login-form" href="[[rootPath]]mk-login-form">
-                                    <drawer-item  minimized="{{drawerMinimized}}">
+                                    <drawer-item minimized="[[drawerMinimized]]">
                                         <iron-icon slot="icon" icon="icons:account-circle"></iron-icon>
-                                        <div slot="item">Login</div>
+                                        <div slot="item">Sign in</div>
                                     </drawer-item>
                                 </a>
                             </template>
                             <template is="dom-if" if="[[user]]">
                                 <a href="#" on-click="_logout">
-                                    <drawer-item  minimized="{{drawerMinimized}}">
+                                    <drawer-item minimized="[[drawerMinimized]]">
                                         <iron-icon slot="icon" icon="icons:account-circle"></iron-icon>
                                         <div slot="item">{{user.displayName}}</div>
                                     </drawer-item>
                                 </a>
                             </template>
                             <a name="my-view1" href="[[rootPath]]my-view1">
-                                <drawer-item  minimized="{{drawerMinimized}}">
+                                <drawer-item minimized="{{drawerMinimized}}">
                                     <iron-icon slot="icon" icon="icons:menu"></iron-icon>
                                     <div slot="item">Link One</div>
                                 </drawer-item>
                             </a>
                             <a name="my-view2" href="[[rootPath]]my-view2">
-                                <drawer-item  minimized="{{drawerMinimized}}">
+                                <drawer-item minimized="[[drawerMinimized]]">
                                     <iron-icon slot="icon" icon="icons:menu"></iron-icon>
                                     <div slot="item">Link One</div>
                                 </drawer-item>
                             </a>
                             <a name="my-view3" href="[[rootPath]]my-view3">
-                                <drawer-item  minimized="{{drawerMinimized}}">
+                                <drawer-item minimized="[[drawerMinimized]]">
                                     <iron-icon slot="icon" icon="icons:menu"></iron-icon>
                                     <div slot="item">Link One</div>
                                 </drawer-item>
                             </a>
                         </iron-selector>
                     </div>
-                    
+
                     <template is="dom-if" if="{{!narrow}}">
-                        <drawer-item id="drawer-content-bottom" minimized="{{drawerMinimized}}" on-click="toggleDrawerMinimization">
-                            <iron-icon slot="icon" icon="icons:chevron-left"></iron-icon>
+                        <drawer-item class="drawer-content-bottom" minimized="[[drawerMinimized]]" on-click="toggleDrawerMinimization">
+                            <iron-icon id="minimizeIcon" slot="icon" icon="icons:chevron-left"></iron-icon>
                             <span slot="item">Minimize</span>
                         </drawer-item>
                     </template>
-                                      
+
                 </div>
             </app-drawer>
 
             <!-- Main content -->
             <app-header-layout has-scrolling-region>
 
-                <app-header  class="app-shadow-4" slot="header" condenses reveals effects="waterfall">
+                <app-header class="app-shadow-4" slot="header" condenses reveals effects="waterfall">
                     <app-toolbar>
                         <template is="dom-if" if="{{narrow}}">
                             <paper-icon-button icon="icons:menu" drawer-toggle></paper-icon-button>
