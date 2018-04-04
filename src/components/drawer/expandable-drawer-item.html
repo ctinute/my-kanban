@@ -7,7 +7,7 @@
 <link rel="import" href="../../../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../../shared-styles.html">
 
-<dom-module id="drawer-item">
+<dom-module id="expandable-drawer-item">
     <template>
         <style include="shared-styles">
             :host {
@@ -45,24 +45,58 @@
             :host([minimized]) #item-content {
                 opacity: 0;
             }
+
+            #persist {
+                display: block;
+                width: 100%;
+                height: 48px;
+            }
+
+            #expand-icon {
+                float: right;
+                transition: transform 0.3s;
+            }
+
+            :host([expanded]) #expand-icon {
+                transform: rotate(180deg);
+            }
+
+            #expandable {
+                max-height: 0;
+                opacity: 0;
+                overflow: hidden;
+                transition: max-height 0.3s, opacity 0.3s;
+            }
+
+            :host([expanded]) #expandable {
+                opacity: 1;
+                max-height: 9999px;
+            }
         </style>
 
-        <paper-icon-item>
+        <paper-icon-item id="persist">
             <div id="icon" class="icon">
                 <slot name="icon"></slot>
             </div>
             <div id="item-content" class="text">
                 <slot name="item"></slot>
             </div>
+            <div id="expand-icon" class="icon" on-click="toggleExpand">
+                <slot name="expand-icon"></slot>
+            </div>
         </paper-icon-item>
+
+        <div id="expandable">
+            <slot name="expandable"></slot>
+        </div>
 
 
     </template>
 
     <script>
-        class DrawerItem extends Polymer.Element {
+        class ExpandableDrawerItem extends Polymer.Element {
             static get is() {
-                return 'drawer-item';
+                return 'expandable-drawer-item';
             }
 
             static get properties() {
@@ -71,11 +105,20 @@
                         type: Boolean,
                         value: false,
                         reflectToAttribute: true
+                    },
+                    expanded: {
+                        type: Boolean,
+                        value: false,
+                        reflectToAttribute: true
                     }
                 };
             }
+
+            toggleExpand() {
+                this.expanded = !this.expanded;
+            }
         }
 
-        window.customElements.define(DrawerItem.is, DrawerItem);
+        window.customElements.define(ExpandableDrawerItem.is, ExpandableDrawerItem);
     </script>
 </dom-module>
