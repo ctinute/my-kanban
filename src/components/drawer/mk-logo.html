@@ -1,0 +1,54 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="./drawer-item.html">
+<link rel="import" href="../../shared-styles.html">
+
+<dom-module id="mk-logo">
+    <template>
+        <style include="shared-styles">
+            :host {
+                height: 64px;
+                display: flex;
+                align-items: center;
+                overflow: hidden;
+            }
+
+            :host([drawer-minimized]) {
+                height: 48px;
+            }
+
+            .app-name {
+                color: white;
+                font-size: 1.3em;
+                font-weight: bold;
+            }
+        </style>
+
+        <a href="[[rootPath]]" class="drawer-logo not-a-link">
+            <drawer-item minimized="[[minimized]]">
+                <img slot="icon" src="../../../images/google-24x24.png">
+                <div slot="item" class="app-name">myKanban</div>
+            </drawer-item>
+        </a>
+
+    </template>
+
+    <script>
+        class MkLogo extends Polymer.Element {
+            static get is() {
+                return 'mk-logo';
+            }
+
+            static get properties() {
+                return {
+                    minimized: {
+                        type: Boolean,
+                        value: false,
+                        reflectToAttribute: true
+                    }
+                };
+            }
+        }
+
+        window.customElements.define(MkLogo.is, MkLogo);
+    </script>
+</dom-module>

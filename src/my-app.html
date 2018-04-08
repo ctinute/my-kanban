@@ -16,8 +16,7 @@
 
 
 <link rel="import" href="./shared-styles.html">
-<link rel="import" href="./components/drawer/drawer-item.html">
-<link rel="import" href="./components/drawer/expandable-drawer-item.html">
+<link rel="import" href="./components/drawer/mk-drawer.html">
 <link rel="import" href="./mk-login-form.html">
 
 <link rel="lazy-import" href="./my-view1.html">
@@ -49,49 +48,8 @@
                 overflow: hidden;
             }
 
-            app-drawer * {
-                color: white;
-            }
 
-            app-drawer>.drawer-content {
-                width: 100%;
-                height: 100%;
-                background-color: var(--mk-secondary-color);
-                display: flex;
-                flex-flow: column;
-            }
-
-            .drawer-content-top {
-                flex-grow: 1;
-            }
-
-            .drawer-logo,
-            .drawer-content-bottom {
-                background-color: var(--paper-blue-grey-800);
-            }
-
-            .drawer-list .list-item.iron-selected {
-                font-weight: bold;
-                background-color: var(--paper-blue-grey-500);
-            }
-
-            #minimizeIcon {
-                transition: transform 0.5s;
-            }
-
-            :host([drawer-minimized]) #minimizeIcon {
-                transform: rotate(180deg);
-            }
-
-            app-header {
-                color: black;
-                background-color: white;
-            }
-
-            app-header,
-            app-toolbar {
-                height: var(--app-header-height);
-            }
+            
 
             iron-pages {
                 width: 100%;
@@ -99,109 +57,66 @@
             }
         </style>
 
-        <firebase-app auth-domain="projectmykanban.firebaseapp.com" database-url="https://projectmykanban.firebaseio.com/" api-key="AIzaSyBSuh-1xzT6XsxP7CGNZxzjSdP-0wyFvgk"
-            storage-bucket="projectmykanban.appspot.com" messaging-sender-id="63907430852"></firebase-app>
+        <!-- Firebase config -->
+        <firebase-app 
+            auth-domain="projectmykanban.firebaseapp.com" 
+            database-url="https://projectmykanban.firebaseio.com/" 
+            api-key="AIzaSyBSuh-1xzT6XsxP7CGNZxzjSdP-0wyFvgk"
+            storage-bucket="projectmykanban.appspot.com" 
+            messaging-sender-id="63907430852">
+        </firebase-app>
 
-        <firebase-auth id="auth" user="{{user}}"></firebase-auth>
+        <!-- Firebase Authentication -->
+        <firebase-auth 
+            id="auth" 
+            user="{{user}}">
+        </firebase-auth>
 
-
-        <app-location route="{{route}}" url-space-regex="^[[rootPath]]">
+        <!-- Router -->
+        <app-location 
+            route="{{route}}" 
+            url-space-regex="^[[rootPath]]">
         </app-location>
 
-        <app-route route="{{route}}" pattern="[[rootPath]]:page" data="{{routeData}}" tail="{{subroute}}">
+        <app-route 
+            route="{{route}}" 
+            pattern="[[rootPath]]:page" 
+            data="{{routeData}}" 
+            tail="{{subroute}}">
         </app-route>
 
+
+        <!-- MAIN APP -->
+
         <app-drawer-layout fullbleed narrow="{{narrow}}">
+
             <!-- Drawer content -->
             <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
-                <div class="drawer-content">
-                    <div class="drawer-content-top">
-                        <a href="[[rootPath]]" class="drawer-logo not-a-link app-shadow-4">
-                            <drawer-item minimized="{{drawerMinimized}}">
-                                <img slot="icon" src="../images/icon.svg">
-                                <div slot="item">myKanban</div>
-                            </drawer-item>
-                        </a>
-                        <div class="drawer-section">
-                            <template is="dom-if" if="[[!user]]">
-                                <a name="mk-login-form" href="[[rootPath]]mk-login-form" class="list-item not-a-link">
-                                    <drawer-item minimized="[[drawerMinimized]]">
-                                        <iron-icon slot="icon" icon="icons:account-circle"></iron-icon>
-                                        <div slot="item">Sign in</div>
-                                    </drawer-item>
-                                </a>
-                            </template>
-                            <template is="dom-if" if="[[user]]">
-                                <a href="#" class="list-item not-a-link">
-                                    <expandable-drawer-item minimized="[[drawerMinimized]]">
-                                        <iron-icon slot="icon" icon="icons:account-circle"></iron-icon>
-                                        <div slot="item">{{user.displayName}}</div>
-                                        <iron-icon slot="expand-icon" icon="icons:expand-more"></iron-icon>
-                                        <div slot="expandable">
-                                            <drawer-item>
-                                                <!-- <iron-icon slot="icon" icon="icons:menu"></iron-icon> -->
-                                                <div slot="item">Profile</div>
-                                            </drawer-item>
-                                            <drawer-item on-click="_logout">
-                                                <!-- <iron-icon slot="icon" icon="icons:menu"></iron-icon> -->
-                                                <div slot="item">Sign out</div>
-                                            </drawer-item>
-                                        </div>
-                                    </expandable-drawer-item>
-                                </a>
-                            </template>
-                        </div>
-                        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list drawer-section" role="navigation">
-                            <a name="my-view1" href="[[rootPath]]my-view1" class="list-item not-a-link">
-                                <drawer-item minimized="{{drawerMinimized}}">
-                                    <iron-icon slot="icon" icon="icons:menu"></iron-icon>
-                                    <div slot="item">Link One</div>
-                                </drawer-item>
-                            </a>
-                            <a name="my-view2" href="[[rootPath]]my-view2" class="list-item not-a-link">
-                                <drawer-item minimized="[[drawerMinimized]]">
-                                    <iron-icon slot="icon" icon="icons:menu"></iron-icon>
-                                    <div slot="item">Link One</div>
-                                </drawer-item>
-                            </a>
-                            <a name="my-view3" href="[[rootPath]]my-view3" class="list-item not-a-link">
-                                <drawer-item minimized="[[drawerMinimized]]">
-                                    <iron-icon slot="icon" icon="icons:menu"></iron-icon>
-                                    <div slot="item">Link One</div>
-                                </drawer-item>
-                            </a>
-                        </iron-selector>
-                    </div>
-
-                    <template is="dom-if" if="{{!narrow}}">
-                        <drawer-item class="drawer-content-bottom" minimized="[[drawerMinimized]]" on-click="toggleDrawerMinimization">
-                            <iron-icon id="minimizeIcon" slot="icon" icon="icons:chevron-left"></iron-icon>
-                            <span slot="item">Minimize</span>
-                        </drawer-item>
-                    </template>
-
-                </div>
+                <mk-drawer minimized="{{drawerMinimized}}" narrow="[[narrow]]"></mk-drawer>
             </app-drawer>
 
             <!-- Main content -->
             <app-header-layout has-scrolling-region>
 
-                <app-header class="app-shadow-4" slot="header" condenses reveals effects="waterfall">
-                    <app-toolbar>
-                        <template is="dom-if" if="{{narrow}}">
+                <!-- a global header on moblie -->
+                <template is="dom-if" if="[[narrow]]">
+                    <app-header class="app-shadow-4" slot="header" condenses reveals effects="waterfall">
+                        <app-toolbar>
                             <paper-icon-button icon="icons:menu" drawer-toggle></paper-icon-button>
-                        </template>
-                        <div main-title>My App</div>
-                    </app-toolbar>
-                </app-header>
+                            <div main-title>My App</div>
+                        </app-toolbar>
+                    </app-header>
+                </template>
 
+                <!-- All possible pages for lazy load -->
                 <iron-pages selected="[[page]]" attr-for-selected="name" fallback-selection="my-view404" role="main">
-                    <mk-login-form user="{{user}}" name="mk-login-form"></mk-login-form>
+                    <mk-login-form name="mk-login-form"></mk-login-form>
                     <my-view1 name="my-view1"></my-view1>
                     <my-view2 name="my-view2"></my-view2>
                     <my-view3 name="my-view3"></my-view3>
                     <my-view404 name="my-view404"></my-view404>
                 </iron-pages>
+
             </app-header-layout>
         </app-drawer-layout>
     </template>
@@ -231,8 +146,7 @@
                     rootPath: String,
                     narrow: {
                         type: Boolean,
-                        value: false,
-                        observer: '_narrowChanged'
+                        value: false
                     },
                     drawerMinimized: {
                         type: Boolean,
@@ -255,7 +169,6 @@
             static get observers() {
                 return [
                     '_routePageChanged(routeData.page)',
-                    '_narrowChanged(value)',
                     '_userChanged(value)'
                 ];
             }
@@ -282,10 +195,6 @@
                     true);
             }
 
-            _narrowChanged(value) {
-                // console.log('_narrowChanged: ' + value);
-            }
-
             _showPage404() {
                 this.page = 'my-view404';
             }
@@ -296,6 +205,10 @@
 
             toggleDrawerMinimization() {
                 this.drawerMinimized = !this.drawerMinimized;
+            }
+
+            maximizeDrawer() {
+                this.drawerMinimized = false;
             }
 
             _logout() {

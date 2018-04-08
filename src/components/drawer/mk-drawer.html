@@ -1,0 +1,163 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../../../bower_components/polymerfire/firebase-auth.html">
+
+<link rel="import" href="../../shared-styles.html">
+<link rel="import" href="./mk-logo.html">
+<link rel="import" href="./expandable-drawer-item.html">
+
+<dom-module id="mk-drawer">
+    <template>
+        <style include="shared-styles">
+            :host {
+                width: 100%;
+                height: 100%;
+                background-color: var(--mk-primary-color);
+                display: flex;
+                flex-flow: column;
+                white-space: nowrap;
+                overflow: hidden;
+                cursor: pointer;
+            }
+
+            .drawer-content-main {
+                flex-grow: 1;
+            }
+
+            mk-logo,
+            .drawer-content-bottom {
+                color: var(--mk-primary-text-color);
+                background-color: var(--mk-primary-dark-color);
+            }
+            
+            .drawer-item {
+                color: var(--mk-primary-text-color);
+            }
+
+            .drawer-item.iron-selected {
+                font-weight: bold;
+                background-color: var(--mk-primary-light-color);
+            }
+
+            #minimizeIcon {
+                transition: transform 0.5s;
+            }
+
+            :host([drawer-minimized]) #minimizeIcon {
+                transform: rotate(180deg);
+            }
+        </style>
+
+        <firebase-auth 
+            id="auth" 
+            user="{{user}}">
+        </firebase-auth>
+
+        <!-- Logo & App name -->
+        <mk-logo minimized="[[minimized]]"></mk-logo>
+
+        <div class="drawer-content-main">
+            <!-- drawer items -->
+
+            <div class="drawer-section">
+                <template is="dom-if" if="[[!user]]">
+                    <a name="mk-login-form" href="[[rootPath]]mk-login-form" class="drawer-item not-a-link">
+                        <drawer-item minimized="[[minimized]]">
+                            <iron-icon slot="icon" icon="icons:account-circle"></iron-icon>
+                            <div slot="item">Sign in</div>
+                        </drawer-item>
+                    </a>
+                </template>
+                <template is="dom-if" if="[[user]]">
+                    <a href="#" class="list-item not-a-link">
+                        <expandable-drawer-item minimized="[[minimized]]" on-require-drawer-expansion="maximizeDrawer" class="drawer-item">
+                            <iron-icon slot="icon" icon="icons:account-circle"></iron-icon>
+                            <div slot="item">[[user.displayName]]</div>
+                            <iron-icon slot="expand-icon" icon="icons:expand-more"></iron-icon>
+                            <div slot="expandable">
+                                <drawer-item>
+                                    <!-- <iron-icon slot="icon" icon="icons:menu"></iron-icon> -->
+                                    <div slot="item">Profile</div>
+                                </drawer-item>
+                                <drawer-item on-click="_logout">
+                                    <!-- <iron-icon slot="icon" icon="icons:menu"></iron-icon> -->
+                                    <div slot="item">Sign out</div>
+                                </drawer-item>
+                            </div>
+                        </expandable-drawer-item>
+                    </a>
+                </template>
+            </div>
+
+            <div class="drawer-section">
+                <a name="my-view1" href="[[rootPath]]my-view1" class="drawer-item not-a-link">
+                    <drawer-item minimized="[[minimized]]">
+                        <iron-icon slot="icon" icon="icons:menu"></iron-icon>
+                        <div slot="item">Link One</div>
+                    </drawer-item>
+                </a>
+    
+                <a name="my-view2" href="[[rootPath]]my-view2" class="drawer-item not-a-link">
+                    <drawer-item minimized="[[minimized]]">
+                        <iron-icon slot="icon" icon="icons:menu"></iron-icon>
+                        <div slot="item">Link One</div>
+                    </drawer-item>
+                </a>
+    
+                <a name="my-view3" href="[[rootPath]]my-view3" class="drawer-item not-a-link">
+                    <drawer-item minimized="[[minimized]]">
+                        <iron-icon slot="icon" icon="icons:menu"></iron-icon>
+                        <div slot="item">Link One</div>
+                    </drawer-item>
+                </a>
+            </div>
+                
+        </div>
+
+        <!-- minimize drawer -->
+        <template is="dom-if" if="[[!narrow]]">
+            <drawer-item class="drawer-content-bottom" minimized="[[minimized]]" on-click="toggleDrawerMinimization">
+                <iron-icon id="minimizeIcon" slot="icon" icon="icons:chevron-left"></iron-icon>
+                <span slot="item">Minimize</span>
+            </drawer-item>
+        </template>
+
+
+    </template>
+
+    <script>
+        class MkDrawer extends Polymer.Element {
+            static get is() {
+                return 'mk-drawer';
+            }
+
+            static get properties() {
+                return {
+                    minimized: {
+                        type: Boolean,
+                        value: false,
+                        reflectToAttribute: true,
+                        notify: true
+                    },
+                    narrow: {
+                        type: Boolean,
+                        value: false,
+                        reflectToAttribute: true
+                    }
+                };
+            }
+
+            toggleDrawerMinimization() {
+                this.minimized = !this.minimized;
+            }
+
+            maximizeDrawer() {
+                this.minimized = false;
+            }
+        }
+
+        window.customElements.define(MkDrawer.is, MkDrawer);
+    </script>
+</dom-module>

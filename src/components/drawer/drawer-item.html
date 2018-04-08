@@ -45,6 +45,10 @@
             :host([minimized]) #item-content {
                 opacity: 0;
             }
+
+            :host([active]) {
+                background-color: var(--mk-primary-light-color);
+            }
         </style>
 
         <paper-icon-item>
@@ -68,6 +72,11 @@
             static get properties() {
                 return {
                     minimized: {
+                        type: Boolean,
+                        value: false,
+                        reflectToAttribute: true
+                    },
+                    active: {
                         type: Boolean,
                         value: false,
                         reflectToAttribute: true
