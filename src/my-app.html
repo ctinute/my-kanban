@@ -13,6 +13,8 @@
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 
 
 <link rel="import" href="./shared-styles.html">
@@ -117,6 +119,16 @@
                     <my-view404 name="my-view404"></my-view404>
                 </iron-pages>
 
+                <paper-toast id="mainToast"></paper-toast>
+
+                <paper-dialog id="mainDialog" modal>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <div class="buttons">
+                      <paper-button dialog-confirm autofocus>Tap me to close</paper-button>
+                    </div>
+                </paper-dialog>
+                  
+
             </app-header-layout>
         </app-drawer-layout>
     </template>
@@ -133,8 +145,7 @@
                 return {
                     user: {
                         type: Object,
-                        default: null,
-                        observer: '_userChanged',
+                        default: null
                     },
                     page: {
                         type: String,
@@ -158,9 +169,16 @@
 
             connectedCallback() {
                 super.connectedCallback();
-                console.log('attached');
-                console.log(this.getUser());
+                this.addEventListener('require-toast', config => this._onRequireToast(config));
+                this.addEventListener('require-dialog', config => this._onRequireDialog(config));
             }
+
+            disconnectedCallback() {
+                super.disconnectedCallback();
+                this.removeEventListener('require-toast', this._onRequireToast);
+                this.addEventListener('require-dialog', config => this._onRequireDialog(config));
+            }
+
 
             getUser() {
                 return this.$.auth.signedIn;
@@ -168,14 +186,8 @@
 
             static get observers() {
                 return [
-                    '_routePageChanged(routeData.page)',
-                    '_userChanged(value)'
+                    '_routePageChanged(routeData.page)'
                 ];
-            }
-
-            _userChanged(value) {
-                console.log('_userChanged');
-                console.log(value);
             }
 
             _routePageChanged(page) {
@@ -207,12 +219,21 @@
                 this.drawerMinimized = !this.drawerMinimized;
             }
 
-            maximizeDrawer() {
-                this.drawerMinimized = false;
+            _onRequireToast(properties) {
+                console.log('--- TOAST REQUESTED ---');
+                console.log(properties.detail.toastConfigs);
+                for (var config in properties.detail.toastConfigs) {
+                    this.$.mainToast[config] =  properties.detail.toastConfigs[config];
+                }
+                this.$.mainToast.open();
             }
 
-            _logout() {
-                this.$.auth.signOut()
+            _onRequireDialog(properties) {
+                console.log('--- MODAL REQUESTED ---');
+                for (var config in properties.detail.dialogConfigs) {
+                    this.$.mainDialog[config] =  properties.detail.dialogConfigs[config];
+                }
+                this.$.mainDialog.open();
             }
         }
 

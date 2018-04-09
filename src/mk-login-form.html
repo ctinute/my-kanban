@@ -19,6 +19,7 @@
                 justify-content: center;
                 align-items: center;
             }
+
             paper-button {
                 text-transform: none;
                 background-color: white;
@@ -26,9 +27,11 @@
         </style>
 
 
-        <firebase-auth id="auth" user="{{user}}" provider="google" on-error="_handleLoginError"></firebase-auth>
+        <firebase-auth id="auth" user="{{user}}" provider="google"></firebase-auth>
 
-        <paper-button raised on-click="_login">Login with Google<img src="../images/google-24x24.png" alt="google-icon"></paper-button>
+        <paper-button raised on-click="_login">Login with Google
+            <img src="../images/google-24x24.png" alt="google-icon">
+        </paper-button>
 
     </template>
 
@@ -50,17 +53,26 @@
 
             _login() {
                 this.$.auth.signInWithPopup()
-                    .then(function (response) {
-                        console.log(response);
-                    })
-                    .catch(function (error) { 
-                        console.log(error);
-                    });
+                    .then(()=> this._redirectDashboard())
+                    .catch(e => this._requireToast(e.error, 0));
             }
 
-            _handleLoginError(e) {
-                console.log('Login error !!!');
-                console.log(e);
+            _redirectDashboard() {
+                // window.location.path = '/dashboard';
+            }
+
+            _requireToast(message,duration) {
+                this.dispatchEvent(new CustomEvent('require-toast', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {
+                        toastConfigs: {
+                            text: message,
+                            horizontalAlign: 'right' ,
+                            duration: duration,
+                        }
+                    }
+                }));
             }
         }
 

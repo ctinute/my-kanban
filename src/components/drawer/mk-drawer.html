@@ -156,6 +156,10 @@
             maximizeDrawer() {
                 this.minimized = false;
             }
+
+            _logout() {
+                this.$.auth.signOut()
+            }
         }
 
         window.customElements.define(MkDrawer.is, MkDrawer);
