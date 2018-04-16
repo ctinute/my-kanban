@@ -1,0 +1,81 @@
+<!-- 
+
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+
+<link rel="import" href="shared-styles.html">
+
+
+<dom-module id="mk-login-form">
+    <template>
+        <style include="shared-styles">
+            :host {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            paper-button {
+                text-transform: none;
+                background-color: white;
+            }
+        </style>
+
+
+        <firebase-auth id="auth" user="{{user}}" provider="google"></firebase-auth>
+
+        <paper-button raised on-click="_login">Login with Google
+            <img src="../images/google-24x24.png" alt="google-icon">
+        </paper-button>
+
+    </template>
+
+    <script>
+        class MkLoginForm extends Polymer.Element {
+            static get is() {
+                return 'mk-login-form';
+            }
+
+            static get properties() {
+                return {
+                    user: {
+                        type: Object,
+                        default: null,
+                        reflectToAttribute: true
+                    }
+                };
+            }
+
+            _login() {
+                this.$.auth.signInWithPopup()
+                    .then(()=> this._redirectDashboard())
+                    .catch(e => this._requireToast(e.error, 0));
+            }
+
+            _redirectDashboard() {
+                // window.location.path = '/dashboard';
+            }
+
+            _requireToast(message,duration) {
+                this.dispatchEvent(new CustomEvent('require-toast', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {
+                        toastConfigs: {
+                            text: message,
+                            horizontalAlign: 'right' ,
+                            duration: duration,
+                        }
+                    }
+                }));
+            }
+        }
+
+        window.customElements.define(MkLoginForm.is, MkLoginForm);
+    </script>
+</dom-module>
