@@ -1,0 +1,25 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="page-not-found">
+  <template>
+    <style>
+      :host {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+
+    Oops you hit a 404. <a href="[[rootPath]]">Head back to home.</a>
+  </template>
+
+  <script>
+    class PageNotFound extends Polymer.Element {
+      static get is() { return 'page-not-found'; }
+    }
+
+    window.customElements.define(PageNotFound.is, PageNotFound);
+  </script>
+</dom-module>
