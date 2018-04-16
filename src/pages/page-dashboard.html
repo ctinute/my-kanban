@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 <link rel="import" href="../shared-styles.html">
 
 <dom-module id="page-dashboard">
@@ -14,7 +15,8 @@
       }
     </style>
 
-    <firebase-auth id="auth" user="{{user}}"></firebase-auth>
+    <app-localstorage-document id="local" key="user">
+    </app-localstorage-document>
 
     <div>
       Dashboard
@@ -40,7 +42,7 @@
 
       connectedCallback() {
         super.connectedCallback();
-        if (!this.user) {
+        if (!this.$.local.__data) {
           this.dispatchEvent(new CustomEvent('require-toast', {
             bubbles: true,
             composed: true,
