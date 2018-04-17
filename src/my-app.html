@@ -175,7 +175,7 @@
             disconnectedCallback() {
                 super.disconnectedCallback();
                 this.removeEventListener('require-toast', this._onRequireToast);
-                this.addEventListener('require-dialog', config => this._onRequireDialog(config));
+                this.removeEventListener('require-dialog', this._onRequireDialog);
             }
 
 

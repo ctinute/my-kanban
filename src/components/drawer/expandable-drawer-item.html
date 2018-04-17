@@ -101,6 +101,7 @@
                         type: Boolean,
                         value: false,
                         reflectToAttribute: true,
+                        notify: true,
                         observer: '_minimizationChanged'
                     },
                     expanded: {
@@ -124,17 +125,28 @@
             }
 
             toggleExpand() {
-                this.expanded = !this.expanded;
-                if (this.expanded) {
-                    this._requireDrawerExpansion();
+                if (!this.minimized) {
+                    this.expanded = !this.expanded;
+                }
+                else {
+                    this._requireDrawerTemporaryExpansion();
+                    this.expanded = true;
                 }
             }
 
-            _requireDrawerExpansion() {
-                this.dispatchEvent(new CustomEvent('require-drawer-expansion', {
-                    bubbles: true,
-                    composed: true
-                }));
+            _requireDrawerTemporaryExpansion() {
+                this.minimized = false;
+                var el = this;
+                el.clicked = false; // for by-passing first event cause it fire right after adding event lisener
+                window.addEventListener('click', function _minimizeDrawer() {
+                    if (el.clicked) {
+                        el.minimized = true;
+                        window.removeEventListener('click', _minimizeDrawer);
+                        delete el.clicked;
+                        return;
+                    }
+                    el.clicked = true;
+                });
             }
         }
 

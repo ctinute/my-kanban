@@ -15,9 +15,6 @@
       }
     </style>
 
-    <app-localstorage-document id="local" key="user">
-    </app-localstorage-document>
-
     <div>
       Dashboard
     </div>
@@ -32,34 +29,7 @@
 
       static get properties() {
         return {
-          user: {
-            type: Object,
-            default: null,
-            reflectToAttribute: true
-          }
         };
-      }
-
-      connectedCallback() {
-        super.connectedCallback();
-        if (!this.$.local.__data) {
-          this.dispatchEvent(new CustomEvent('require-toast', {
-            bubbles: true,
-            composed: true,
-            detail: {
-              toastConfigs: {
-                text: 'You need to login to access ths page !',
-                horizontalAlign: 'right',
-                duration: 0,
-                noCancelOnOutsideClick: false
-              }
-            }
-          }));
-        }
-      }
-
-      _redirectToLoginPage() {
-        window.location = 'login';
       }
     }
 
