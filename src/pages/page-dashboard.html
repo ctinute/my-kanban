@@ -14,8 +14,6 @@
       }
     </style>
 
-    <firebase-auth id="auth" user="{{user}}"></firebase-auth>
-
     <div>
       Dashboard
     </div>
@@ -30,35 +28,9 @@
 
       static get properties() {
         return {
-          user: {
-            type: Object,
-            default: null,
-            reflectToAttribute: true
-          }
         };
       }
 
-      connectedCallback() {
-        super.connectedCallback();
-        if (!this.user) {
-          this.dispatchEvent(new CustomEvent('require-toast', {
-            bubbles: true,
-            composed: true,
-            detail: {
-              toastConfigs: {
-                text: 'You need to login to access ths page !',
-                horizontalAlign: 'right',
-                duration: 0,
-                noCancelOnOutsideClick: false
-              }
-            }
-          }));
-        }
-      }
-
-      _redirectToLoginPage() {
-        window.location = 'login';
-      }
     }
 
     window.customElements.define(PageDashboard.is, PageDashboard);

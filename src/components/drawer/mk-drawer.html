@@ -72,7 +72,7 @@
                 </template>
                 <template is="dom-if" if="[[user]]">
                     <a href="#" class="list-item not-a-link">
-                        <expandable-drawer-item minimized="[[minimized]]" on-require-drawer-expansion="maximizeDrawer" class="drawer-item">
+                        <expandable-drawer-item minimized="{{minimized}}" class="drawer-item">
                             <iron-icon slot="icon" icon="icons:account-circle"></iron-icon>
                             <div slot="item">[[user.displayName]]</div>
                             <iron-icon slot="expand-icon" icon="icons:expand-more"></iron-icon>
@@ -151,10 +151,6 @@
 
             toggleDrawerMinimization() {
                 this.minimized = !this.minimized;
-            }
-
-            maximizeDrawer() {
-                this.minimized = false;
             }
 
             _logout() {
