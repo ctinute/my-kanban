@@ -1,7 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
-<link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="../shared-styles.html">
 
 <dom-module id="page-login">
@@ -21,11 +20,7 @@
       }
     </style>
 
-    <firebase-auth 
-      id="auth"
-       user="{{user}}" 
-       provider="google"
-       on-signed-in-changed="_onSignedInChanged"></firebase-auth>
+    <firebase-auth id="auth" user="{{user}}" provider="google"></firebase-auth>
 
     <paper-button raised on-click="_login">Login with Google
       <img src="../images/google-24x24.png" alt="google-icon">
@@ -45,6 +40,17 @@
             type: Object
           }
         };
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        if (this.$.auth.signedIn) {
+          console.log('aaa');
+          this._redirectToDashboard();
+        }
+        else {
+          console.log('eeee');
+        }
       }
 
       _login() {
