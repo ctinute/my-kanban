@@ -1,0 +1,93 @@
+<link rel="import" href="./../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="./../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="./../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="./../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="./../../bower_components/polymerfire/firebase-database-script.html">
+
+<dom-module id="project-db">
+    <template>
+        <firebase-auth id="auth" user="{{user}}"></firebase-auth>
+    </template>
+    <script>
+        class ProjectDb extends Polymer.Element {
+
+            static get is() {
+                return 'project-db';
+            }
+
+            static get properties() {
+                return {
+                    db: {
+                        type: Object
+                    },
+                    user: {
+                        type: Object
+                    },
+                    isLoading: {
+                        type: Boolean,
+                        value: false,
+                        notify: true
+                    },
+                    isLoading: {
+                        type: Boolean,
+                        value: false,
+                        notify: true
+                    },
+                    error: {
+                        type: Object,
+                        notify: true
+                    }
+                }
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                this.db = firebase.database();
+            }
+
+            checkKey(key) {
+                if (key) {
+                    var isExisted = false;
+                    this.db.ref('/projects/').child(projectId).once('value', snapshot => {
+                        isExisted = snapshot.exists();
+                        console.log('check key '+ isExisted)
+                    });
+                    return isExisted;
+                }
+                else {
+                    return false
+                }
+                
+            }
+
+            getById(projectId) {
+                if (this.db && this.user && projectId) {
+                    // TODO: check permission of user
+                    return this.db.ref('/projects/' + projectId).once('value')
+                }
+                return null;
+            }
+
+            saveOrUpdate(projectId, data) {
+                if (this.db && this.user) {
+                    // TODO: check permission of user
+                    if (!this.checkKey(projectId)) {
+                        projectId = firebase.database().ref().child('/projects/').push().key;
+                    }
+                    return this.db.ref('/projects/' + projectId).update(data)
+                }
+                return null;
+            }
+
+            delete(projectId) {
+                if (this.db && this.user && projectId) {
+                    // TODO: check permission of user
+                    this.db.ref('/projects/' + projectId).remove()
+                }
+                return null;
+            }
+        }
+
+        window.customElements.define(ProjectDb.is, ProjectDb);
+    </script>
+</dom-module>

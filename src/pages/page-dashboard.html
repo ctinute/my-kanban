@@ -1,6 +1,9 @@
-<link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
-<link rel="import" href="../shared-styles.html">
+<link rel="import" href="./../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="./../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="./../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="./../shared-styles.html">
+<link rel="import" href="./modules/project-init-dialog.html">
 
 <dom-module id="page-dashboard">
   <template>
@@ -11,12 +14,18 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        box-sizing: border-box;
+        padding: 16px;
       }
     </style>
 
     <div>
-      Dashboard
+      <div>Dashboard</div>
+      <paper-button raised on-click="_openProjectInitDialog">New project...</paper-button>
     </div>
+    
+    
+    
 
   </template>
 
@@ -29,6 +38,16 @@
       static get properties() {
         return {
         };
+      }
+
+      _openProjectInitDialog() {
+        this.dispatchEvent(new CustomEvent('require-dialog', {
+          bubbles: true,
+          composed: true,
+          detail: {
+            modalId: 'project-init-dialog'
+          }
+        }));
       }
 
     }

@@ -1,4 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/lazy-imports/lazy-imports-mixin.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
@@ -26,6 +27,9 @@
 <link rel="lazy-import" href="./pages/page-dashboard.html">
 
 <dom-module id="my-app">
+
+    <link rel="lazy-import" group="project-init-dialog" href="./pages/modules/project-init-dialog.html">
+
     <template>
         <style include="shared-styles">
             :host {
@@ -33,6 +37,7 @@
                 color: var(--mk-primary-color);
                 --app-drawer-width: 256px;
                 --app-header-height: 48px;
+                --paper-toast-color: #FFF;
             }
 
             :host([drawer-minimized]) {
@@ -76,17 +81,11 @@
             url-space-regex="^[[rootPath]]">
         </app-location>
 
-        <app-route 
-            route="{{route}}" 
-            pattern="[[rootPath]]:page" 
-            data="{{routeData}}" 
-            tail="{{subroute}}">
+        <app-route route="{{route}}" pattern="[[rootPath]]:page" data="{{routeData}}" tail="{{subroute}}">
         </app-route>
 
         <!-- App local storage -->
-        <app-localstorage-document 
-            key="drawerMinimization" 
-            data="{{drawerMinimized}}">
+        <app-localstorage-document key="drawerMinimization" data="{{drawerMinimized}}">
         </app-localstorage-document>
 
 
@@ -119,24 +118,23 @@
                     <page-dashboard name="dashboard"></page-dashboard>
                 </iron-pages>
 
-                <paper-toast id="mainToast"></paper-toast>
-
-                <paper-dialog id="mainDialog" modal>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                    <div class="buttons">
-                      <paper-button dialog-confirm autofocus>Tap me to close</paper-button>
-                    </div>
-                </paper-dialog>
-                  
 
             </app-header-layout>
         </app-drawer-layout>
+
+
+        <!-- global attention -->
+        <paper-toast id="mainToast"></paper-toast>
+        <paper-dialog id="mainDialog" modal></paper-dialog>
+
+        <project-init-dialog id="project-init-dialog"></project-init-dialog>
+
     </template>
 
     <script>
         Polymer.setPassiveTouchGestures(true);
 
-        class MyApp extends Polymer.Element {
+        class MyApp extends Polymer.LazyImportsMixin(Polymer.Element) {
             static get is() {
                 return 'my-app';
             }
@@ -154,13 +152,11 @@
                     },
                     drawerItems: {
                         type: Object,
-                        value: [
-                            {
-                                title: 'Dashboard',
-                                icon: 'icons:dashboard',
-                                link: 'dashboard'
-                            }
-                        ]
+                        value: [{
+                            title: 'Dashboard',
+                            icon: 'icons:dashboard',
+                            link: 'dashboard'
+                        }]
                     },
                     routeData: Object,
                     subroute: Object,
@@ -228,17 +224,19 @@
                 console.log('--- TOAST REQUESTED ---');
                 console.log(properties.detail.toastConfigs);
                 for (var config in properties.detail.toastConfigs) {
-                    this.$.mainToast[config] =  properties.detail.toastConfigs[config];
+                    this.$.mainToast[config] = properties.detail.toastConfigs[config];
                 }
                 this.$.mainToast.open();
             }
 
             _onRequireDialog(properties) {
                 console.log('--- MODAL REQUESTED ---');
-                for (var config in properties.detail.dialogConfigs) {
-                    this.$.mainDialog[config] =  properties.detail.dialogConfigs[config];
+                if (properties.detail.modalId) {
+                    this.importLazyGroup(properties.detail.modalId).then((results) => {
+                        this.$[properties.detail.modalId].open();
+                    });
+
                 }
-                this.$.mainDialog.open();
             }
         }
 
