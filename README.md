@@ -1,6 +1,6 @@
 # mKanban
 
-Personal / small team project management via Kanban table
+Personal project management via Kanban table
 
 ### Setup
 
@@ -17,8 +17,8 @@ Second, install [Bower](https://bower.io/) using [npm](https://www.npmjs.com)
 
 ##### Initialize project
 
-    git clone https://github.com/tinnguyen263/my-kanban-polymer
-    cd my-kanban-polymer
+    git clone https://github.com/tinnguyen263/my-kanban
+    cd my-kanban
     bower install
 
 ### Start the development server
