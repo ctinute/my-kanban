@@ -12,16 +12,49 @@
         width: 100%;
         height: 100%;
         display: flex;
-        justify-content: center;
-        align-items: center;
+        flex-direction: column;
         box-sizing: border-box;
-        padding: 16px;
+        padding: 0 16px;
+      }
+
+      .page-title {
+        margin: 16px 0;
+        height: 32px;
+        line-height: 32px;
+      }
+
+      .section-action paper-button {
+        text-decoration: underline;
       }
     </style>
 
-    <div>
-      <div>Dashboard</div>
-      <paper-button raised on-click="_openProjectInitDialog">New project...</paper-button>
+    <h2 class="page-title">Dashboard</h2>
+
+    <div class="page-content">
+      
+      <div class="section projects">
+        <h3 class="section-title">
+          Projects
+        </h3>
+        <div class="section-content">
+          <template is="dom-if" if="[[!(projects.length)]]">
+            You don't have any project yet.<br/>
+            Press button bellow to create new one.
+          </template>
+          <template 
+            is="dom-repeate"
+            items="[[projects]]"
+            as="project">
+            <a href="project.link">
+              [[project.name]]
+            </a>
+          </template>
+        </div>
+        <div class="section-action">
+          <paper-button ripple on-click="_openProjectInitDialog">New project...</paper-button>
+        </div>
+      </div>
+
     </div>
     
     
@@ -37,6 +70,10 @@
 
       static get properties() {
         return {
+          projects: {
+            type: Array,
+            value: []
+          }
         };
       }
 
