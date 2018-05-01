@@ -61,7 +61,7 @@
         <div class="drawer-content-main">
             <!-- drawer items -->
 
-            <div class="drawer-section">
+            <div class="drawer-section auth">
                 <template is="dom-if" if="[[!user]]">
                     <a name="login" href="[[rootPath]]login" class="drawer-item not-a-link">
                         <drawer-item minimized="[[minimized]]">
@@ -91,27 +91,15 @@
                 </template>
             </div>
 
-            <div class="drawer-section">
-                <a name="my-view1" href="[[rootPath]]my-view1" class="drawer-item not-a-link">
-                    <drawer-item minimized="[[minimized]]">
-                        <iron-icon slot="icon" icon="icons:menu"></iron-icon>
-                        <div slot="item">Link One</div>
-                    </drawer-item>
-                </a>
-    
-                <a name="my-view2" href="[[rootPath]]my-view2" class="drawer-item not-a-link">
-                    <drawer-item minimized="[[minimized]]">
-                        <iron-icon slot="icon" icon="icons:menu"></iron-icon>
-                        <div slot="item">Link One</div>
-                    </drawer-item>
-                </a>
-    
-                <a name="my-view3" href="[[rootPath]]my-view3" class="drawer-item not-a-link">
-                    <drawer-item minimized="[[minimized]]">
-                        <iron-icon slot="icon" icon="icons:menu"></iron-icon>
-                        <div slot="item">Link One</div>
-                    </drawer-item>
-                </a>
+            <div class="drawer-section configurable">
+                <template is="dom-repeat" items="{{drawerItems}}" as="item">
+                    <a name="[[item.link]]" href="[[item.link]]" class="drawer-item not-a-link">
+                        <drawer-item minimized="[[minimized]]">
+                            <iron-icon slot="icon" icon="[[item.icon]]"></iron-icon>
+                            <div slot="item">[[item.title]]</div>
+                        </drawer-item>
+                    </a>
+                </template>
             </div>
                 
         </div>
@@ -145,6 +133,9 @@
                         type: Boolean,
                         value: false,
                         reflectToAttribute: true
+                    },
+                    drawerItems: {
+                        type: Array
                     }
                 };
             }

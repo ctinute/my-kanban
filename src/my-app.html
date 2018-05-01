@@ -96,7 +96,7 @@
 
             <!-- Drawer content -->
             <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
-                <mk-drawer minimized="{{drawerMinimized}}" narrow="[[narrow]]"></mk-drawer>
+                <mk-drawer minimized="{{drawerMinimized}}" narrow="[[narrow]]" drawer-items="[[drawerItems]]"></mk-drawer>
             </app-drawer>
 
             <!-- Main content -->
@@ -151,6 +151,16 @@
                         type: String,
                         reflectToAttribute: true,
                         observer: '_pageChanged',
+                    },
+                    drawerItems: {
+                        type: Object,
+                        value: [
+                            {
+                                title: 'Dashboard',
+                                icon: 'icons:dashboard',
+                                link: 'dashboard'
+                            }
+                        ]
                     },
                     routeData: Object,
                     subroute: Object,
