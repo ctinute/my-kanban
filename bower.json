@@ -22,7 +22,8 @@
     "paper-dialog": "PolymerElements/paper-dialog#^2.1.1",
     "paper-toast": "PolymerElements/paper-toast#^2.1.0",
     "paper-input": "PolymerElements/paper-input#^2.2.2",
-    "lazy-imports": "Polymer/lazy-imports#^2.1.0"
+    "lazy-imports": "Polymer/lazy-imports#^2.1.0",
+    "polymer-redux": "^1.0.5"
   },
   "resolutions": {
     "polymer": "^2.0.0"

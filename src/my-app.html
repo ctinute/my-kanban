@@ -21,10 +21,11 @@
 
 <link rel="import" href="./shared-styles.html">
 <link rel="import" href="./components/drawer/mk-drawer.html">
-
+<link rel="import" href="./redux-mixin.html">
 <link rel="lazy-import" href="./pages/page-login.html">
 <link rel="lazy-import" href="./pages/page-not-found.html">
 <link rel="lazy-import" href="./pages/page-dashboard.html">
+
 
 <dom-module id="my-app">
 
@@ -127,6 +128,15 @@
         <paper-toast id="mainToast"></paper-toast>
         <paper-dialog id="mainDialog" modal></paper-dialog>
 
+        <paper-toast 
+            id="globalToast" 
+            opened="[[globalToast.show]]" 
+            text="[[globalToast.message]]" 
+            duration="[[globalToast.duration]]" 
+            on-opened-changed="_onToastStateChanged"
+            horizontal-align="right">
+        </paper-toast>
+
         <project-init-dialog id="project-init-dialog"></project-init-dialog>
 
     </template>
@@ -134,7 +144,7 @@
     <script>
         Polymer.setPassiveTouchGestures(true);
 
-        class MyApp extends Polymer.LazyImportsMixin(Polymer.Element) {
+        class MyApp extends Polymer.LazyImportsMixin(ReduxMixin(Polymer.Element)) {
             static get is() {
                 return 'my-app';
             }
@@ -169,6 +179,20 @@
                         type: Boolean,
                         value: false,
                         reflectToAttribute: true
+                    },
+                    globalToast: {
+                        type: Object,
+                        statePath: 'app.globalToast'
+                    }
+                };
+            }
+
+            static get actions() {
+                return {
+                    dismissToast() {
+                        return {
+                            type: 'APP_GLOBAL_TOAST_DISMISS'
+                        };
                     }
                 };
             }
@@ -222,7 +246,7 @@
 
             _onRequireToast(properties) {
                 console.log('--- TOAST REQUESTED ---');
-                console.log(properties.detail.toastConfigs);
+                console.log(properties.detail);
                 for (var config in properties.detail.toastConfigs) {
                     this.$.mainToast[config] = properties.detail.toastConfigs[config];
                 }
@@ -231,11 +255,18 @@
 
             _onRequireDialog(properties) {
                 console.log('--- MODAL REQUESTED ---');
+                console.log(properties.detail);
                 if (properties.detail.modalId) {
                     this.importLazyGroup(properties.detail.modalId).then((results) => {
                         this.$[properties.detail.modalId].open();
                     });
 
+                }
+            }
+
+            _onToastStateChanged(e) {
+                if (!this.$.globalToast.opened) {
+                    this.dispatch('dismissToast')
                 }
             }
         }

@@ -2,7 +2,7 @@
 <link rel="import" href="./../../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="./../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="./../../../bower_components/paper-input/paper-input.html">
-
+<link rel="import" href="./../../redux-mixin.html">
 <link rel="import" href="./../../api/project-data.html">
 <link rel="import" href="./../../shared-styles.html">
 
@@ -40,7 +40,7 @@
   </template>
 
   <script>
-    class ProjectInitDialog extends Polymer.Element {
+    class ProjectInitDialog extends ReduxMixin(Polymer.Element) {
 
       static get is() {
         return 'project-init-dialog';
@@ -62,8 +62,18 @@
         };
       }
 
-      _generateRandomId() {
-        return Math.round(Math.random()*1000000);
+      static get actions() {
+          return {
+              showToastMessage(message, duration) {
+                  return {
+                      type: 'APP_GLOBAL_TOAST_SHOW',
+                      payload: {
+                          message: message,
+                          duration: duration,
+                      }
+                  }
+              }
+          }
       }
 
       open() {
@@ -86,25 +96,12 @@
         this.$.projectDB.saveOrUpdate(null, this.newProject)
           .then(resp => {
             this.close()
-            this._showMessage('Success! Redirecting to project dashboard...', 1500)
+            this.dispatch('showToastMessage','Success! Redirecting to project dashboard...', 1500)
           })
           .catch(error => {
-            this.$.close()
-            this._showMessage(error.message, 0)
+            this.close()
+            this.dispatch('showToastMessage',error.message, 0)
           })
-      }
-
-      _showMessage(text, duration) {
-        this.dispatchEvent(new CustomEvent('require-toast', {
-          bubbles: true,
-          composed: true,
-          detail: {
-            toastConfigs: {
-              text,
-              duration
-            }
-          }
-        }));
       }
 
     }

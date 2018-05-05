@@ -1,0 +1,84 @@
+<!-- src/demo-app/redux-mixin.html -->
+
+<link rel="import" href="./../bower_components/polymer-redux/polymer-redux.html">
+<script src="./../node_modules/redux/dist/redux.js"></script>
+<script>
+    // Setup a Redux store
+    const initialState = {
+        app: {
+            isLoading: false,
+            globalToast: {
+                show: false,
+                message: null,
+                duration: 0
+            }
+        },
+        auth: {
+            user: null
+        },
+        userData: {
+            projects: []
+        }
+    };
+
+    const rootReducer = (state, action) => {
+        console.log(action.type);
+        switch (action.type) {
+
+            case 'AUTH_SAVE_USER':
+                {
+                    return state;
+                }
+            case 'AUTH_REMOVE_USER':
+                {
+                    return state;
+                }
+
+            case 'APP_SET_LOADING':
+                {
+                    return Object.assign({}, state, {
+                        app: {
+                            ...state.app,
+                            isLoading: action.payload.isLoading
+                        }
+                    });
+                }
+
+            case 'APP_GLOBAL_TOAST_SHOW':
+                {
+                    return Object.assign({}, state, {
+                        app: {
+                            ...state.app,
+                            globalToast: {
+                                show: true,
+                                message: action.payload.message,
+                                duration: action.payload.duration
+                            }
+                        }
+                    });
+                }
+            case 'APP_GLOBAL_TOAST_DISMISS':
+                {
+                    return Object.assign({}, state, {
+                        app: {
+                            ...state.app,
+                            globalToast: {
+                                show: false,
+                                message: null,
+                                duration: 0
+                            }
+                        }
+                    });
+                }
+
+            default:
+                console.log('Redux reducer not found for action: ' + action.type);
+                return state;
+        }
+    };
+
+    const store = Redux.createStore(rootReducer, initialState);
+
+    // Export the ReduxMixin
+    ReduxMixin = PolymerRedux(store);
+</script>
