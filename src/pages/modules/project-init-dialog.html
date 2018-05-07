@@ -7,105 +7,118 @@
 <link rel="import" href="./../../shared-styles.html">
 
 <dom-module id="project-init-dialog">
-  <template>
-    <style include="shared-styles">
-      :host {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-    </style>
+    <template>
+        <style include="shared-styles">
+            :host {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        </style>
 
-    <project-db id="projectDB"></project-db>
+        <paper-dialog id="dialog" opened="{{opened}}">
+            <div class="modal-header">
+                <h2>New project</h2>
+            </div>
+            <div class="modal-content">
+                <paper-input required auto-validate label="Project name" value="{{newProject.name}}" error-message="This field is required !!!">
+                </paper-input>
+            </div>
+            <div class="modal-actions">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button dialog-confirm on-click="_createNewProject">Create</paper-button>
+            </div>
+        </paper-dialog>
 
-    <paper-dialog id="dialog" opened="{{opened}}">
-      <div class="modal-header">
-        <h2>New project</h2>
-      </div>  
-      <div class="modal-content">
-          <paper-input required auto-validate
-            label="Project name" 
-            value="{{newProject.name}}"
-            error-message="This field is required !!!">
-          </paper-input>
-      </div>
-      <div class="modal-actions">
-        <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button dialog-confirm on-click="_createNewProject">Create</paper-button>
-      </div>
-    </paper-dialog>
+    </template>
 
-  </template>
+    <script>
+        class ProjectInitDialog extends ReduxMixin(Polymer.Element) {
 
-  <script>
-    class ProjectInitDialog extends ReduxMixin(Polymer.Element) {
+            static get is() {
+                return 'project-init-dialog';
+            }
 
-      static get is() {
-        return 'project-init-dialog';
-      }
+            static get properties() {
+                return {
+                    opened: {
+                        type: Boolean,
+                        value: false
+                    },
+                    user: {
+                        type: Object
+                    },
+                    newProject: {
+                        type: Object,
+                        value: {}
+                    }
+                };
+            }
 
-      static get properties() {
-        return {
-          opened: {
-            type: Boolean,
-            value: false
-          },
-          user: {
-            type: Object
-          },
-          newProject: {
-            type: Object,
-            value: {}
-          }
-        };
-      }
+            static get actions() {
+                return {
+                    showToastMessage(message, duration) {
+                        return {
+                            type: 'APP_GLOBAL_TOAST_SHOW',
+                            payload: {
+                                message,
+                                duration,
+                            }
+                        }
+                    },
+                    showFetching(message, duration) {
+                        return {
+                            type: 'APP_SET_FETCHING',
+                            payload: { isFetching: true }
+                        }
+                    },
+                    hideFetching(message, duration) {
+                        return {
+                            type: 'APP_SET_FETCHING',
+                            payload: { isFetching: false }
+                        }
+                    },
+                    createProject(project) {
+                        return function (dispatch) {
+                            dispatch('showFetching')
+                            projectDb.save(project)
+                                .then(resp => {
+                                    dispatch('showToastMessage',
+                                        'Success! Redirecting to project dashboard...', 1500)
+                                })
+                                .catch(error => {
+                                    dispatch('showToastMessage', error.message, 0)
+                                })
+                                .finally(() => dispatch('hideFetching'))
+                        }
+                    }
+                }
+            }
 
-      static get actions() {
-          return {
-              showToastMessage(message, duration) {
-                  return {
-                      type: 'APP_GLOBAL_TOAST_SHOW',
-                      payload: {
-                          message: message,
-                          duration: duration,
-                      }
-                  }
-              }
-          }
-      }
+            open() {
+                this.opened = true;
+            }
 
-      open() {
-        this.opened = true;
-      }
+            close() {
+                this.opened = false;
+            }
 
-      close() {
-        this.opened = false;
-      }
+            toggle() {
+                this.opened = !this.opened;
+            }
 
-      toggle() {
-        this.opened = !this.opened;
-      }
+            _showSuccessMessage() {}
 
-      _showSuccessMessage(){}
+            _navigateProject() {}
 
-      _navigateProject(){}
+            _createNewProject() {
+                this.dispatch('createProject', this.newProject)
+            }
 
-      _createNewProject() {
-        this.$.projectDB.saveOrUpdate(null, this.newProject)
-          .then(resp => {
-            this.close()
-            this.dispatch('showToastMessage','Success! Redirecting to project dashboard...', 1500)
-          })
-          .catch(error => {
-            this.close()
-            this.dispatch('showToastMessage',error.message, 0)
-          })
-      }
+        }
 
-    }
-
-    window.customElements.define(ProjectInitDialog.is, ProjectInitDialog);
-  </script>
+        window.customElements.define(ProjectInitDialog.is, ProjectInitDialog);
+    </script>
 </dom-module>

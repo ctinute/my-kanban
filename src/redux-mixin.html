@@ -1,12 +1,13 @@
 <!-- src/demo-app/redux-mixin.html -->
 
 <link rel="import" href="./../bower_components/polymer-redux/polymer-redux.html">
-<script src="./../node_modules/redux/dist/redux.js"></script>
+
 <script>
     // Setup a Redux store
     const initialState = {
         app: {
             isLoading: false,
+            isFetching: false,
             globalToast: {
                 show: false,
                 message: null,
@@ -22,62 +23,77 @@
     };
 
     const rootReducer = (state, action) => {
+        console.log(`=== INCOMMING ACTION =====================================`);
         console.log(action.type);
+        console.log(`--- prev state ---`);
+        console.log(state);
+        
+        var nextState = state;
         switch (action.type) {
 
             case 'AUTH_SAVE_USER':
-                {
-                    return state;
-                }
+                break;
             case 'AUTH_REMOVE_USER':
-                {
-                    return state;
-                }
+                break;
 
             case 'APP_SET_LOADING':
-                {
-                    return Object.assign({}, state, {
-                        app: {
-                            ...state.app,
-                            isLoading: action.payload.isLoading
-                        }
-                    });
-                }
+                nextState = Object.assign({}, state, {
+                    app: {
+                        ...state.app,
+                        isLoading: action.payload.isLoading
+                    }
+                });
+                break;
+
+            case 'APP_SET_FETCHING':
+                nextState = Object.assign({}, state, {
+                    app: {
+                        ...state.app,
+                        isFetching: action.payload.isFetching
+                    }
+                })
+                break;
 
             case 'APP_GLOBAL_TOAST_SHOW':
-                {
-                    return Object.assign({}, state, {
-                        app: {
-                            ...state.app,
-                            globalToast: {
-                                show: true,
-                                message: action.payload.message,
-                                duration: action.payload.duration
-                            }
+                nextState = Object.assign({}, state, {
+                    app: {
+                        ...state.app,
+                        globalToast: {
+                            show: true,
+                            message: action.payload.message,
+                            duration: action.payload.duration
                         }
-                    });
-                }
+                    }
+                });
+                break;
+
             case 'APP_GLOBAL_TOAST_DISMISS':
-                {
-                    return Object.assign({}, state, {
-                        app: {
-                            ...state.app,
-                            globalToast: {
-                                show: false,
-                                message: null,
-                                duration: 0
-                            }
+                nextState = Object.assign({}, state, {
+                    app: {
+                        ...state.app,
+                        globalToast: {
+                            show: false,
+                            message: null,
+                            duration: 0
                         }
-                    });
-                }
+                    }
+                });
+                break;
 
             default:
-                console.log('Redux reducer not found for action: ' + action.type);
-                return state;
+                break;
         }
+
+        console.log(`--- next state ---`);
+        console.log(nextState);
+        return nextState;
     };
 
-    const store = Redux.createStore(rootReducer, initialState);
+    const store = Redux.createStore(
+        rootReducer,
+        initialState,
+        Redux.applyMiddleware(ReduxThunk.default)
+    );
 
     // Export the ReduxMixin
     ReduxMixin = PolymerRedux(store);

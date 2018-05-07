@@ -1,93 +1,33 @@
-<link rel="import" href="./../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="./../../bower_components/polymerfire/firebase-auth.html">
-<link rel="import" href="./../../bower_components/polymerfire/firebase-document.html">
-<link rel="import" href="./../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="./../../bower_components/polymerfire/firebase-database-script.html">
 
-<dom-module id="project-db">
-    <template>
-        <firebase-auth id="auth" user="{{user}}"></firebase-auth>
-    </template>
-    <script>
-        class ProjectDb extends Polymer.Element {
+<script>
+    const db = firebase.database()
 
-            static get is() {
-                return 'project-db';
-            }
+    const projectDb = {}
 
-            static get properties() {
-                return {
-                    db: {
-                        type: Object
-                    },
-                    user: {
-                        type: Object
-                    },
-                    isLoading: {
-                        type: Boolean,
-                        value: false,
-                        notify: true
-                    },
-                    isLoading: {
-                        type: Boolean,
-                        value: false,
-                        notify: true
-                    },
-                    error: {
-                        type: Object,
-                        notify: true
-                    }
-                }
-            }
+    projectDb.checkKey = key => {
+        var isExisted = false
+        db.ref('/projects/').child(key).once('value', snapshot => {
+            isExisted = snapshot.exists()
+        });
+        return isExisted
+    }
 
-            connectedCallback() {
-                super.connectedCallback();
-                this.db = firebase.database();
-            }
+    projectDb.getByKey = key => {
+        return db.ref('/projects/' + key).once('value')
+    }
 
-            checkKey(key) {
-                if (key) {
-                    var isExisted = false;
-                    this.db.ref('/projects/').child(projectId).once('value', snapshot => {
-                        isExisted = snapshot.exists();
-                        console.log('check key '+ isExisted)
-                    });
-                    return isExisted;
-                }
-                else {
-                    return false
-                }
-                
-            }
+    projectDb.save = (data) => {
+        const key = db.ref().child('/projects/').push().key;
+        return db.ref('/projects/' + key).set(data)
+    }
 
-            getById(projectId) {
-                if (this.db && this.user && projectId) {
-                    // TODO: check permission of user
-                    return this.db.ref('/projects/' + projectId).once('value')
-                }
-                return null;
-            }
+    projectDb.update = (key, data) => {
+        return db.ref('/projects/' + key).update(data)
+    }
 
-            saveOrUpdate(projectId, data) {
-                if (this.db && this.user) {
-                    // TODO: check permission of user
-                    if (!this.checkKey(projectId)) {
-                        projectId = firebase.database().ref().child('/projects/').push().key;
-                    }
-                    return this.db.ref('/projects/' + projectId).update(data)
-                }
-                return null;
-            }
+    projectDb.deleteByKey = key => {
+        return db.ref('/projects/' + key).remove()
+    }
 
-            delete(projectId) {
-                if (this.db && this.user && projectId) {
-                    // TODO: check permission of user
-                    this.db.ref('/projects/' + projectId).remove()
-                }
-                return null;
-            }
-        }
-
-        window.customElements.define(ProjectDb.is, ProjectDb);
-    </script>
-</dom-module>
+</script>
