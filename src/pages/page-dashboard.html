@@ -1,94 +1,163 @@
 <link rel="import" href="./../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="./../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="./../../bower_components/paper-button/paper-button.html">
-
+<link rel="import" href="./../redux-mixin.html">
+<link rel="import" href="./../api/project-data.html">
 <link rel="import" href="./../shared-styles.html">
 <link rel="import" href="./modules/project-init-dialog.html">
 
 <dom-module id="page-dashboard">
-  <template>
-    <style include="shared-styles">
-      :host {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        box-sizing: border-box;
-        padding: 0 16px;
-      }
+    <template>
+        <style include="shared-styles">
+            :host {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                box-sizing: border-box;
+                padding: 0 16px;
+            }
 
-      .page-title {
-        margin: 16px 0;
-        height: 32px;
-        line-height: 32px;
-      }
+            .page-title {
+                margin: 16px 0;
+                height: 32px;
+                line-height: 32px;
+            }
 
-      .section-action paper-button {
-        text-decoration: underline;
-      }
-    </style>
+            .section-action paper-button {
+                text-decoration: underline;
+            }
+        </style>
 
-    <h2 class="page-title">Dashboard</h2>
+        <h2 class="page-title">Dashboard</h2>
 
-    <div class="page-content">
-      
-      <div class="section projects">
-        <h3 class="section-title">
-          Projects
-        </h3>
-        <div class="section-content">
-          <template is="dom-if" if="[[!(projects.length)]]">
-            You don't have any project yet.<br/>
-            Press button bellow to create new one.
-          </template>
-          <template 
-            is="dom-repeate"
-            items="[[projects]]"
-            as="project">
-            <a href="project.link">
-              [[project.name]]
-            </a>
-          </template>
+        <div class="page-content">
+
+            <div class="section projects">
+                <h3 class="section-title">
+                    Projects
+                </h3>
+                <div class="section-content">
+                    <template is="dom-if" if="[[!projects.length]]">
+                        You don't have any project yet.
+                        <br/> Press button bellow to create new one.
+                    </template>
+                    <template is="dom-repeat" items="[[projects]]" as="project">
+                        <span>
+                            [[project.name]]
+                        </span>
+                    </template>
+                </div>
+                <div class="section-action">
+                    <paper-button ripple on-click="_openProjectInitDialog">New project...</paper-button>
+                </div>
+            </div>
+
         </div>
-        <div class="section-action">
-          <paper-button ripple on-click="_openProjectInitDialog">New project...</paper-button>
-        </div>
-      </div>
 
-    </div>
-    
-    
-    
+    </template>
 
-  </template>
+    <script>
+        class PageDashboard extends ReduxMixin(Polymer.Element) {
+            static get is() {
+                return 'page-dashboard';
+            }
 
-  <script>
-    class PageDashboard extends Polymer.Element {
-      static get is() {
-        return 'page-dashboard';
-      }
+            static get properties() {
+                return {
+                    projects: {
+                        type: Array,
+                        statePath: 'userData.projects'
+                    }
+                };
+            }
 
-      static get properties() {
-        return {
-          projects: {
-            type: Array,
-            value: []
-          }
-        };
-      }
+            static get actions() {
+                return {
+                    showToastMessage(message, duration) {
+                        return {
+                            type: 'APP_GLOBAL_TOAST_SHOW',
+                            payload: {
+                                message,
+                                duration,
+                            }
+                        }
+                    },
+                    showFetching(message, duration) {
+                        return {
+                            type: 'APP_SET_FETCHING',
+                            payload: {
+                                isFetching: true
+                            }
+                        }
+                    },
+                    hideFetching(message, duration) {
+                        return {
+                            type: 'APP_SET_FETCHING',
+                            payload: {
+                                isFetching: false
+                            }
+                        }
+                    },
+                    saveProjectToState(projects) {
+                        return {
+                            type: 'USER_FETCH_PROJECTS',
+                            payload: { projects }
+                        }
+                    },
+                    fetchProject(project) {
+                        return function (dispatch) {
+                            dispatch('showFetching')
+                            projectDb.getByCurrentUser()
+                                .then(snapshot => {
+                                    var data = snapshot.val()
+                                    var projects = []
+                                    for (var key in data ) {
+                                        projects.push({
+                                            id: key,
+                                            name: data[key].name
+                                        })
+                                    }
+                                    dispatch('saveProjectToState', projects)
+                                })
+                                .catch(error => {
+                                    dispatch('showToastMessage', error.message, 0)
+                                })
+                                .finally(() => dispatch('hideFetching'))
+                        }
+                    }
+                }
+            }
 
-      _openProjectInitDialog() {
-        this.dispatchEvent(new CustomEvent('require-dialog', {
-          bubbles: true,
-          composed: true,
-          detail: {
-            modalId: 'project-init-dialog'
-          }
-        }));
-      }
+            connectedCallback() {
+                super.connectedCallback();
+                firebase.auth().onAuthStateChanged(this._onAuthReady.bind(this));
+            }
 
-    }
+            _onAuthReady(user) {
+                if (user) {
+                    this._fetchProjects();
+                } else {
+                    // TODO: redirect to login page
+                }
+            }
 
-    window.customElements.define(PageDashboard.is, PageDashboard);
-  </script>
+            _fetchProjects() {
+                this.dispatch('fetchProject')
+            }
+
+            _openProjectInitDialog() {
+                this.dispatchEvent(new CustomEvent('require-dialog', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {
+                        modalId: 'project-init-dialog'
+                    }
+                }));
+            }
+
+        }
+
+        window.customElements.define(PageDashboard.is, PageDashboard);
+    </script>
 </dom-module>

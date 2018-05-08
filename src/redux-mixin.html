@@ -25,6 +25,7 @@
     const rootReducer = (state, action) => {
         console.log(`=== INCOMMING ACTION =====================================`);
         console.log(action.type);
+        console.log(action.payload);
         console.log(`--- prev state ---`);
         console.log(state);
         
@@ -38,6 +39,7 @@
 
             case 'APP_SET_LOADING':
                 nextState = Object.assign({}, state, {
+                    ...state,
                     app: {
                         ...state.app,
                         isLoading: action.payload.isLoading
@@ -47,6 +49,7 @@
 
             case 'APP_SET_FETCHING':
                 nextState = Object.assign({}, state, {
+                    ...state,
                     app: {
                         ...state.app,
                         isFetching: action.payload.isFetching
@@ -56,6 +59,7 @@
 
             case 'APP_GLOBAL_TOAST_SHOW':
                 nextState = Object.assign({}, state, {
+                    ...state,
                     app: {
                         ...state.app,
                         globalToast: {
@@ -69,6 +73,7 @@
 
             case 'APP_GLOBAL_TOAST_DISMISS':
                 nextState = Object.assign({}, state, {
+                    ...state,
                     app: {
                         ...state.app,
                         globalToast: {
@@ -76,6 +81,16 @@
                             message: null,
                             duration: 0
                         }
+                    }
+                });
+                break;
+
+            case 'USER_FETCH_PROJECTS':
+                nextState = Object.assign({}, state, {
+                    ...state, 
+                    userData: {
+                        ...state.userData,
+                        projects: action.payload.projects
                     }
                 });
                 break;

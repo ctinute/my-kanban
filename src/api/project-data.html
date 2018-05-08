@@ -14,20 +14,34 @@
     }
 
     projectDb.getByKey = key => {
-        return db.ref('/projects/' + key).once('value')
+        return db.ref(`/projects/${key}`).once('value')
+    }
+
+    projectDb.getByUserId = uid => {
+        return db.ref(`/projectsNyUser/${uid}`).once('value')
+    }
+
+    projectDb.getByCurrentUser = () => {
+        return db.ref(`/projectsByUser/${firebase.auth().currentUser.uid}`).once('value')
     }
 
     projectDb.save = (data) => {
-        const key = db.ref().child('/projects/').push().key;
-        return db.ref('/projects/' + key).set(data)
+        const key = db.ref().child('/projects/').push().key
+        const updates = {}
+        updates[`/projects/${key}`] = data;
+        updates[`/projectsByUser/${firebase.auth().currentUser.uid}/${key}`] = { name: data.name }
+        return db.ref().update(updates)
     }
 
     projectDb.update = (key, data) => {
-        return db.ref('/projects/' + key).update(data)
+        const updates = {}
+        updates[`/projects/${key}`] = data;
+        updates[`/projectsByUser/${firebase.auth().currentUser.uid}/${key}`] = { name: data.name }
+        return db.ref().update(updates)
     }
 
     projectDb.deleteByKey = key => {
-        return db.ref('/projects/' + key).remove()
+        return db.ref(`/projects/${key}`).remove()
     }
 
 </script>
