@@ -5,7 +5,7 @@
 <link rel="import" href="./../api/project-data.html">
 <link rel="import" href="./../shared-styles.html">
 <link rel="import" href="./modules/project-init-dialog.html">
-
+<script src="./../action-creator.js"></script>
 <dom-module id="page-dashboard">
     <template>
         <style include="shared-styles">
@@ -74,58 +74,7 @@
 
             static get actions() {
                 return {
-                    showToastMessage(message, duration) {
-                        return {
-                            type: 'APP_GLOBAL_TOAST_SHOW',
-                            payload: {
-                                message,
-                                duration,
-                            }
-                        }
-                    },
-                    showFetching(message, duration) {
-                        return {
-                            type: 'APP_SET_FETCHING',
-                            payload: {
-                                isFetching: true
-                            }
-                        }
-                    },
-                    hideFetching(message, duration) {
-                        return {
-                            type: 'APP_SET_FETCHING',
-                            payload: {
-                                isFetching: false
-                            }
-                        }
-                    },
-                    saveProjectToState(projects) {
-                        return {
-                            type: 'USER_FETCH_PROJECTS',
-                            payload: { projects }
-                        }
-                    },
-                    fetchProject(project) {
-                        return function (dispatch) {
-                            dispatch('showFetching')
-                            projectDb.getByCurrentUser()
-                                .then(snapshot => {
-                                    var data = snapshot.val()
-                                    var projects = []
-                                    for (var key in data ) {
-                                        projects.push({
-                                            id: key,
-                                            name: data[key].name
-                                        })
-                                    }
-                                    dispatch('saveProjectToState', projects)
-                                })
-                                .catch(error => {
-                                    dispatch('showToastMessage', error.message, 0)
-                                })
-                                .finally(() => dispatch('hideFetching'))
-                        }
-                    }
+                    ...actionCreator
                 }
             }
 
