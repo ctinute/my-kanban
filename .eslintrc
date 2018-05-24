@@ -1,0 +1,29 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "google"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "experimentalObjectRestSpread": true
+    }
+  },
+  "rules": {
+    "require-jsdoc": "off",
+    "max-len": "off"
+  },
+  "env": {
+    "browser": true,
+    "es6": true,
+    "serviceworker": true
+  },
+  "globals": {
+    "module": false,
+    "console": false,
+    "firebase": false,
+    "firebaseApp": false
+  }
+}
