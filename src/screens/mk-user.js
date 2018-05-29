@@ -62,9 +62,13 @@ export default class MkUser extends connect(store)(PageViewElement) {
             </style>
         `;
 
-        let projectBlock = props._projects.length ?
-            props._projects.map((project) => `<span>[[project.name]]</span>`) :
-            `You don't have any project yet.<br/> Press button bellow to create new one.`;
+        let projectBlock = props._projects ?
+            html`
+                <ul>
+                    ${Object.values(props._projects).map((project) => html`<li><a href="/${project.id}">${project.name}</a></li>`)}
+                </ul>
+             `:
+            html`You don't have any project yet.<br/> Press button bellow to create new one.`;
 
         return html`
             ${styles}

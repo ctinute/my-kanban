@@ -16,11 +16,13 @@ import {installOfflineWatcher} from 'pwa-helpers/network.js';
 import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
 
 import {store} from './store.js';
-
+import {Actions} from './actions';
 
 import './components/mk-drawer';
 import './screens/mk-home.js';
-import {Actions} from './actions';
+import './screens/mk-user.js';
+import './screens/mk-project.js';
+
 
 class MyApp extends connect(store)(LitElement) {
     static get properties() {
