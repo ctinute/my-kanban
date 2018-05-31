@@ -30,3 +30,14 @@ export const showToast = (message) => ({
 export const hideToast = () => ({
     type: ActionTypes.app.HIDE_TOAST,
 });
+
+export const showDialog = (dialogContent) => ({
+    type: ActionTypes.app.SHOW_DIALOG,
+    payload: {
+        dialogContent: dialogContent,
+    },
+});
+
+export const hideDialog = () => ({
+    type: ActionTypes.app.HIDE_DIALOG,
+});

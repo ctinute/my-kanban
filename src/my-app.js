@@ -1,4 +1,5 @@
 import {html, LitElement} from '@polymer/lit-element';
+import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings.js';
 import '@polymer/app-layout/app-scroll-effects/effects/waterfall.js';
 import '@polymer/app-layout/app-header/app-header.js';
 import '@polymer/app-layout/app-drawer/app-drawer.js';
@@ -8,7 +9,7 @@ import '@polymer/app-layout/app-toolbar/app-toolbar.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-toast/paper-toast.js';
 import '@polymer/paper-dialog/paper-dialog.js';
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings.js';
+
 
 import {connect} from 'pwa-helpers/connect-mixin.js';
 import {installRouter} from 'pwa-helpers/router.js';
@@ -17,14 +18,24 @@ import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
 
 import {store} from './store.js';
 import {Actions} from './actions';
+import {APP_INITIAL_STATE} from './initial-state';
 
 import './components/mk-drawer';
+import './components/mk-dialog-create-project';
 import './screens/mk-home.js';
 import './screens/mk-user.js';
 import './screens/mk-project.js';
 
-
 class MyApp extends connect(store)(LitElement) {
+    constructor() {
+        super();
+        setPassiveTouchGestures(true);
+
+        this._ready = false;
+        this._globalToast = APP_INITIAL_STATE.globalToast;
+        this._globalDialog = APP_INITIAL_STATE.globalDialog;
+    }
+
     static get properties() {
         return {
             _ready: Boolean,
@@ -38,20 +49,7 @@ class MyApp extends connect(store)(LitElement) {
 
             _offline: Boolean,
             _globalToast: Object,
-            _dialogOpened: false,
-            _dialogContent: Object,
-        };
-    }
-
-    constructor() {
-        super();
-        setPassiveTouchGestures(true);
-
-        this._ready = false;
-        this._globalToast = {
-            show: false,
-            message: null,
-            duration: 0,
+            _globalDialog: Object,
         };
     }
 
@@ -66,6 +64,7 @@ class MyApp extends connect(store)(LitElement) {
 
         this._offline = state.app.offline;
         this._globalToast = state.app.globalToast;
+        this._globalDialog = state.app.globalDialog;
     }
 
     _firstRendered() {
@@ -100,9 +99,23 @@ class MyApp extends connect(store)(LitElement) {
         `;
     }
 
-    _renderApp(props) {
+    _renderApp({
+                   _ready,
+                   _page,
+                   _path,
+                   _user,
+                   _smallScreen,
+
+                   _drawer,
+                   _drawerItems,
+
+                   _offline,
+                   _globalToast,
+                   _globalDialog,
+               }) {
         const styles = html`
-            <style>
+            <!--suppress ALL -->
+<style>
               :host {
                 display: block;
                 position: relative;
@@ -145,11 +158,20 @@ class MyApp extends connect(store)(LitElement) {
                   padding-top: 64px;
                 }
               }
+                
+              #dialog {}
+              
+              #dialog > * {
+                display: none;
+              }
         
+              #dialog > [active] {
+                display: block;
+              }
             </style>
         `;
 
-        const miniDrawerStyle = props._drawer.minimized ? html`
+        const miniDrawerStyle = _drawer.minimized ? html`
             <style>
                 app-drawer-layout {
                     --app-drawer-width: 56px;
@@ -159,14 +181,14 @@ class MyApp extends connect(store)(LitElement) {
         return html`
             ${styles}
             ${miniDrawerStyle}
-            <app-drawer-layout fullbleed narrow="${props._smallScreen}">
+            <app-drawer-layout fullbleed narrow="${_smallScreen}">
     
                 <!-- Drawer content -->
-                <app-drawer id="drawer" slot="drawer" swipe-open="${props._smallScreen}" opened="${props._drawer.opened}">
+                <app-drawer id="drawer" slot="drawer" swipe-open="${_smallScreen}" opened="${_drawer.opened}">
                      <mk-drawer 
-                        user="${props._user}"
-                        minimized="${props._drawer.minimized}" 
-                        drawer-items="${props._drawerItems}"
+                        user="${_user}"
+                        minimized="${_drawer.minimized}" 
+                        drawer-items="${_drawerItems}"
                         on-login="${() => store.dispatch(Actions.auth.login())}"
                         on-logout="${() => store.dispatch(Actions.auth.logout())}"
                         on-toggle-minimize="${(e) => store.dispatch(Actions.app.setAppDrawerMinimization(!e.detail.minimized))}">
@@ -177,26 +199,26 @@ class MyApp extends connect(store)(LitElement) {
                 <app-header-layout has-scrolling-region>
                     
                    <main id="pages">
-                      <mk-home active?="${props._page === 'home'}"></mk-home>
-                      <mk-user active?="${props._page === 'user'}"></mk-user>
-                      <mk-project active?="${props._page === 'project'}"></mk-project>
-                      <mk-phase active?="${props._page === 'phase'}"></mk-phase>
-                      <mk-card active?="${props._page === 'card'}"></mk-card>
-                      <mk-cards active?="${props._page === 'cards'}"></mk-cards>
-                      <mk-404 active?="${props._page === '404'}"></mk-404>
+                      <mk-home active?="${_page === 'home'}"></mk-home>
+                      <mk-user active?="${_page === 'user'}"></mk-user>
+                      <mk-project active?="${_page === 'project'}"></mk-project>
+                      <mk-phase active?="${_page === 'phase'}"></mk-phase>
+                      <mk-card active?="${_page === 'card'}"></mk-card>
+                      <mk-cards active?="${_page === 'cards'}"></mk-cards>
+                      <mk-404 active?="${_page === '404'}"></mk-404>
                    </main>
     
                 </app-header-layout>
             </app-drawer-layout>     
             
-            <paper-dialog id="dialog" opened="${props._dialogOpened}">
-                ${props._dialogContent}
+            <paper-dialog id="dialog" opened="${_globalDialog.show}">
+                 <mk-dialog-create-project active?="${_globalDialog.content === 'mk-dialog-create-project'}"></mk-dialog-create-project>
             </paper-dialog>  
             
             <paper-toast 
                 id="globalToast" 
-                opened="${props._globalToast.show}" 
-                text="${props._globalToast.message}" 
+                opened="${_globalToast.show}" 
+                text="${_globalToast.message}" 
                 duration="0"
                 horizontal-align="right">
             </paper-toast>

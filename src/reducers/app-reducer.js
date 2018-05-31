@@ -1,7 +1,7 @@
 import {ActionTypes} from '../action-types';
-import {INITIAL_STATE} from '../initial-state';
+import {APP_INITIAL_STATE} from '../initial-state';
 
-const appReducer = (state = INITIAL_STATE.app, action) => {
+const appReducer = (state = APP_INITIAL_STATE, action) => {
     switch (action.type) {
         case ActionTypes.app.SET_APP_READY:
             return Object.assign({}, state, {
@@ -60,6 +60,23 @@ const appReducer = (state = INITIAL_STATE.app, action) => {
                         opened: true,
                         minimized: action.payload.minimized,
                     },
+            });
+
+        case ActionTypes.app.SHOW_DIALOG:
+            return Object.assign({}, state, {
+                ...state,
+                globalDialog: {
+                    show: true,
+                    content: action.payload.dialogContent,
+                },
+            });
+        case ActionTypes.app.HIDE_DIALOG:
+            return Object.assign({}, state, {
+                ...state,
+                globalDialog: {
+                    show: false,
+                    content: null,
+                },
             });
 
         default:

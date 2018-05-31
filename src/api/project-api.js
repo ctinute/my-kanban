@@ -1,11 +1,22 @@
 import {database} from './firebase-app';
+import {API} from './index';
+
+export const getSpecificProjectOfCurrentUser = async (projectId) => {
+    const uid = API.auth.getCurrentUser().uid;
+    const path = `/users/${uid}/projects/${projectId}`;
+    return await database.ref(path).once('value').then((snap) => snap.val());
+};
+
+export const hasId = async (id) => {
+    return await getProjectsOfSpecificUser(id) !== null;
+};
 
 export const saveProject = async (project) => {
-    const path = `/projectsByUser/${project.owner}/`;
-    const key = await database.ref(path).push().key;
+    const projectDetailPath = `/projectsByUser/${project.owner}/${project.id}`;
+    const projectListOfUserPath = `/users/${project.owner}/projects/${project.id}`;
     let data = {};
-    data[path] = project;
-    data[`/users/projects/${key}`] = {
+    data[projectDetailPath] = project;
+    data[projectListOfUserPath] = {
         name: project.name,
     };
     return database.ref().update(data);
@@ -21,6 +32,12 @@ export const deleteProject = async (project) => {
 };
 
 export const getProjectsOfSpecificUser = async (uid) => {
+    const path = `/users/${uid}/projects/`;
+    return await database.ref(path).once('value').then((snap) => snap.val());
+};
+
+export const getProjectsOfCurrentUser = async () => {
+    const uid = API.auth.getCurrentUser().uid;
     const path = `/users/${uid}/projects/`;
     return await database.ref(path).once('value').then((snap) => snap.val());
 };

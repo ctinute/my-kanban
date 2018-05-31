@@ -3,6 +3,7 @@ import {html} from '@polymer/lit-element';
 import '@polymer/paper-button/paper-button.js';
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
+import {Actions} from '../actions';
 
 export default class MkUser extends connect(store)(PageViewElement) {
     static get properties() {
@@ -18,24 +19,7 @@ export default class MkUser extends connect(store)(PageViewElement) {
     }
 
     _openCreateProjectDialog() {
-        this.dispatchEvent(new CustomEvent('open-dialog', {
-            bubbles: true,
-            composed: true,
-            detail: {
-                dialogContent: html`
-                    <div class="modal-header">
-                        <h2>New project</h2>
-                    </div>
-                    <div class="modal-content">
-                        <paper-input required auto-validate label="Project name" value="{{newProject.name}}" error-message="This field is required !!!">
-                        </paper-input>
-                    </div>
-                    <div class="modal-actions">
-                        <paper-button dialog-dismiss>Cancel</paper-button>
-                        <paper-button dialog-confirm on-click="_createNewProject">Create</paper-button>
-                    </div>`,
-            },
-        }));
+        store.dispatch(Actions.app.showDialog('mk-dialog-create-project'));
     }
 
     _render(props) {
