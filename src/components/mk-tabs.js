@@ -12,17 +12,17 @@ import {html, LitElement} from '@polymer/lit-element';
 import './mk-tabs-overlay.js';
 
 class MkTabs extends LitElement {
-    static get properties() {
-        return {
-            /**
-             * The index of the selected element.
-             */
-            selectedIndex: Number,
-        };
-    }
+  static get properties() {
+    return {
+      /**
+       * The index of the selected element.
+       */
+      selectedIndex: Number,
+    };
+  }
 
-    _render() {
-        return html`
+  _render() {
+    return html`
     <style>
       :host {
         display: flex;
@@ -38,7 +38,7 @@ class MkTabs extends LitElement {
       <shop-tabs-overlay target="${this.children[this.selectedIndex]}"></shop-tabs-overlay>
       <slot></slot>
     </div>`;
-    }
+  }
 }
 
 customElements.define('shop-tabs', MkTabs);

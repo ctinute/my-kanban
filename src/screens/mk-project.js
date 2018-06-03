@@ -4,18 +4,18 @@ import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 
 export default class MkProject extends connect(store)(PageViewElement) {
-    static get properties() {
-        return {};
-    }
+  static get properties() {
+    return {};
+  }
 
-    _stateChanged(state) {
-    }
+  _stateChanged(state) {
+  }
 
-    _render(props) {
-        return html`
+  _render(props) {
+    return html`
             project
         `;
-    }
+  }
 }
 
 customElements.define('mk-project', MkProject);

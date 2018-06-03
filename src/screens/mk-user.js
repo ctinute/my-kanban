@@ -6,24 +6,24 @@ import {connect} from 'pwa-helpers/connect-mixin.js';
 import {Actions} from '../actions';
 
 export default class MkUser extends connect(store)(PageViewElement) {
-    static get properties() {
-        return {
-            _user: Object,
-            _projects: Array,
-        };
-    }
+  static get properties() {
+    return {
+      _user: Object,
+      _projects: Array,
+    };
+  }
 
-    _stateChanged(state) {
-        this._user = state.auth.user;
-        this._projects = state.userData.projects;
-    }
+  _stateChanged(state) {
+    this._user = state.auth.user;
+    this._projects = state.userData.projects;
+  }
 
-    _openCreateProjectDialog() {
-        store.dispatch(Actions.app.showDialog('mk-dialog-create-project'));
-    }
+  _openCreateProjectDialog() {
+    store.dispatch(Actions.app.showDialog('mk-dialog-create-project'));
+  }
 
-    _render(props) {
-        let styles = html`
+  _render(props) {
+    let styles = html`
             <style>
                 :host {
                     width: 100%;
@@ -46,15 +46,15 @@ export default class MkUser extends connect(store)(PageViewElement) {
             </style>
         `;
 
-        let projectBlock = props._projects ?
-            html`
+    let projectBlock = props._projects ?
+      html`
                 <ul>
                     ${Object.values(props._projects).map((project) => html`<li><a href="/${project.id}">${project.name}</a></li>`)}
                 </ul>
-             `:
-            html`You don't have any project yet.<br/> Press button bellow to create new one.`;
+             ` :
+      html`You don't have any project yet.<br/> Press button bellow to create new one.`;
 
-        return html`
+    return html`
             ${styles}
         
             <h2 class="page-title">Dashboard</h2>
@@ -75,7 +75,7 @@ export default class MkUser extends connect(store)(PageViewElement) {
     
             </div>
         `;
-    }
+  }
 }
 
 customElements.define('mk-user', MkUser);

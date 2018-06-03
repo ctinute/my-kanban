@@ -6,17 +6,18 @@ import * as project from './project-saga';
 import {ActionTypes} from '../action-types';
 
 function* rootSaga() {
-    yield [
-        takeLatest(ActionTypes.auth.LOGIN, auth.login),
-        takeLatest(ActionTypes.auth.LOGOUT, auth.logout),
+  yield [
+    takeLatest(ActionTypes.auth.LOGIN, auth.login),
+    takeLatest(ActionTypes.auth.LOGOUT, auth.logout),
 
-        takeLatest(ActionTypes.route.CHANGE_ROUTE, route.updateLocation),
+    takeLatest(ActionTypes.route.CHANGE_ROUTE, route.updateLocation),
+    takeLatest(ActionTypes.route.NAVIGATE, route.navigate),
 
-        takeLatest(ActionTypes.app.SET_TOAST, app.setToast),
+    takeLatest(ActionTypes.app.SET_TOAST, app.setToast),
 
-        takeLatest(ActionTypes.project.SAGA_CREATE_PROJECT, project.createProjectAndCloseDiaog),
-        takeLatest(ActionTypes.project.SAGA_CANCEL_CREATE_DIALOG, project.cancelCreateProjectDialog),
-    ];
+    takeLatest(ActionTypes.project.SAGA_CREATE_PROJECT, project.createProjectAndCloseDiaog),
+    takeLatest(ActionTypes.project.SAGA_CANCEL_CREATE_DIALOG, project.cancelCreateProjectDialog),
+  ];
 }
 
 export default rootSaga;

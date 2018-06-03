@@ -2,8 +2,8 @@ import {html} from '@polymer/lit-element';
 import MkDrawerItem from './mk-drawer-item';
 
 class MkLogo extends MkDrawerItem {
-    _render({icon, text, minimized, active}) {
-        const styles = html`
+  _render({icon, text, minimized, active}) {
+    const styles = html`
             <style include="shared-styles">
             :host {
                 height: 64px;
@@ -18,7 +18,7 @@ class MkLogo extends MkDrawerItem {
             }
         </style>`;
 
-        return html`
+    return html`
             ${styles}
             <paper-icon-item class="${active ? 'active' : ''}">
                 <div class="icon">
@@ -28,7 +28,7 @@ class MkLogo extends MkDrawerItem {
                     ${text}
                 </div>
             </paper-icon-item>`;
-    }
+  }
 }
 
 customElements.define('mk-logo', MkLogo);

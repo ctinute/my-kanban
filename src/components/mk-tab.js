@@ -12,8 +12,8 @@ import {html, LitElement} from '@polymer/lit-element';
 import './mk-ripple-container.js';
 
 class MkTab extends LitElement {
-    _render() {
-        return html`
+  _render() {
+    return html`
     <style>
       [hidden] {
         display: none !important;
@@ -43,7 +43,7 @@ class MkTab extends LitElement {
     <shop-ripple-container>
       <slot></slot>
     </shop-ripple-container>`;
-    }
+  }
 }
 
 customElements.define('shop-tab', MkTab);

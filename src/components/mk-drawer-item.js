@@ -3,17 +3,17 @@ import '@polymer/paper-item/paper-icon-item.js';
 import {MkCommonStyles} from './mk-common-styles';
 
 export default class MkDrawerItem extends LitElement {
-    static get properties() {
-        return {
-            icon: String,
-            text: String,
-            minimized: Boolean,
-            active: Boolean,
-        };
-    }
+  static get properties() {
+    return {
+      icon: String,
+      text: String,
+      minimized: Boolean,
+      active: Boolean,
+    };
+  }
 
-    _render({icon, text, minimized, active}) {
-        const styles = html`
+  _render({icon, text, minimized, active}) {
+    const styles = html`
             <style>
                 :host {
                     display: block;
@@ -38,18 +38,18 @@ export default class MkDrawerItem extends LitElement {
                 }
             </style>`;
 
-        const minimizedStyle = html`
+    const minimizedStyle = html`
             <style>
             </style>`;
 
-        const activeStyle = html`
+    const activeStyle = html`
             <style>
                 .text {
                     font-weight: bold;
                 }
             </style>`;
 
-        return html`
+    return html`
             ${MkCommonStyles}
             ${styles}
             ${ active ? activeStyle : null }
@@ -58,7 +58,7 @@ export default class MkDrawerItem extends LitElement {
                 <iron-icon icon="${icon}" slot="item-icon"></iron-icon>
                 <div class="text">${text}</div>
             </paper-icon-item>`;
-    }
+  }
 }
 
 customElements.define('mk-drawer-item', MkDrawerItem);

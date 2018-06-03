@@ -4,19 +4,19 @@ import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 
 export default class MkHome extends connect(store)(PageViewElement) {
-    constructor() {
-        super();
-    }
+  constructor() {
+    super();
+  }
 
-    static get properties() {
-        return {};
-    }
+  static get properties() {
+    return {};
+  }
 
-    _stateChanged(state) {
-    }
+  _stateChanged(state) {
+  }
 
-    _render(props) {
-        const style = html`
+  _render(props) {
+    const style = html`
             <style>
                 :host {
                     width: 100%;
@@ -26,11 +26,11 @@ export default class MkHome extends connect(store)(PageViewElement) {
                     align-items: center;                
                 }
             </style>`;
-        return html`
+    return html`
             ${style}
             Home
         `;
-    }
+  }
 }
 
 customElements.define('mk-home', MkHome);

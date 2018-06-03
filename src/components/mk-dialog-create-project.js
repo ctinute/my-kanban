@@ -9,29 +9,29 @@ import {store} from '../store.js';
 import {Actions} from '../actions';
 
 export default class MkUser extends connect(store)(PageViewElement) {
-    constructor() {
-        super();
-        this._project = {
-            name: null,
-        };
-    }
+  constructor() {
+    super();
+    this._project = {
+      name: null,
+    };
+  }
 
-    static get properties() {
-        return {
-            _user: Object,
-            _project: Object,
-        };
-    }
+  static get properties() {
+    return {
+      _user: Object,
+      _project: Object,
+    };
+  }
 
-    _stateChanged(state) {
-        this._user = state.auth.user;
-    }
+  _stateChanged(state) {
+    this._user = state.auth.user;
+  }
 
-    open() {
-    }
+  open() {
+  }
 
-    _render({_project}) {
-        return html`
+  _render({_project}) {
+    return html`
             <div class="modal-header">
                 <h2>New project; ${_project.name}</h2>
             </div>
@@ -48,7 +48,7 @@ export default class MkUser extends connect(store)(PageViewElement) {
                 <paper-button dialog-dismiss on-click="${() => store.dispatch(Actions.project.cancelCreateProject())}">Cancel</paper-button>
                 <paper-button dialog-confirm on-click="${() => store.dispatch(Actions.project.createProject(_project))}">Create</paper-button>
             </div>`;
-    }
+  }
 }
 
 customElements.define('mk-dialog-create-project', MkUser);

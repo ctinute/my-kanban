@@ -14,26 +14,26 @@ import {Actions} from './actions';
 const sagaMiddleware = createSagaMiddleware();
 
 const rootReducer = combineReducers({
-    'app': persistReducer({
-        key: 'app',
-        storage: storageSession,
-        whitelist: ['drawer'],
-    }, appReducer),
-    'auth': persistReducer({
-        key: 'auth',
-        storage: storageSession,
-    }, authReducer),
-    'userData': persistReducer({
-        key: 'userData',
-        storage: storageSession,
-    }, userDataReducer),
-    'route': routeReducer,
+  'app': persistReducer({
+    key: 'app',
+    storage: storageSession,
+    whitelist: ['drawer'],
+  }, appReducer),
+  'auth': persistReducer({
+    key: 'auth',
+    storage: storageSession,
+  }, authReducer),
+  'userData': persistReducer({
+    key: 'userData',
+    storage: storageSession,
+  }, userDataReducer),
+  'route': routeReducer,
 });
 
 export const store = createStore(
-    rootReducer,
-    {},
-    applyMiddleware(sagaMiddleware, logger)
+  rootReducer,
+  {},
+  applyMiddleware(sagaMiddleware, logger)
 );
 sagaMiddleware.run(rootSaga);
 export const persistor = persistStore(store, {}, () => store.dispatch(Actions.app.setAppReady()));

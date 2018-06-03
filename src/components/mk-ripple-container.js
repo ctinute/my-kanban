@@ -14,15 +14,15 @@ import {addListener} from '@polymer/polymer/lib/utils/gestures.js';
 import {mixinBehaviors} from '@polymer/polymer/lib/legacy/class.js';
 
 class MkRippleContainer extends mixinBehaviors(
-    [PaperRippleBehavior], PolymerElement) {
-    constructor() {
-        super();
-        this._isDown = false;
-    }
+  [PaperRippleBehavior], PolymerElement) {
+  constructor() {
+    super();
+    this._isDown = false;
+  }
 
-    static get template() {
-        // language=HTML
-        return html`
+  static get template() {
+    // language=HTML
+    return html`
     <style>
       :host {
         display: inline-block;
@@ -35,36 +35,36 @@ class MkRippleContainer extends mixinBehaviors(
     </style>
     <slot></slot>
     `;
-    }
+  }
 
-    ready() {
-        super.ready();
-        this.addEventListener('focus', (e) => this._onFocus(e), true);
-        this.addEventListener('blur', (e) => this._onBlur(e), true);
-        addListener(this, 'down', this._rippleDown);
-        addListener(this, 'up', this._rippleUp);
-    }
+  ready() {
+    super.ready();
+    this.addEventListener('focus', (e) => this._onFocus(e), true);
+    this.addEventListener('blur', (e) => this._onBlur(e), true);
+    addListener(this, 'down', this._rippleDown);
+    addListener(this, 'up', this._rippleUp);
+  }
 
-    _onFocus(event) {
-        // Prevent second ripple when clicking causes both focus and down.
-        if (!this._isDown) {
-            this._rippleDown(event);
-        }
+  _onFocus(event) {
+    // Prevent second ripple when clicking causes both focus and down.
+    if (!this._isDown) {
+      this._rippleDown(event);
     }
+  }
 
-    _onBlur(event) {
-        this._rippleUp(event);
-    }
+  _onBlur(event) {
+    this._rippleUp(event);
+  }
 
-    _rippleDown(event) {
-        this._isDown = true;
-        this.getRipple().downAction(event);
-    }
+  _rippleDown(event) {
+    this._isDown = true;
+    this.getRipple().downAction(event);
+  }
 
-    _rippleUp(event) {
-        this._isDown = false;
-        this.getRipple().upAction(event);
-    }
+  _rippleUp(event) {
+    this._isDown = false;
+    this.getRipple().upAction(event);
+  }
 }
 
 customElements.define('shop-ripple-container', MkRippleContainer);
