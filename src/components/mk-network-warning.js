@@ -16,14 +16,14 @@ import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 
 class MkNetworkWarning extends connect(store)(LitElement) {
-    static get properties() {
-        return {
-            _offline: Boolean,
-        };
-    }
+  static get properties() {
+    return {
+      _offline: Boolean,
+    };
+  }
 
-    _render({_offline}) {
-        return html`
+  _render({_offline}) {
+    return html`
             <style>
         
               :host {
@@ -56,21 +56,21 @@ class MkNetworkWarning extends connect(store)(LitElement) {
                 <h1>No internet connection</h1>
                 <p>Check if your device is connected to a mobile network or WiFi.</p>
                 ` : html`<h1>Couldn't reach the server</h1>`
-                    }
+      }
             </div>
             <shop-button>
               <button on-click="${() => this._tryReconnect()}">Try Again</button>
             </shop-button>
         `;
-    }
+  }
 
-    _stateChanged(state) {
-        this._offline = state.app.offline;
-    }
+  _stateChanged(state) {
+    this._offline = state.app.offline;
+  }
 
-    _tryReconnect() {
-        // store.dispatch(ActioreloadCategory());
-    }
+  _tryReconnect() {
+    // store.dispatch(ActioreloadCategory());
+  }
 }
 
 customElements.define('shop-network-warning', MkNetworkWarning);

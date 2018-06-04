@@ -53,6 +53,13 @@
                 });
             });
         }
+
+        const _customElementsDefine = window.customElements.define;
+        window.customElements.define = function (name, clazz, config) {
+            if (!customElements.get(name)) {
+                _customElementsDefine.call(window.customElements, name, clazz, config);
+            }
+        };
     </script>
 
     <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->

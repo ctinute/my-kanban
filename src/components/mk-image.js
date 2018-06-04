@@ -11,22 +11,22 @@
 import {html, LitElement} from '@polymer/lit-element';
 
 class MkImage extends LitElement {
-    static get properties() {
-        return {
+  static get properties() {
+    return {
 
-            alt: String,
+      alt: String,
 
-            src: String,
+      src: String,
 
-            placeholder: String,
+      placeholder: String,
 
-            _loaded: Boolean,
+      _loaded: Boolean,
 
-        };
-    }
+    };
+  }
 
-    _render({alt, placeholder, src, _loaded}) {
-        return html`
+  _render({alt, placeholder, src, _loaded}) {
+    return html`
     <style>
 
       :host {
@@ -72,21 +72,21 @@ class MkImage extends LitElement {
           on-error="${() => this._onImgError()}">
     </div>
 `;
-    }
+  }
 
-    _propertiesChanged(props, changed, oldProps) {
-        if (changed && 'src' in changed) {
-            props._loaded = false;
-        }
-        super._propertiesChanged(props, changed, oldProps);
+  _propertiesChanged(props, changed, oldProps) {
+    if (changed && 'src' in changed) {
+      props._loaded = false;
     }
+    super._propertiesChanged(props, changed, oldProps);
+  }
 
-    _onImgError() {
-        if (!this.placeholder) {
-            // noinspection JSStringConcatenationToES6Template
-            this.src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#CCC" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>');
-        }
+  _onImgError() {
+    if (!this.placeholder) {
+      // noinspection JSStringConcatenationToES6Template
+      this.src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#CCC" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>');
     }
+  }
 }
 
 customElements.define('shop-image', MkImage);

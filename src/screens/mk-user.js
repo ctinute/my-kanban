@@ -3,43 +3,27 @@ import {html} from '@polymer/lit-element';
 import '@polymer/paper-button/paper-button.js';
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
+import {Actions} from '../actions';
 
 export default class MkUser extends connect(store)(PageViewElement) {
-    static get properties() {
-        return {
-            _user: Object,
-            _projects: Array,
-        };
-    }
+  static get properties() {
+    return {
+      _user: Object,
+      _projects: Array,
+    };
+  }
 
-    _stateChanged(state) {
-        this._user = state.auth.user;
-        this._projects = state.userData.projects;
-    }
+  _stateChanged(state) {
+    this._user = state.auth.user;
+    this._projects = state.userData.projects;
+  }
 
-    _openCreateProjectDialog() {
-        this.dispatchEvent(new CustomEvent('open-dialog', {
-            bubbles: true,
-            composed: true,
-            detail: {
-                dialogContent: html`
-                    <div class="modal-header">
-                        <h2>New project</h2>
-                    </div>
-                    <div class="modal-content">
-                        <paper-input required auto-validate label="Project name" value="{{newProject.name}}" error-message="This field is required !!!">
-                        </paper-input>
-                    </div>
-                    <div class="modal-actions">
-                        <paper-button dialog-dismiss>Cancel</paper-button>
-                        <paper-button dialog-confirm on-click="_createNewProject">Create</paper-button>
-                    </div>`,
-            },
-        }));
-    }
+  _openCreateProjectDialog() {
+    store.dispatch(Actions.app.showDialog('mk-dialog-create-project'));
+  }
 
-    _render(props) {
-        let styles = html`
+  _render(props) {
+    let styles = html`
             <style>
                 :host {
                     width: 100%;
@@ -62,11 +46,15 @@ export default class MkUser extends connect(store)(PageViewElement) {
             </style>
         `;
 
-        let projectBlock = props._projects.length ?
-            props._projects.map((project) => `<span>[[project.name]]</span>`) :
-            `You don't have any project yet.<br/> Press button bellow to create new one.`;
+    let projectBlock = props._projects ?
+      html`
+                <ul>
+                    ${Object.values(props._projects).map((project) => html`<li><a href="/${project.id}">${project.name}</a></li>`)}
+                </ul>
+             ` :
+      html`You don't have any project yet.<br/> Press button bellow to create new one.`;
 
-        return html`
+    return html`
             ${styles}
         
             <h2 class="page-title">Dashboard</h2>
@@ -87,7 +75,7 @@ export default class MkUser extends connect(store)(PageViewElement) {
     
             </div>
         `;
-    }
+  }
 }
 
 customElements.define('mk-user', MkUser);

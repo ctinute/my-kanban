@@ -11,8 +11,8 @@
 import {html, LitElement} from '@polymer/lit-element';
 
 class MkSnackbar extends LitElement {
-    _render() {
-        return html`
+  _render() {
+    return html`
             <style>
                   :host {
                     display: block;
@@ -55,7 +55,7 @@ class MkSnackbar extends LitElement {
             
             <slot></slot>
         `;
-    }
+  }
 }
 
 customElements.define('shop-snackbar', MkSnackbar);
