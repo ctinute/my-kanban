@@ -17,7 +17,7 @@ export function* updateLocation(action) {
 const computePage = (isAuthenticated, path) => {
   if (!isAuthenticated) {
     // rewrite location to home
-    window.replaceState('', '', 'home');
+    window.history.replaceState('', '', 'home');
     return {page: 'home', pathData: {}};
   } else {
     const pathLevels = (path || '').slice(1).split('/');

@@ -32,7 +32,7 @@ export const deleteProject = async (project) => {
 };
 
 export const getProjectsOfSpecificUser = async (uid) => {
-  const path = `/projectsByUser/${uid}/projects/`;
+  const path = `/projectsByUser/${uid}/`;
   return await database.ref(path).once('value').then((snap) => snap.val());
 };
 
