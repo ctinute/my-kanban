@@ -1,6 +1,6 @@
 import {applyMiddleware, combineReducers, createStore} from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import logger from 'redux-logger/src';
+import {createLogger} from 'redux-logger/src';
 // import {lazyReducerEnhancer} from 'pwa-helpers/lazy-reducer-enhancer.js';
 import {persistReducer, persistStore} from 'redux-persist';
 import storageSession from 'redux-persist/es/storage/session';
@@ -30,13 +30,19 @@ const rootReducer = combineReducers({
   'route': routeReducer,
 });
 
+const logger = createLogger({
+  collapsed: true,
+});
+
+
 export const store = createStore(
   rootReducer,
   {},
   applyMiddleware(sagaMiddleware, logger)
 );
+
 sagaMiddleware.run(rootSaga);
-export const persistor = persistStore(store, {}, () => {
+persistStore(store, {}, () => {
   store.dispatch({type: ActionTypes.app.SET_APP_READY});
   store.dispatch({type: ActionTypes.app.REFRESH_DATA});
 });

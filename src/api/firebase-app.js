@@ -1,6 +1,3 @@
-import firebase from '../../node_modules/@firebase/app';
-import '../../node_modules/@firebase/database';
-
 // noinspection SpellCheckingInspection
 export const firebaseApp = firebase.initializeApp({
   apiKey: 'AIzaSyCcnboD6v1Qdze8In091sos7N3bkZ3MPko',
@@ -11,4 +8,5 @@ export const firebaseApp = firebase.initializeApp({
   messagingSenderId: '964738474969',
 });
 
-export const database = firebaseApp.database();
+export const database = firebase.database();
+export const authentication = firebase.auth();

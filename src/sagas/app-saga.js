@@ -24,7 +24,6 @@ export function* fetchNewData() {
     yield put(Actions.app.setFetching(true));
 
     const user = yield call(API.auth.getCurrentUser);
-    yield put(Actions.auth.saveCredential(user));
 
     if (user) {
       const projectList = yield call(API.project.getProjectsOfCurrentUser);

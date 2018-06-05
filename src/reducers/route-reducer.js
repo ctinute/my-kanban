@@ -3,6 +3,7 @@ import {ActionTypes} from '../action-types';
 const initialAppState = {
   page: 'home',
   pathLevels: [],
+  data: {},
 };
 
 const routeReducer = (state = initialAppState, action) => {

@@ -1,8 +1,8 @@
 import {database} from './firebase-app';
-import {API} from './index';
+import * as authenticationAPI from './auth-api';
 
 export const getSpecificProjectOfCurrentUser = async (projectId) => {
-  const uid = API.auth.getCurrentUser().uid;
+  const uid = authenticationAPI.getCurrentUser().uid;
   const path = `/users/${uid}/projects/${projectId}`;
   return await database.ref(path).once('value').then((snap) => snap.val());
 };
@@ -37,6 +37,6 @@ export const getProjectsOfSpecificUser = async (uid) => {
 };
 
 export const getProjectsOfCurrentUser = async () => {
-  const uid = API.auth.getCurrentUser().uid;
+  const uid = authenticationAPI.getCurrentUser().uid;
   return await getProjectsOfSpecificUser(uid);
 };

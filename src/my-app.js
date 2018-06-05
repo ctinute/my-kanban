@@ -1,15 +1,6 @@
+/* eslint-disable */
 import {html, LitElement} from '@polymer/lit-element';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings.js';
-import '@polymer/app-layout/app-scroll-effects/effects/waterfall.js';
-import '@polymer/app-layout/app-header/app-header.js';
-import '@polymer/app-layout/app-drawer/app-drawer.js';
-import '@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
-import '@polymer/app-layout/app-header-layout/app-header-layout.js';
-import '@polymer/app-layout/app-toolbar/app-toolbar.js';
-import '@polymer/paper-button/paper-button.js';
-import '@polymer/paper-toast/paper-toast.js';
-import '@polymer/paper-dialog/paper-dialog.js';
-
 
 import {connect} from 'pwa-helpers/connect-mixin.js';
 import {installRouter} from 'pwa-helpers/router.js';
@@ -20,8 +11,18 @@ import {store} from './store.js';
 import {Actions} from './actions';
 import {APP_INITIAL_STATE} from './initial-state';
 
+import '@polymer/app-layout/app-header/app-header.js';
+import '@polymer/app-layout/app-drawer/app-drawer.js';
+import '@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
+import '@polymer/app-layout/app-header-layout/app-header-layout.js';
+import '@polymer/app-layout/app-toolbar/app-toolbar.js';
+import '@polymer/paper-toast/paper-toast.js';
+import '@polymer/paper-dialog/paper-dialog.js';
+
 import './components/mk-drawer';
 import './components/mk-dialog-create-project';
+
+import './screens/mk-404.js';
 import './screens/mk-home.js';
 import './screens/mk-user.js';
 import './screens/mk-project.js';
@@ -31,13 +32,23 @@ import './screens/mk-card.js';
 import './screens/mk-cards.js';
 
 class MyApp extends connect(store)(LitElement) {
+
   constructor() {
     super();
     setPassiveTouchGestures(true);
 
     this._ready = false;
+    this._smallScreen = false;
+
     this._globalToast = APP_INITIAL_STATE.globalToast;
     this._globalDialog = APP_INITIAL_STATE.globalDialog;
+    this._drawer = APP_INITIAL_STATE.drawer;
+
+    this._drawerItems = [{
+      title: 'Dashboard',
+      icon: 'icons:dashboard',
+      link: 'dashboard',
+    }];
   }
 
   static get properties() {
@@ -54,6 +65,7 @@ class MyApp extends connect(store)(LitElement) {
       _offline: Boolean,
       _globalToast: Object,
       _globalDialog: Object,
+      shouldRender: Boolean
     };
   }
 
@@ -63,44 +75,16 @@ class MyApp extends connect(store)(LitElement) {
     this._path = state.route.path;
     this._user = state.auth.user;
     this._smallScreen = state.app.smallScreen;
-
     this._drawer = state.app.drawer;
-
     this._offline = state.app.offline;
     this._globalToast = state.app.globalToast;
     this._globalDialog = state.app.globalDialog;
   }
 
   _firstRendered() {
-    this._drawerItems = [{
-      title: 'Dashboard',
-      icon: 'icons:dashboard',
-      link: 'dashboard',
-    }];
-    this._drawer = {
-      minimized: false,
-      opened: true,
-    };
-    this.smallScreen = false;
     installRouter((location) => store.dispatch(Actions.route.changeRoute(location)));
     installOfflineWatcher((offline) => store.dispatch(Actions.app.setNetworkStatus(offline)));
     installMediaQueryWatcher('(max-width: 767px)', (matches) => this._smallScreen = matches);
-
-    // Custom elements polyfill safe way to indicate an element has been upgraded.
-    this.removeAttribute('unresolved');
-
-    this.addEventListener('open-dialog', (config) => {
-      this._dialogOpened = true;
-      this._dialogContent = config.detail.dialogContent;
-    });
-  }
-
-  _renderSplashScreen() {
-    return html`
-      <div style="position:fixed; width: 100vW; height: 100vh; display: flex; justify-content: center; align-items: center;">
-        <img src="https://cdn.dribbble.com/users/528264/screenshots/3140440/firebase_logo_1x.png" alt="logo" width="80" height="60"/>
-      </div>
-    `;
   }
 
   _renderApp({
@@ -231,7 +215,7 @@ class MyApp extends connect(store)(LitElement) {
   }
 
   _render(props) {
-    return props._ready ? this._renderApp(props) : this._renderSplashScreen();
+    return props._ready ? this._renderApp(props) : html``;
   }
 }
 

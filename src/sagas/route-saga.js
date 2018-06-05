@@ -6,7 +6,7 @@ import {API} from '../api';
 export function* updateLocation(action) {
   yield put({type: ActionTypes.route.APP_ROUTE_CHANGING});
 
-  const isAuthenticated = yield call(API.auth.getCurrentUser) !== null;
+  const isAuthenticated = yield call(API.auth.getCurrentUser);
   const path = window.decodeURIComponent(action.payload.location.pathname);
 
   const {page, pathData} = computePage(isAuthenticated, path);
@@ -57,7 +57,7 @@ const computePage = (isAuthenticated, path) => {
 export function* navigate(action) {
   yield put({type: ActionTypes.route.APP_ROUTE_CHANGING});
 
-  const isAuthenticated = yield call(API.auth.getCurrentUser) !== null;
+  const isAuthenticated = yield call(API.auth.getCurrentUser);
 
   const path = action.payload.path;
   const title = action.payload.title;
