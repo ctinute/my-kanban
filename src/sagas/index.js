@@ -13,6 +13,7 @@ function* rootSaga() {
     takeLatest(ActionTypes.route.CHANGE_ROUTE, route.updateLocation),
     takeLatest(ActionTypes.route.NAVIGATE, route.navigate),
 
+    takeLatest(ActionTypes.app.REFRESH_DATA, app.fetchNewData),
     takeLatest(ActionTypes.app.SET_TOAST, app.setToast),
 
     takeLatest(ActionTypes.project.SAGA_CREATE_PROJECT, project.createProjectAndCloseDiaog),

@@ -9,7 +9,7 @@ import routeReducer from './reducers/route-reducer';
 import rootSaga from './sagas';
 import authReducer from './reducers/auth-reducer';
 import userDataReducer from './reducers/user-data-reducer';
-import {Actions} from './actions';
+import {ActionTypes} from './action-types';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -36,5 +36,8 @@ export const store = createStore(
   applyMiddleware(sagaMiddleware, logger)
 );
 sagaMiddleware.run(rootSaga);
-export const persistor = persistStore(store, {}, () => store.dispatch(Actions.app.setAppReady()));
+export const persistor = persistStore(store, {}, () => {
+  store.dispatch({type: ActionTypes.app.SET_APP_READY});
+  store.dispatch({type: ActionTypes.app.REFRESH_DATA});
+});
 

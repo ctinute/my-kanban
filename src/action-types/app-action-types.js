@@ -1,4 +1,5 @@
 export const SET_APP_READY = 'SET_READY';
+export const REFRESH_DATA = 'REFRESH_DATA';
 
 export const SET_NETWORK_ONLINE = 'SET_NETWORK_ONLINE';
 export const SET_NETWORK_OFFLINE = 'SET_NETWORK_OFFLINE';
