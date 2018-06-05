@@ -25,6 +25,10 @@ import './components/mk-dialog-create-project';
 import './screens/mk-home.js';
 import './screens/mk-user.js';
 import './screens/mk-project.js';
+import './screens/mk-phase.js';
+import './screens/mk-stage.js';
+import './screens/mk-card.js';
+import './screens/mk-cards.js';
 
 class MyApp extends connect(store)(LitElement) {
   constructor() {

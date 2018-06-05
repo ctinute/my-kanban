@@ -44,7 +44,7 @@ const computePage = (isAuthenticated, path) => {
             }
             return {page: '404', pathLevels};
           }
-          return {page: 'stage', pathData: {projectId, phaseId}};
+          return {page: 'phase', pathData: {projectId, phaseId}};
         }
         return {page: 'project', pathData: {projectId}};
       }
