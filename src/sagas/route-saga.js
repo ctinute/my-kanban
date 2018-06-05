@@ -1,11 +1,12 @@
-import {put, select} from 'redux-saga/effects';
+import {call, put} from 'redux-saga/effects';
 import {Actions} from '../actions';
 import {ActionTypes} from '../action-types';
+import {API} from '../api';
 
 export function* updateLocation(action) {
   yield put({type: ActionTypes.route.APP_ROUTE_CHANGING});
 
-  const isAuthenticated = yield select((state) => state.auth.user !== null);
+  const isAuthenticated = yield call(API.auth.getCurrentUser) !== null;
   const path = window.decodeURIComponent(action.payload.location.pathname);
 
   const {page, pathData} = computePage(isAuthenticated, path);
@@ -56,7 +57,7 @@ const computePage = (isAuthenticated, path) => {
 export function* navigate(action) {
   yield put({type: ActionTypes.route.APP_ROUTE_CHANGING});
 
-  const isAuthenticated = yield select((state) => state.auth.user !== null);
+  const isAuthenticated = yield call(API.auth.getCurrentUser) !== null;
 
   const path = action.payload.path;
   const title = action.payload.title;
