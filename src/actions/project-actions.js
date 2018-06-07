@@ -5,6 +5,11 @@ export const saveProjectsToState = (projects) => ({
   payload: {projects},
 });
 
+export const saveProjectToState = (project) => ({
+  type: ActionTypes.project.PROJECT_SAVE_SINGLE_PROJECT_TO_STATE,
+  payload: {project},
+});
+
 export const createProject = (project) => {
   let newId = project.name.toString().toLowerCase();
   newId = newId.split(' ').join('-');

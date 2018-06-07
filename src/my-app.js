@@ -19,7 +19,6 @@ import '@polymer/paper-toast/paper-toast.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 
 import './screens/components/mk-drawer';
-import './screens/components/mk-dialog-create-project';
 
 import './screens/mk-404.js';
 import './screens/mk-home.js';
@@ -29,6 +28,9 @@ import './screens/mk-phase.js';
 import './screens/mk-stage.js';
 import './screens/mk-card.js';
 import './screens/mk-cards.js';
+
+import './screens/components/mk-dialog-create-project';
+import './screens/components/mk-dialog-create-phase';
 
 class MyApp extends connect(store)(LitElement) {
   constructor() {
@@ -163,7 +165,6 @@ class MyApp extends connect(store)(LitElement) {
           --app-drawer-width: 56px;
         }
       </style>` : null;
-
     return html`
       ${styles}
       ${miniDrawerStyle}
@@ -198,8 +199,9 @@ class MyApp extends connect(store)(LitElement) {
         </app-header-layout>
       </app-drawer-layout>     
       
-      <paper-dialog id="dialog" opened="${_globalDialog.show}">
+      <paper-dialog id="dialog" opened="${_globalDialog.show}" modal with-backdrop>
          <mk-dialog-create-project active?="${_globalDialog.content === 'mk-dialog-create-project'}"></mk-dialog-create-project>
+         <mk-dialog-create-phase active?="${_globalDialog.content === 'mk-dialog-create-phase'}"></mk-dialog-create-phase>
       </paper-dialog>  
       
       <paper-toast 

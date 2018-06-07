@@ -31,10 +31,11 @@ export const hideToast = () => ({
   type: ActionTypes.app.HIDE_TOAST,
 });
 
-export const showDialog = (dialogContent) => ({
+export const showDialog = (dialogContent, data = {}) => ({
   type: ActionTypes.app.SHOW_DIALOG,
   payload: {
     dialogContent: dialogContent,
+    data: data,
   },
 });
 

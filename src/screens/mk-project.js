@@ -87,33 +87,32 @@ export default class MkProject extends connect(store)(PageViewElement) {
     `;
   }
 
+  _renderPhaseList(projectId, phases) {
+    if (phases) {
+      return html`
+        <ul>
+          ${Object.values(phases).map((phase) => html`<li><a href="/u/${projectId}/${phase.id}">${phase.name}</a></li>`)}
+        </ul>`;
+    } else {
+      return html`You don't have any phase yet.<br/> Press button bellow to create new one.`;
+    }
+  }
+
+  _openCreatePhaseDialog(projectId) {
+    store.dispatch(Actions.app.showDialog('mk-dialog-create-phase', {projectId}));
+  }
+
   _renderPhases(project) {
     return html`
+      <div class="card-header">
+        Phases
+      </div>
       <div class="card-content">
-        <div class="cafe-header">
-          Template
-          <div class="cafe-location cafe-light">
-            <iron-icon icon="communication:location-on"></iron-icon>
-            <span>250ft</span>
-          </div>
-        </div>
-        <div class="cafe-rating">
-          <iron-icon class="star" icon="star"></iron-icon>
-          <iron-icon class="star" icon="star"></iron-icon>
-          <iron-icon class="star" icon="star"></iron-icon>
-          <iron-icon class="star" icon="star"></iron-icon>
-          <iron-icon class="star" icon="star"></iron-icon>
-        </div>
-        <p>$・Italian, Cafe</p>
-        <p class="cafe-light">Small plates, salads &amp; sandwiches in an intimate setting.</p>
+        ${this._renderPhaseList(project.id, project.phases)}
       </div>
       <div class="card-actions">
         <div class="horizontal justified">
-          <paper-icon-button icon="icons:event"></paper-icon-button>
-          <paper-button>5:30PM</paper-button>
-          <paper-button>7:30PM</paper-button>
-          <paper-button>9:00PM</paper-button>
-          <paper-button class="cafe-reserve">Reserve</paper-button>
+            <paper-button ripple on-click="${() => this._openCreatePhaseDialog(project.id)}">New phase...</paper-button>
         </div>
       </div>
     `;

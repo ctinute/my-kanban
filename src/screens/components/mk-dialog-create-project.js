@@ -8,7 +8,7 @@ import {connect} from 'pwa-helpers/connect-mixin.js';
 import {store} from '../../store.js';
 import {Actions} from '../../actions/index';
 
-export default class MkUser extends connect(store)(PageViewElement) {
+export default class MkDialogCreateProject extends connect(store)(PageViewElement) {
   constructor() {
     super();
     this._project = {
@@ -33,7 +33,7 @@ export default class MkUser extends connect(store)(PageViewElement) {
   _render({_project}) {
     return html`
             <div class="modal-header">
-                <h2>New project; ${_project.name}</h2>
+                <h2>New project</h2>
             </div>
             <div class="modal-content">
                 <paper-input 
@@ -51,4 +51,4 @@ export default class MkUser extends connect(store)(PageViewElement) {
   }
 }
 
-customElements.define('mk-dialog-create-project', MkUser);
+customElements.define('mk-dialog-create-project', MkDialogCreateProject);

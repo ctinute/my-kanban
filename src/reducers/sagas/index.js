@@ -3,6 +3,7 @@ import * as auth from './auth-saga';
 import * as route from './route-saga';
 import * as app from './app-saga';
 import * as project from './project-saga';
+import * as phase from './phase-saga';
 import {ActionTypes} from '../../actions/action-types/index';
 
 function* rootSaga() {
@@ -18,6 +19,9 @@ function* rootSaga() {
 
     takeLatest(ActionTypes.project.SAGA_CREATE_PROJECT, project.createProjectAndCloseDiaog),
     takeLatest(ActionTypes.project.SAGA_CANCEL_CREATE_DIALOG, project.cancelCreateProjectDialog),
+
+    takeLatest(ActionTypes.phase.PHASE_SAGA_CREATE, phase.createPhaseAndCloseDiaog),
+    takeLatest(ActionTypes.phase.PHASE_SAGA_CANCEL_CREATE, phase.cancelCreateDialog),
   ];
 }
 

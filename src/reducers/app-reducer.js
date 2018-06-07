@@ -68,6 +68,7 @@ const appReducer = (state = APP_INITIAL_STATE, action) => {
         globalDialog: {
           show: true,
           content: action.payload.dialogContent,
+          data: action.payload.data,
         },
       });
     case ActionTypes.app.HIDE_DIALOG:
