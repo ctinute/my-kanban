@@ -1,4 +1,4 @@
-import {ActionTypes} from '../action-types';
+import {ActionTypes} from './action-types';
 
 export const login = () => ({type: ActionTypes.auth.LOGIN});
 export const logout = () => ({type: ActionTypes.auth.LOGOUT});

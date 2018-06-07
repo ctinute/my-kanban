@@ -6,10 +6,10 @@ import {persistReducer, persistStore} from 'redux-persist';
 import storageSession from 'redux-persist/es/storage/session';
 import appReducer from './reducers/app-reducer';
 import routeReducer from './reducers/route-reducer';
-import rootSaga from './sagas';
+import rootSaga from './reducers/sagas';
 import authReducer from './reducers/auth-reducer';
 import userDataReducer from './reducers/user-data-reducer';
-import {ActionTypes} from './action-types';
+import {ActionTypes} from './actions/action-types';
 
 const sagaMiddleware = createSagaMiddleware();
 

@@ -1,4 +1,4 @@
-import {ActionTypes} from '../action-types';
+import {ActionTypes} from '../actions/action-types';
 import {APP_INITIAL_STATE} from '../initial-state';
 
 const appReducer = (state = APP_INITIAL_STATE, action) => {

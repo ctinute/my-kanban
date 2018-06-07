@@ -1,7 +1,7 @@
 import {call, put} from 'redux-saga/effects';
-import {Actions} from '../actions';
-import {ActionTypes} from '../action-types';
-import {API} from '../api';
+import {Actions} from '../../actions/index';
+import {ActionTypes} from '../../actions/action-types/index';
+import {API} from '../../api/index';
 
 export function* updateLocation(action) {
   yield put({type: ActionTypes.route.APP_ROUTE_CHANGING});
