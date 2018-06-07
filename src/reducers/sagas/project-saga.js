@@ -1,6 +1,6 @@
 import {call, put} from 'redux-saga/effects';
-import {API} from '../api';
-import {Actions} from '../actions';
+import {API} from '../../api/index';
+import {Actions} from '../../actions/index';
 
 export function* createProjectAndCloseDiaog(action) {
   let project = action.payload.project;

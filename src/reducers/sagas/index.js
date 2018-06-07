@@ -3,7 +3,7 @@ import * as auth from './auth-saga';
 import * as route from './route-saga';
 import * as app from './app-saga';
 import * as project from './project-saga';
-import {ActionTypes} from '../action-types';
+import {ActionTypes} from '../../actions/action-types/index';
 
 function* rootSaga() {
   yield [

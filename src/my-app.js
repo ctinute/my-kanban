@@ -1,4 +1,3 @@
-/* eslint-disable */
 import {html, LitElement} from '@polymer/lit-element';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings.js';
 
@@ -19,8 +18,8 @@ import '@polymer/app-layout/app-toolbar/app-toolbar.js';
 import '@polymer/paper-toast/paper-toast.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 
-import './components/mk-drawer';
-import './components/mk-dialog-create-project';
+import './screens/components/mk-drawer';
+import './screens/components/mk-dialog-create-project';
 
 import './screens/mk-404.js';
 import './screens/mk-home.js';
@@ -32,7 +31,6 @@ import './screens/mk-card.js';
 import './screens/mk-cards.js';
 
 class MyApp extends connect(store)(LitElement) {
-
   constructor() {
     super();
     setPassiveTouchGestures(true);
@@ -65,7 +63,7 @@ class MyApp extends connect(store)(LitElement) {
       _offline: Boolean,
       _globalToast: Object,
       _globalDialog: Object,
-      shouldRender: Boolean
+      shouldRender: Boolean,
     };
   }
 

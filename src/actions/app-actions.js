@@ -1,4 +1,4 @@
-import {ActionTypes} from '../action-types';
+import {ActionTypes} from './action-types';
 
 export const setAppReady = () => ({type: ActionTypes.app.SET_APP_READY});
 

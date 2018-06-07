@@ -12,7 +12,7 @@ import {html, LitElement} from '@polymer/lit-element';
 import '@polymer/iron-icon';
 import './shop-icons.js';
 
-import {store} from '../store.js';
+import {store} from '../../store.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 
 class MkNetworkWarning extends connect(store)(LitElement) {

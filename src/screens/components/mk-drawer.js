@@ -1,10 +1,10 @@
 import {html, LitElement} from '@polymer/lit-element';
 import '@polymer/iron-icons/iron-icons';
 
-import {Actions} from '../actions';
+import {Actions} from '../../actions/index';
 
 import './mk-logo.js';
-import '../components/mk-drawer-item.js';
+import './/mk-drawer-item.js';
 
 class MkDrawer extends LitElement {
   static get properties() {

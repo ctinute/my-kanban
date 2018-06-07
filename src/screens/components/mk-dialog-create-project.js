@@ -1,12 +1,12 @@
-import {PageViewElement} from '../screens/page-view-element.js';
+import {PageViewElement} from '../page-view-element.js';
 import {html} from '@polymer/lit-element';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
 
 import {connect} from 'pwa-helpers/connect-mixin.js';
 
-import {store} from '../store.js';
-import {Actions} from '../actions';
+import {store} from '../../store.js';
+import {Actions} from '../../actions/index';
 
 export default class MkUser extends connect(store)(PageViewElement) {
   constructor() {
