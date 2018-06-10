@@ -23,6 +23,7 @@
   },
   "globals": {
     "module": false,
+    "customElements": false,
     "console": false,
     "firebase": false,
     "firebaseApp": false

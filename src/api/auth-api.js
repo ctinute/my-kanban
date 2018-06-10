@@ -1,12 +1,14 @@
+import {authentication} from './firebase-app';
+
 export const firebaseLogin = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    return firebase.auth().signInWithPopup(provider);
+  const provider = new firebase.auth.GoogleAuthProvider();
+  return authentication.signInWithPopup(provider);
 };
 
 export const firebaseLogout = () => {
-    return firebase.auth().signOut();
+  return authentication.signOut();
 };
 
 export const getCurrentUser = () => {
-    return firebase.auth().currentUser;
+  return authentication.currentUser;
 };
