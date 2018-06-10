@@ -8,6 +8,7 @@ import '@polymer/app-layout/app-header/app-header';
 import '@polymer/app-layout/app-toolbar/app-toolbar';
 import '@polymer/paper-icon-button';
 import '@polymer/paper-card';
+import './components/mk-stage-list';
 
 
 export default class MkPhase extends connect(store)(PageViewElement) {
@@ -29,12 +30,6 @@ export default class MkPhase extends connect(store)(PageViewElement) {
     this.phase = this.project ? this.project.phases[this.phaseId] : null;
   }
 
-  _onSortStageComplete(e) {
-    console.log(e)
-    const sortedItem = e.detail.target.items;
-    console.log(sortedItem);
-  }
-
   _renderStyles() {
     return html`
       <style>
@@ -48,77 +43,7 @@ export default class MkPhase extends connect(store)(PageViewElement) {
           padding: 16px 0;
           height: 100%;
         }
-        .stages,
-        .new-stage {
-          display: inline-block;
-          vertical-align: top;
-          white-space: nowrap;
-        }
-        
-        .stage {
-          display: inline-block;
-          vertical-align: top;
-          white-space: nowrap;
-          height: 100%;
-          width: 256px;
-          margin: 0 16px;
-          padding: 8px;
-        }
-        .tasks {
-          width: 100%;
-        }
-        .task {
-          height: 48px;
-          width: 100%;
-          margin: 8px 0;
-          padding: 4px 8px;
-          display: block;
-        }
       </style>
-    `;
-  }
-
-  _computedPhaseStageDetails(stageDetails, stages) {
-    return stages.map((stageId) => stageDetails[stageId]);
-  }
-
-  _computedStageTaskDetails(taskDetails, tasks) {
-    return tasks.map((taskId) => taskDetails[taskId]);
-  }
-
-  _renderTask(task) {
-    console.log(task);
-    return html`
-      <paper-card class="task">
-        ${task}
-      </paper-card>
-    `;
-  }
-
-  _renderStage(stage, canCreateTask) {
-    console.log(stage);
-    let taskList = stage.tasks ?
-      html`
-        <sortable-list class="tasks" 
-          on-sort-finish="${this._onSortStageComplete}" 
-          items="${Object.values(stage.tasks)}" 
-          sortable=".task">
-          ${stage.tasks.map((task) => this._renderTask(task))}
-        </sortable-list>` :
-      html `No task`;
-    let actions = canCreateTask ? html`<paper-button ripple on-click="${() => this._openCreateTaskDialog()}">New task...</paper-button>` : null;
-    return html`
-      <paper-card class="stage">
-        <div class="header">
-          ${stage.name}
-        </div>
-        <div class="content">
-          ${taskList}
-        </div>
-        <div class="actions">
-          ${actions}
-        </div>
-      </paper-card>
     `;
   }
 
@@ -134,9 +59,51 @@ export default class MkPhase extends connect(store)(PageViewElement) {
     `;
   }
 
+  // _render({phase}) {
+  //   let styles = this._renderStyles();
+  //   let toolbar = this._renderToolbar(phase);
+  //   return html`
+  //     ${styles}
+  //     <app-header-layout>
+  //       <app-header slot="header" fixed condenses effects="waterfall">
+  //         ${toolbar}
+  //       </app-header>
+  //       <div class="content">
+  //         <div class="stage-list">
+  //           <sortable-list class="stages" on-sort-finish="${this._onSortStageComplete}" items="${Object.values(phase.stages)}" sortable=".stage">
+  //             ${this._computedPhaseStageDetails(phase.stageDetails, phase.stages).map((stage, index) => this._renderStage(stage, index === 0)) }
+  //           </sortable-list>
+  //           <div class="new-stage">
+  //             <paper-button ripple on-click="${() => this._openCreateTaskDialog()}">New stage...</paper-button>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </app-header-layout>
+  //   `;
+  // }
+
+  _createDisplayStages(phase) {
+    let stages = [];
+    for (let stageId of phase.stages) {
+      let tasks = [];
+      if (phase.stageDetails[stageId].tasks) {
+        for (let taskId of phase.stageDetails[stageId].tasks) {
+          tasks.push(phase.taskDetails[taskId]);
+        }
+      }
+      stages.push({
+        id: stageId,
+        name: phase.stageDetails[stageId].name,
+        tasks,
+      });
+    }
+    return stages;
+  }
+
   _render({phase}) {
     let styles = this._renderStyles();
     let toolbar = this._renderToolbar(phase);
+    let stages = this._createDisplayStages(phase);
     return html`
       ${styles}
       <app-header-layout>
@@ -145,11 +112,8 @@ export default class MkPhase extends connect(store)(PageViewElement) {
         </app-header>
         <div class="content">
           <div class="stage-list">
-            <sortable-list class="stages" on-sort-finish="${this._onSortStageComplete}" items="${Object.values(phase.stages)}" sortable=".stage">
-              ${this._computedPhaseStageDetails(phase.stageDetails, phase.stages).map((stage, index) => this._renderStage(stage, index === 0)) }
-            </sortable-list>
-            <div class="new-stage">
-              <paper-button ripple on-click="${() => this._openCreateTaskDialog()}">New stage...</paper-button>
+            <div class="stages">
+              <mk-stage-list stages="${stages}"></mk-stage-list>
             </div>
           </div>
         </div>

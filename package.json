@@ -40,13 +40,13 @@
     "@polymer/paper-toast": "^3.0.0-pre.19",
     "@polymer/polymer": "^3.0.2",
     "@webcomponents/webcomponentsjs": "^2.0.0",
-    "dr-niels-sortable-list": "^1.0.5",
     "lit-html": "^0.9.0",
     "pwa-helpers": "polymerlabs/pwa-helpers",
     "redux": "^4.0.0",
     "redux-persist": "^5.9.1",
     "redux-saga": "^0.16.0",
-    "reselect": "^3.0.1"
+    "reselect": "^3.0.1",
+    "sortablejs": "^1.7.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
