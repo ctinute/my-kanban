@@ -156,6 +156,11 @@ class MyApp extends connect(store)(LitElement) {
         #dialog > [active] {
           display: block;
         }
+        
+        .screen {
+          width: 100%;
+          height: 100%;
+        }
       </style>
     `;
 
@@ -187,13 +192,13 @@ class MyApp extends connect(store)(LitElement) {
         <app-header-layout has-scrolling-region>
             
         <main id="pages">
-          <mk-home active?="${_page === 'home'}"></mk-home>
-          <mk-user active?="${_page === 'user'}"></mk-user>
-          <mk-project active?="${_page === 'project'}"></mk-project>
-          <mk-phase active?="${_page === 'phase'}"></mk-phase>
-          <mk-card active?="${_page === 'card'}"></mk-card>
-          <mk-cards active?="${_page === 'cards'}"></mk-cards>
-          <mk-404 active?="${_page === '404'}"></mk-404>
+          <mk-home class="screen" active?="${_page === 'home'}"></mk-home>
+          <mk-user class="screen" active?="${_page === 'user'}"></mk-user>
+          <mk-project class="screen" active?="${_page === 'project'}"></mk-project>
+          <mk-phase class="screen" active?="${_page === 'phase'}"></mk-phase>
+          <mk-card class="screen" active?="${_page === 'card'}"></mk-card>
+          <mk-cards class="screen" active?="${_page === 'cards'}"></mk-cards>
+          <mk-404 class="screen" active?="${_page === '404'}"></mk-404>
         </main>
 
         </app-header-layout>
