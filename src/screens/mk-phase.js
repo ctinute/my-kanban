@@ -2,7 +2,6 @@ import {PageViewElement} from './page-view-element.js';
 import {html} from '@polymer/lit-element';
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
-import 'dr-niels-sortable-list/sortable-list';
 import '@polymer/app-layout/app-header-layout/app-header-layout';
 import '@polymer/app-layout/app-header/app-header';
 import '@polymer/app-layout/app-toolbar/app-toolbar';
@@ -59,28 +58,26 @@ export default class MkPhase extends connect(store)(PageViewElement) {
     `;
   }
 
-  // _render({phase}) {
-  //   let styles = this._renderStyles();
-  //   let toolbar = this._renderToolbar(phase);
-  //   return html`
-  //     ${styles}
-  //     <app-header-layout>
-  //       <app-header slot="header" fixed condenses effects="waterfall">
-  //         ${toolbar}
-  //       </app-header>
-  //       <div class="content">
-  //         <div class="stage-list">
-  //           <sortable-list class="stages" on-sort-finish="${this._onSortStageComplete}" items="${Object.values(phase.stages)}" sortable=".stage">
-  //             ${this._computedPhaseStageDetails(phase.stageDetails, phase.stages).map((stage, index) => this._renderStage(stage, index === 0)) }
-  //           </sortable-list>
-  //           <div class="new-stage">
-  //             <paper-button ripple on-click="${() => this._openCreateTaskDialog()}">New stage...</paper-button>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </app-header-layout>
-  //   `;
-  // }
+  _render({phase}) {
+    let styles = this._renderStyles();
+    let toolbar = this._renderToolbar(phase);
+    let stages = this._createDisplayStages(phase);
+    return html`
+      ${styles}
+      <app-header-layout>
+        <app-header slot="header" fixed condenses effects="waterfall">
+          ${toolbar}
+        </app-header>
+        <div class="content">
+          <mk-stage-list 
+            stages="${stages}"
+            on-move-stage="${(e) => console.log(e)}"
+            on-move-task="${(e) => console.log(e)}">
+          </mk-stage-list>
+        </div>
+      </app-header-layout>
+    `;
+  }
 
   _createDisplayStages(phase) {
     let stages = [];
@@ -98,27 +95,6 @@ export default class MkPhase extends connect(store)(PageViewElement) {
       });
     }
     return stages;
-  }
-
-  _render({phase}) {
-    let styles = this._renderStyles();
-    let toolbar = this._renderToolbar(phase);
-    let stages = this._createDisplayStages(phase);
-    return html`
-      ${styles}
-      <app-header-layout>
-        <app-header slot="header" fixed condenses effects="waterfall">
-          ${toolbar}
-        </app-header>
-        <div class="content">
-          <div class="stage-list">
-            <div class="stages">
-              <mk-stage-list stages="${stages}"></mk-stage-list>
-            </div>
-          </div>
-        </div>
-      </app-header-layout>
-    `;
   }
 }
 
