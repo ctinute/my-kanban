@@ -19,7 +19,9 @@ class MkTaskItem extends LitElement {
   }
 
   _render({task, onTaskClick}) {
+    let styles = this._renderStyles();
     return html`
+      ${styles}
       <div on-click="${onTaskClick}">
         ${task.title}
       </div>

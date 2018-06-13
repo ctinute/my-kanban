@@ -37,15 +37,6 @@ export default class MkPhase extends connect(store)(PageViewElement) {
             width: 100%;
             height: 100%;
         }
-        app-header-layout {
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            display: flex;
-        }
-        app-header-layout {
-            
-        }
         .content {
             width: 100%;
             height: 100%;
@@ -55,10 +46,32 @@ export default class MkPhase extends connect(store)(PageViewElement) {
           height: 100%;
         }
         
+        .horizontal-list {
+          width: auto;
+          white-space: nowrap;
+          overflow-y: hidden;
+          overflow-x: scroll;
+        }
+        .horizontal-list > .list-item {
+          display: inline-block;
+          vertical-align: top;
+        }
+        
         mk-stage-list {
-            width: 100%;
             height: 100%;
-            overflow-x: scroll;
+            width: auto;
+        }
+        
+        #new-stage {
+          display: inline-block;
+          vertical-align: top;
+          width: 256px;
+          margin: 0 16px;
+          padding: 8px;
+          font-size: 1.2em;
+          line-height: 2.5em;
+          height: 2.5em;
+          text-align: center;
         }
       </style>
     `;
@@ -85,12 +98,16 @@ export default class MkPhase extends connect(store)(PageViewElement) {
       <app-header slot="header" fixed condenses effects="waterfall">
         ${toolbar}
       </app-header>
-      <div class="content">
+      <div class="content horizontal-list">
         <mk-stage-list 
+          class="list-item"
           stages="${stages}"
           on-move-stage="${(e) => console.log(e)}"
           on-move-task="${(e) => console.log(e)}">
         </mk-stage-list>
+        <div class="list-item">
+          <paper-button id="new-stage" flat on-click="${() => {}}">New stage</paper-button>
+        </div>
       </div>
     `;
   }

@@ -103,6 +103,7 @@ class MkStageList extends LitElement {
           padding: 4px 8px;
           display: block;
           cursor: pointer;
+          border-radius: 4px;
         }
         .no-task {
           text-align: center;
