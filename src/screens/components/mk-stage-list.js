@@ -1,5 +1,7 @@
 import {html, LitElement} from '@polymer/lit-element';
 import 'sortablejs';
+import './mk-stage';
+import './mk-task-item';
 
 class MkStageList extends LitElement {
   constructor() {
@@ -31,7 +33,7 @@ class MkStageList extends LitElement {
   _didRender() {
     let stageListContainer = this.shadowRoot.querySelector('#list');
     Sortable.create(stageListContainer, {
-      animation: 150,
+      animation: 100,
       draggable: '.stage',
       handle: '.header',
       chosenClass: 'item-old',
@@ -46,7 +48,7 @@ class MkStageList extends LitElement {
       Sortable.create(cardList, {
         group: 'card',
         draggable: '.task',
-        animation: 150,
+        animation: 100,
         chosenClass: 'item-old',
         dragClass: 'item-dragging',
         ghostClass: 'item-new',
@@ -69,15 +71,13 @@ class MkStageList extends LitElement {
   _renderStyles() {
     return html`
       <style>
-        app-header-layout {
-            height: 100%;
-            width: 100%;
-            overflow-x: scroll;
-            overflow-y: hidden;
+        :host {
+            display: block;
         }
-        app-header-layout > .content {
-          padding: 16px 0;
-          height: 100%;
+        #list {
+            white-space: nowrap;
+            width: auto;
+            height: 100%;
         }
         .content {
             min-height: 16px;
@@ -88,30 +88,12 @@ class MkStageList extends LitElement {
           vertical-align: top;
           white-space: nowrap;
         }
-        
         .stage {
           display: inline-block;
           vertical-align: top;
-          white-space: nowrap;
-          height: 100%;
           width: 256px;
           margin: 0 16px;
           padding: 8px;
-        }
-        .stage > .header {
-            font-size: 1.2em;
-            font-weight: bold;
-            text-align: center;
-            height: 2.5em;
-            line-height: 2.5em;
-            margin-bottom: 8px;
-            border-bottom: 1px solid darkgrey;
-            cursor: move;
-        }
-        
-        
-        .tasks {
-          width: 100%;
         }
         .task {
           height: 48px;
@@ -122,7 +104,11 @@ class MkStageList extends LitElement {
           display: block;
           cursor: pointer;
         }
-        
+        .no-task {
+          text-align: center;
+          opacity: 0.8;
+          padding: 16px 0;
+        }
         .item-new {
           opacity: 0.2;
           border: 1px dashed black;
@@ -135,30 +121,26 @@ class MkStageList extends LitElement {
   }
 
   _renderStage(stage, index) {
-    const canCreateTask = (index === 0);
-    let taskList = stage.tasks ?
-      html`${stage.tasks.map((task, index) => this._renderTask(task, index))}` :
-      html `No task`;
-    let actions = canCreateTask ? html`<paper-button ripple on-click="${() => this._openCreateTaskDialog()}">New task...</paper-button>` : null;
+    let taskList = stage.tasks.length > 0 ?
+      html`${stage.tasks.map((task) => this._renderTask(task))}` : null;
+      // html `<div class="no-task">No task. Drop new task here !</div>`;
     return html`
-      <paper-card class="stage" id="stage-${stage.id}">
-        <div class="header">
-          ${stage.name}
-        </div>
+      <mk-stage 
+        class="stage" 
+        stage="${stage}" 
+        canCreateTask="${(index === 0)}" 
+        onCreateTaskButtonClick="${() => {}}">
         <div class="content" id="${stage.id}" data-index-number="${index}">
           ${taskList}
         </div>
-        <div class="actions">
-          ${actions}
-        </div>
-      </paper-card>
+      </mk-stage>
     `;
   }
 
-  _renderTask(task, index) {
+  _renderTask(task) {
     return html`
-      <paper-card class="task" data-index="${index}">
-        ${task.title}
+      <paper-card class="task">
+        <mk-task-item task="${task}">
       </paper-card>
     `;
   }

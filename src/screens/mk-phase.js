@@ -32,15 +32,33 @@ export default class MkPhase extends connect(store)(PageViewElement) {
   _renderStyles() {
     return html`
       <style>
+        :host {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
         app-header-layout {
             height: 100%;
             width: 100%;
-            overflow-x: scroll;
-            overflow-y: hidden;
+            overflow: hidden;
+            display: flex;
+        }
+        app-header-layout {
+            
+        }
+        .content {
+            width: 100%;
+            height: 100%;
         }
         app-header-layout > .content {
           padding: 16px 0;
           height: 100%;
+        }
+        
+        mk-stage-list {
+            width: 100%;
+            height: 100%;
+            overflow-x: scroll;
         }
       </style>
     `;
@@ -64,18 +82,16 @@ export default class MkPhase extends connect(store)(PageViewElement) {
     let stages = this._createDisplayStages(phase);
     return html`
       ${styles}
-      <app-header-layout>
-        <app-header slot="header" fixed condenses effects="waterfall">
-          ${toolbar}
-        </app-header>
-        <div class="content">
-          <mk-stage-list 
-            stages="${stages}"
-            on-move-stage="${(e) => console.log(e)}"
-            on-move-task="${(e) => console.log(e)}">
-          </mk-stage-list>
-        </div>
-      </app-header-layout>
+      <app-header slot="header" fixed condenses effects="waterfall">
+        ${toolbar}
+      </app-header>
+      <div class="content">
+        <mk-stage-list 
+          stages="${stages}"
+          on-move-stage="${(e) => console.log(e)}"
+          on-move-task="${(e) => console.log(e)}">
+        </mk-stage-list>
+      </div>
     `;
   }
 

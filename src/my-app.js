@@ -189,17 +189,17 @@ class MyApp extends connect(store)(LitElement) {
         </app-drawer>
 
         <!-- Main content -->
-        <app-header-layout has-scrolling-region>
+        <app-header-layout>
             
-        <main id="pages">
-          <mk-home class="screen" active?="${_page === 'home'}"></mk-home>
-          <mk-user class="screen" active?="${_page === 'user'}"></mk-user>
-          <mk-project class="screen" active?="${_page === 'project'}"></mk-project>
-          <mk-phase class="screen" active?="${_page === 'phase'}"></mk-phase>
-          <mk-card class="screen" active?="${_page === 'card'}"></mk-card>
-          <mk-cards class="screen" active?="${_page === 'cards'}"></mk-cards>
-          <mk-404 class="screen" active?="${_page === '404'}"></mk-404>
-        </main>
+          <main id="pages">
+            <mk-home class="screen" active?="${_page === 'home'}"></mk-home>
+            <mk-user class="screen" active?="${_page === 'user'}"></mk-user>
+            <mk-project class="screen" active?="${_page === 'project'}"></mk-project>
+            <mk-phase class="screen" active?="${_page === 'phase'}"></mk-phase>
+            <mk-card class="screen" active?="${_page === 'card'}"></mk-card>
+            <mk-cards class="screen" active?="${_page === 'cards'}"></mk-cards>
+            <mk-404 class="screen" active?="${_page === '404'}"></mk-404>
+          </main>
 
         </app-header-layout>
       </app-drawer-layout>     
