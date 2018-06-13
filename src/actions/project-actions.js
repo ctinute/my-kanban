@@ -32,3 +32,5 @@ export const pullAll = () => ({type: ActionTypes.project.PULL_ALL});
 export const pushAll = () => ({type: ActionTypes.project.PUSH_ALL});
 export const pullOne = (projectId) => ({type: ActionTypes.project.PULL_ONE, payload: {projectId}});
 export const pushOne = (projectId) => ({type: ActionTypes.project.PUSH_ONE, payload: {projectId}});
+
+export const notifyAll = () => ({type: ActionTypes.project.NOTIFY_ALL});

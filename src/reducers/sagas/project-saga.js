@@ -69,7 +69,9 @@ export function* cancelCreateProjectDialog() {
 export function* pushAll() {
   try {
     let projects = yield select((state) => state.userData.projects);
-    yield all(Object.values(projects).map((project) => put(Actions.project.pushOne(project.id))));
+    yield all(Object.values(projects).map(
+      (project) => put(Actions.project.pushOne(project.id)))
+    );
   } catch (e) {
     yield put(Actions.app.showToast(e.message));
   }
@@ -77,8 +79,11 @@ export function* pushAll() {
 
 export function* pullAll() {
   try {
-    let projects = yield call(API.project.getProjectsOfCurrentUser);
-    yield all(Object.values(projects).map((project) => put(Actions.project.saveProjectToState(project))));
+    let user = yield select((state) => state.auth.user);
+    let projects = yield call(API.project.getProjectsOfSpecificUser, user.uid);
+    yield all(Object.values(projects).map(
+      (project) => put(Actions.project.saveProjectToState(project)))
+    );
   } catch (e) {
     yield put(Actions.app.showToast(e.message));
   }

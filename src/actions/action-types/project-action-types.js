@@ -7,5 +7,7 @@ export const PUSH_ALL = 'PUSH_ALL';
 export const PULL_ONE = 'PULL_ONE';
 export const PUSH_ONE = 'PUSH_ONE';
 
+export const NOTIFY_ALL = 'NOTIFY_ALL';
+
 export const SAGA_CREATE_PROJECT = 'SAGA_CREATE_PROJECT';
 export const SAGA_CANCEL_CREATE_DIALOG = 'SAGA_CANCEL_CREATE_DIALOG';
