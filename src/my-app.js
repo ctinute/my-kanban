@@ -205,8 +205,7 @@ class MyApp extends connect(store)(LitElement) {
       </app-drawer-layout>     
       
       <paper-dialog id="dialog" opened="${_globalDialog.show}" modal with-backdrop>
-         <mk-dialog-create-project active?="${_globalDialog.content === 'mk-dialog-create-project'}"></mk-dialog-create-project>
-         <mk-dialog-create-phase active?="${_globalDialog.content === 'mk-dialog-create-phase'}"></mk-dialog-create-phase>
+         ${_globalDialog.content}
       </paper-dialog>  
       
       <paper-toast 
