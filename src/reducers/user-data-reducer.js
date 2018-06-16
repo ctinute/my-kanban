@@ -11,7 +11,7 @@ const userDataReducer = (state = initialAppState, action) => {
         ...state,
         projects: {
           ...state.projects,
-          [action.payload.project.id]: action.payload.project,
+          [action.payload.project.id]: JSON.parse(JSON.stringify(action.payload.project)),
         },
       });
 
