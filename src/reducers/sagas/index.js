@@ -23,11 +23,9 @@ function* rootSaga() {
     takeEvery(ActionTypes.project.PULL_ONE, project.pullOne),
     takeEvery(ActionTypes.project.PUSH_ONE, project.pushOne),
 
-    takeLatest(ActionTypes.project.SAGA_CREATE_PROJECT, project.createProjectAndCloseDialog),
-    takeLatest(ActionTypes.project.SAGA_CANCEL_CREATE_DIALOG, project.cancelCreateProjectDialog),
+    takeLatest(ActionTypes.project.SAGA_CREATE_PROJECT, project.createProject),
 
-    takeLatest(ActionTypes.phase.PHASE_SAGA_CREATE, phase.createPhaseAndCloseDiaog),
-    takeLatest(ActionTypes.phase.PHASE_SAGA_CANCEL_CREATE, phase.cancelCreateDialog),
+    takeLatest(ActionTypes.phase.PHASE_SAGA_CREATE, phase.createPhase),
   ];
 }
 

@@ -1,6 +1,5 @@
 import {call, put, select} from 'redux-saga/effects';
 import {Actions} from '../../actions/index';
-import {API} from '../../api/index';
 
 export function* setToast(action) {
   try {

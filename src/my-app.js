@@ -29,9 +29,6 @@ import './screens/mk-stage.js';
 import './screens/mk-card.js';
 import './screens/mk-cards.js';
 
-import './screens/components/mk-dialog-create-project';
-import './screens/components/mk-dialog-create-phase';
-
 class MyApp extends connect(store)(LitElement) {
   constructor() {
     super();
@@ -87,21 +84,8 @@ class MyApp extends connect(store)(LitElement) {
     installMediaQueryWatcher('(max-width: 767px)', (matches) => this._smallScreen = matches);
   }
 
-  _renderApp({
-               _ready,
-               _page,
-               _path,
-               _user,
-               _smallScreen,
-
-               _drawer,
-               _drawerItems,
-
-               _offline,
-               _globalToast,
-               _globalDialog,
-             }) {
-    const styles = html`
+  _renderStyles() {
+    return html`
       <!--suppress ALL -->
       <style>
         :host {
@@ -146,16 +130,6 @@ class MyApp extends connect(store)(LitElement) {
             padding-top: 64px;
           }
         }
-          
-        #dialog {}
-        
-        #dialog > * {
-          display: none;
-        }
-  
-        #dialog > [active] {
-          display: block;
-        }
         
         .screen {
           width: 100%;
@@ -163,6 +137,23 @@ class MyApp extends connect(store)(LitElement) {
         }
       </style>
     `;
+  }
+
+  _render({
+               _ready,
+               _page,
+               _path,
+               _user,
+               _smallScreen,
+
+               _drawer,
+               _drawerItems,
+
+               _offline,
+               _globalToast,
+               _globalDialog,
+             }) {
+    const styles = this._renderStyles();
 
     const miniDrawerStyle = _drawer.minimized ? html`
       <style>
@@ -204,7 +195,7 @@ class MyApp extends connect(store)(LitElement) {
         </app-header-layout>
       </app-drawer-layout>     
       
-      <paper-dialog id="dialog" opened="${_globalDialog.show}" modal with-backdrop>
+      <paper-dialog id="dialog" opened="${_globalDialog.show}" modal with-backdrop on-opened-changed="${this._onDialogVisibilityChanged}">
          ${_globalDialog.content}
       </paper-dialog>  
       
@@ -218,8 +209,11 @@ class MyApp extends connect(store)(LitElement) {
     `;
   }
 
-  _render(props) {
-    return props._ready ? this._renderApp(props) : html``;
+  _onDialogVisibilityChanged(e) {
+    const opened = e.detail.value;
+    if (!opened) {
+      store.dispatch(Actions.app.hideDialog());
+    }
   }
 }
 

@@ -1,14 +1,12 @@
 import {LitElement, html} from '@polymer/lit-element';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
-import '@polymer/paper-input/paper-input.js';
+import '@polymer/paper-toggle-button';
 
 export default class MkDialogCreateStage extends LitElement {
   static get properties() {
     return {
       stage: Object,
-      _onSubmit: Function,
-      _onCancel: Function,
     };
   }
 
@@ -23,8 +21,28 @@ export default class MkDialogCreateStage extends LitElement {
     };
   }
 
-  _render({stage, _onSubmit, _onCancel}) {
+  _submit(stage) {
+    this.dispatchEvent(new CustomEvent('submit', {detail: {stage}}));
+  }
+
+  _cancel() {
+    this.dispatchEvent(new CustomEvent('cancel'));
+  }
+
+  _renderStyles() {
     return html`
+      <style>
+        :host {
+            display: block;
+        }
+      </style>
+    `;
+  }
+
+  _render({stage}) {
+    let styles = this._renderStyles();
+    return html`
+      ${styles}
       <div class="header">
         <h2>New stage</h2>
       </div>
@@ -47,8 +65,8 @@ export default class MkDialogCreateStage extends LitElement {
         <paper-toggle-button></paper-toggle-button>
       </div>
       <div class="actions">
-        <paper-button dialog-dismiss on-click="${() => _onSubmit(stage)}">Cancel</paper-button>
-        <paper-button dialog-confirm on-click="${() => _onCancel()}">Create</paper-button>
+        <paper-button dialog-dismiss onclick="${() => this._submit(stage)}">Cancel</paper-button>
+        <paper-button dialog-confirm onclick="${this._cancel}">Create</paper-button>
       </div>`;
   }
 }

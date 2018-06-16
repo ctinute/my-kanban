@@ -8,6 +8,7 @@ import '@polymer/paper-card';
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 import {Actions} from '../actions';
+import './components/mk-dialog-create-phase';
 
 export default class MkProject extends connect(store)(PageViewElement) {
   constructor() {
@@ -29,6 +30,11 @@ export default class MkProject extends connect(store)(PageViewElement) {
     this.user = state.auth.user;
     this.projectId = state.route.data.projectId;
     this.project = state.userData.projects[this.projectId];
+  }
+
+  _openCreatePhaseDialog() {
+    let createProject = (phase) => store.dispatch(Actions.phase.createPhase(phase, this.projectId));
+    store.dispatch(Actions.app.showDialog(html`<mk-dialog-create-phase on-submit="${(e) => createProject(e.detail.phase)}"></mk-dialog-create-phase>`));
   }
 
   _renderStyles() {
@@ -96,10 +102,6 @@ export default class MkProject extends connect(store)(PageViewElement) {
     } else {
       return html`You don't have any phase yet.<br/> Press button bellow to create new one.`;
     }
-  }
-
-  _openCreatePhaseDialog(projectId) {
-    store.dispatch(Actions.app.showDialog('mk-dialog-create-phase', {projectId}));
   }
 
   _renderPhases(project) {

@@ -15,12 +15,6 @@ const userDataReducer = (state = initialAppState, action) => {
         },
       });
 
-    case ActionTypes.project.NOTIFY_ALL:
-      return Object.assign({}, state, {
-        ...state,
-        projects: state.projects,
-      });
-
     case ActionTypes.project.PROJECT_SAVE_TO_STATE:
       return Object.assign({}, state, {
         ...state,

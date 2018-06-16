@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {PageViewElement} from './page-view-element.js';
 import {html} from '@polymer/lit-element';
 import {store} from '../store.js';
@@ -8,6 +9,8 @@ import '@polymer/app-layout/app-toolbar/app-toolbar';
 import '@polymer/paper-icon-button';
 import '@polymer/paper-card';
 import './components/mk-stage-list';
+import './components/mk-dialog-create-stage';
+import {Actions} from '../actions';
 
 
 export default class MkPhase extends connect(store)(PageViewElement) {
@@ -27,6 +30,14 @@ export default class MkPhase extends connect(store)(PageViewElement) {
     this.phaseId = state.route.data.phaseId;
     this.project = state.userData.projects[this.projectId];
     this.phase = this.project ? this.project.phases[this.phaseId] : null;
+  }
+
+  _openCreateStageDialog() {
+    let dialog = html`
+      <mk-dialog-create-stage
+        on-submit="${()=>console.log('cancelled')}"
+        on-cancel="${()=>console.log('cancelled')}"></mk-dialog-create-stage>`;
+    store.dispatch(Actions.app.showDialog(dialog, null));
   }
 
   _renderStyles() {
@@ -106,7 +117,7 @@ export default class MkPhase extends connect(store)(PageViewElement) {
           on-move-task="${(e) => console.log(e)}">
         </mk-stage-list>
         <div class="list-item">
-          <paper-button id="new-stage" flat on-click="${() => {}}">New stage</paper-button>
+          <paper-button id="new-stage" flat on-click="${this._openCreateStageDialog}">New stage</paper-button>
         </div>
       </div>
     `;
