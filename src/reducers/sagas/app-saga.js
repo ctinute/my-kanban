@@ -1,6 +1,5 @@
-import {call, put} from 'redux-saga/effects';
+import {call, put, select} from 'redux-saga/effects';
 import {Actions} from '../../actions/index';
-import {API} from '../../api/index';
 
 export function* setToast(action) {
   try {
@@ -23,11 +22,9 @@ export function* fetchNewData() {
   try {
     yield put(Actions.app.setFetching(true));
 
-    const user = yield call(API.auth.getCurrentUser);
-
+    const user = yield select((state) => state.auth.user);
     if (user) {
-      const projectList = yield call(API.project.getProjectsOfCurrentUser);
-      yield put(Actions.project.saveProjectsToState(projectList));
+      yield put(Actions.project.pullAll());
     }
 
     yield put(Actions.app.setFetching(false));

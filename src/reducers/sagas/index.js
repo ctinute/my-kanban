@@ -1,4 +1,4 @@
-import {takeLatest} from 'redux-saga/effects';
+import {takeLatest, takeEvery} from 'redux-saga/effects';
 import * as auth from './auth-saga';
 import * as route from './route-saga';
 import * as app from './app-saga';
@@ -17,11 +17,15 @@ function* rootSaga() {
     takeLatest(ActionTypes.app.REFRESH_DATA, app.fetchNewData),
     takeLatest(ActionTypes.app.SET_TOAST, app.setToast),
 
-    takeLatest(ActionTypes.project.SAGA_CREATE_PROJECT, project.createProjectAndCloseDiaog),
-    takeLatest(ActionTypes.project.SAGA_CANCEL_CREATE_DIALOG, project.cancelCreateProjectDialog),
+    takeLatest(ActionTypes.project.PULL_ALL, project.pullAll),
+    takeLatest(ActionTypes.project.PUSH_ALL, project.pushAll),
 
-    takeLatest(ActionTypes.phase.PHASE_SAGA_CREATE, phase.createPhaseAndCloseDiaog),
-    takeLatest(ActionTypes.phase.PHASE_SAGA_CANCEL_CREATE, phase.cancelCreateDialog),
+    takeEvery(ActionTypes.project.PULL_ONE, project.pullOne),
+    takeEvery(ActionTypes.project.PUSH_ONE, project.pushOne),
+
+    takeLatest(ActionTypes.project.SAGA_CREATE_PROJECT, project.createProject),
+
+    takeLatest(ActionTypes.phase.PHASE_SAGA_CREATE, phase.createPhase),
   ];
 }
 

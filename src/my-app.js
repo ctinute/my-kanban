@@ -29,9 +29,6 @@ import './screens/mk-stage.js';
 import './screens/mk-card.js';
 import './screens/mk-cards.js';
 
-import './screens/components/mk-dialog-create-project';
-import './screens/components/mk-dialog-create-phase';
-
 class MyApp extends connect(store)(LitElement) {
   constructor() {
     super();
@@ -87,21 +84,8 @@ class MyApp extends connect(store)(LitElement) {
     installMediaQueryWatcher('(max-width: 767px)', (matches) => this._smallScreen = matches);
   }
 
-  _renderApp({
-               _ready,
-               _page,
-               _path,
-               _user,
-               _smallScreen,
-
-               _drawer,
-               _drawerItems,
-
-               _offline,
-               _globalToast,
-               _globalDialog,
-             }) {
-    const styles = html`
+  _renderStyles() {
+    return html`
       <!--suppress ALL -->
       <style>
         :host {
@@ -146,18 +130,30 @@ class MyApp extends connect(store)(LitElement) {
             padding-top: 64px;
           }
         }
-          
-        #dialog {}
         
-        #dialog > * {
-          display: none;
-        }
-  
-        #dialog > [active] {
-          display: block;
+        .screen {
+          width: 100%;
+          height: 100%;
         }
       </style>
     `;
+  }
+
+  _render({
+               _ready,
+               _page,
+               _path,
+               _user,
+               _smallScreen,
+
+               _drawer,
+               _drawerItems,
+
+               _offline,
+               _globalToast,
+               _globalDialog,
+             }) {
+    const styles = this._renderStyles();
 
     const miniDrawerStyle = _drawer.minimized ? html`
       <style>
@@ -184,24 +180,23 @@ class MyApp extends connect(store)(LitElement) {
         </app-drawer>
 
         <!-- Main content -->
-        <app-header-layout has-scrolling-region>
+        <app-header-layout>
             
-        <main id="pages">
-          <mk-home active?="${_page === 'home'}"></mk-home>
-          <mk-user active?="${_page === 'user'}"></mk-user>
-          <mk-project active?="${_page === 'project'}"></mk-project>
-          <mk-phase active?="${_page === 'phase'}"></mk-phase>
-          <mk-card active?="${_page === 'card'}"></mk-card>
-          <mk-cards active?="${_page === 'cards'}"></mk-cards>
-          <mk-404 active?="${_page === '404'}"></mk-404>
-        </main>
+          <main id="pages">
+            <mk-home class="screen" active?="${_page === 'home'}"></mk-home>
+            <mk-user class="screen" active?="${_page === 'user'}"></mk-user>
+            <mk-project class="screen" active?="${_page === 'project'}"></mk-project>
+            <mk-phase class="screen" active?="${_page === 'phase'}"></mk-phase>
+            <mk-card class="screen" active?="${_page === 'card'}"></mk-card>
+            <mk-cards class="screen" active?="${_page === 'cards'}"></mk-cards>
+            <mk-404 class="screen" active?="${_page === '404'}"></mk-404>
+          </main>
 
         </app-header-layout>
       </app-drawer-layout>     
       
-      <paper-dialog id="dialog" opened="${_globalDialog.show}" modal with-backdrop>
-         <mk-dialog-create-project active?="${_globalDialog.content === 'mk-dialog-create-project'}"></mk-dialog-create-project>
-         <mk-dialog-create-phase active?="${_globalDialog.content === 'mk-dialog-create-phase'}"></mk-dialog-create-phase>
+      <paper-dialog id="dialog" opened="${_globalDialog.show}" modal with-backdrop on-opened-changed="${this._onDialogVisibilityChanged}">
+         ${_globalDialog.content}
       </paper-dialog>  
       
       <paper-toast 
@@ -214,8 +209,11 @@ class MyApp extends connect(store)(LitElement) {
     `;
   }
 
-  _render(props) {
-    return props._ready ? this._renderApp(props) : html``;
+  _onDialogVisibilityChanged(e) {
+    const opened = e.detail.value;
+    if (!opened) {
+      store.dispatch(Actions.app.hideDialog());
+    }
   }
 }
 

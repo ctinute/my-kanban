@@ -26,6 +26,7 @@
     "customElements": false,
     "console": false,
     "firebase": false,
-    "firebaseApp": false
+    "firebaseApp": false,
+    "Sortable": false
   }
 }

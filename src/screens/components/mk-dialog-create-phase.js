@@ -1,14 +1,14 @@
-import {PageViewElement} from '../page-view-element.js';
-import {html} from '@polymer/lit-element';
+import {html, LitElement} from '@polymer/lit-element';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
 
-import {connect} from 'pwa-helpers/connect-mixin.js';
+export default class MkDialogCreatePhase extends LitElement {
+  static get properties() {
+    return {
+      phase: Object,
+    };
+  }
 
-import {store} from '../../store.js';
-import {Actions} from '../../actions/index';
-
-export default class MkDialogCreatePhase extends connect(store)(PageViewElement) {
   constructor() {
     super();
     this.phase = {
@@ -16,19 +16,22 @@ export default class MkDialogCreatePhase extends connect(store)(PageViewElement)
     };
   }
 
-  static get properties() {
-    return {
-      phase: Object,
-      projectId: String,
-    };
+  _submit(phase) {
+    this.dispatchEvent(new CustomEvent('submit', {detail: {phase}}));
   }
 
-  _stateChanged(state) {
-    this.projectId = state.route.data.projectId;
+  _cancel() {
+    this.dispatchEvent(new CustomEvent('cancel'));
+  }
+
+  _renderStyles() {
+    return html`<style>:host{display: block;}</style>`;
   }
 
   _render({phase, projectId}) {
+    let styles = this._renderStyles();
     return html`
+      ${styles}
       <div class="modal-header">
         <h2>New Phase: ${projectId}</h2>
       </div>
@@ -42,8 +45,8 @@ export default class MkDialogCreatePhase extends connect(store)(PageViewElement)
         </paper-input>
       </div>
       <div class="modal-actions">
-        <paper-button dialog-dismiss on-click="${() => store.dispatch(Actions.phase.cancelCreatePhase())}">Cancel</paper-button>
-        <paper-button dialog-confirm on-click="${() => store.dispatch(Actions.phase.createPhase(phase, projectId))}">Create</paper-button>
+        <paper-button dialog-dismiss on-click="${() => this._cancel()}" ">Cancel</paper-button>
+        <paper-button dialog-confirm on-click="${() => this._submit(phase)}">Create</paper-button>
       </div>`;
   }
 }

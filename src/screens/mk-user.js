@@ -4,6 +4,7 @@ import '@polymer/paper-button/paper-button.js';
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 import {Actions} from '../actions';
+import './components/mk-dialog-create-project';
 
 export default class MkUser extends connect(store)(PageViewElement) {
   static get properties() {
@@ -19,7 +20,8 @@ export default class MkUser extends connect(store)(PageViewElement) {
   }
 
   _openCreateProjectDialog() {
-    store.dispatch(Actions.app.showDialog('mk-dialog-create-project'));
+    let createProject = (project) => store.dispatch(Actions.project.createProject(project));
+    store.dispatch(Actions.app.showDialog(html`<mk-dialog-create-project on-submit="${(e) => createProject(e.detail.project)}"></mk-dialog-create-project>`));
   }
 
   _renderStyles() {

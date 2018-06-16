@@ -11,8 +11,7 @@ export function* login() {
     yield put(Actions.auth.saveCredential(user));
 
     // fetch all data
-    const projects = yield call(API.project.getProjectsOfCurrentUser);
-    yield put(Actions.project.saveProjectsToState(projects));
+    yield put(Actions.project.pullAll());
     yield put(Actions.route.navigate('Dashboard', '/u'));
 
     yield put(Actions.app.setFetching(false));

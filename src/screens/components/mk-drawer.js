@@ -38,7 +38,6 @@ class MkDrawer extends LitElement {
         :host {
           width: 100%;
           height: 100vh;
-          background-color: var(--mk-primary-color);
           
           display: flex;
           flex-flow: column;
@@ -84,7 +83,7 @@ class MkDrawer extends LitElement {
           on-click="${() => this._navigateUserDashboard()}">
         </mk-drawer-item>
         <mk-drawer-item
-          icon="" 
+          icon="icons:exit-to-app" 
           text="Sign out"
           minimized="${minimized}"
           class="drawer-item"
@@ -124,7 +123,7 @@ class MkDrawer extends LitElement {
       ${styles}
       <!-- Logo & App name -->
       <div class="drawer-header">
-        <mk-logo minimized="${minimized}"></mk-logo>
+        <!--<mk-logo minimized=""></mk-logo>-->
       </div>
       <div class="drawer-content">
         <div class="drawer-pinned-top">${userBlock}</div>
