@@ -7,7 +7,6 @@ import {installOfflineWatcher} from 'pwa-helpers/network.js';
 import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
 
 import {store} from './store.js';
-import {Actions} from './actions';
 import {APP_INITIAL_STATE} from './initial-state';
 
 import '@polymer/app-layout/app-header/app-header.js';
@@ -28,6 +27,9 @@ import './screens/mk-phase.js';
 import './screens/mk-stage.js';
 import './screens/mk-card.js';
 import './screens/mk-cards.js';
+import {hideDialog, setAppDrawerMinimization, setNetworkStatus} from './actions/app';
+import {login, logout} from './actions/auth';
+import {changeRoute} from './actions/route';
 
 class MyApp extends connect(store)(LitElement) {
   constructor() {
@@ -79,8 +81,8 @@ class MyApp extends connect(store)(LitElement) {
   }
 
   _firstRendered() {
-    installRouter((location) => store.dispatch(Actions.route.changeRoute(location)));
-    installOfflineWatcher((offline) => store.dispatch(Actions.app.setNetworkStatus(offline)));
+    installRouter((location) => store.dispatch(changeRoute(location)));
+    installOfflineWatcher((offline) => store.dispatch(setNetworkStatus(offline)));
     installMediaQueryWatcher('(max-width: 767px)', (matches) => this._smallScreen = matches);
   }
 
@@ -172,9 +174,9 @@ class MyApp extends connect(store)(LitElement) {
             user="${_user}"
             minimized="${_drawer.minimized}" 
             drawer-items="${_drawerItems}"
-            on-login="${() => store.dispatch(Actions.auth.login())}"
-            on-logout="${() => store.dispatch(Actions.auth.logout())}"
-            on-toggle-minimize="${(e) => store.dispatch(Actions.app.setAppDrawerMinimization(!e.detail.minimized))}"
+            on-login="${() => store.dispatch(login())}"
+            on-logout="${() => store.dispatch(logout())}"
+            on-toggle-minimize="${(e) => store.dispatch(setAppDrawerMinimization(!e.detail.minimized))}"
             store="${store}">
           </mk-drawer>
         </app-drawer>
@@ -212,7 +214,7 @@ class MyApp extends connect(store)(LitElement) {
   _onDialogVisibilityChanged(e) {
     const opened = e.detail.value;
     if (!opened) {
-      store.dispatch(Actions.app.hideDialog());
+      store.dispatch(hideDialog());
     }
   }
 }
