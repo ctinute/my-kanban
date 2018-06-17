@@ -1,5 +1,4 @@
-import {ActionTypes} from '../actions/action-types';
-
+import {DELETE_CREDENTIAL, SAVE_CREDENTIAL} from '../actions/auth';
 
 const initialAppState = {
   user: null,
@@ -7,12 +6,12 @@ const initialAppState = {
 
 const authReducer = (state = initialAppState, action) => {
   switch (action.type) {
-    case ActionTypes.auth.SAVE_CREDENTIAL:
+    case SAVE_CREDENTIAL:
       return Object.assign({}, state, {
         ...state,
         user: action.payload.user,
       });
-    case ActionTypes.auth.DELETE_CREDENTIAL:
+    case DELETE_CREDENTIAL:
       return Object.assign({}, state, {
         ...state,
         user: null,

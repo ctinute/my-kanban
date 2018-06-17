@@ -1,37 +1,48 @@
-import {ActionTypes} from '../actions/action-types';
 import {APP_INITIAL_STATE} from '../initial-state';
+import {
+  HIDE_DIALOG,
+  HIDE_TOAST,
+  SET_APP_READY,
+  SET_DRAWER_MINIMIZATION,
+  SET_FETCH_END,
+  SET_FETCH_START,
+  SET_NETWORK_OFFLINE,
+  SET_NETWORK_ONLINE,
+  SHOW_DIALOG,
+  SHOW_TOAST,
+} from '../actions/app';
 
 const appReducer = (state = APP_INITIAL_STATE, action) => {
   switch (action.type) {
-    case ActionTypes.app.SET_APP_READY:
+    case SET_APP_READY:
       return Object.assign({}, state, {
         ...state,
         ready: true,
       });
 
-    case ActionTypes.app.SET_FETCH_START:
+    case SET_FETCH_START:
       return Object.assign({}, state, {
         ...state,
         fetching: true,
       });
-    case ActionTypes.app.SET_FETCH_END:
+    case SET_FETCH_END:
       return Object.assign({}, state, {
         ...state,
         fetching: false,
       });
 
-    case ActionTypes.app.SET_NETWORK_ONLINE:
+    case SET_NETWORK_ONLINE:
       return Object.assign({}, state, {
         ...state,
         offline: false,
       });
-    case ActionTypes.app.SET_NETWORK_OFFLINE:
+    case SET_NETWORK_OFFLINE:
       return Object.assign({}, state, {
         ...state,
         offline: true,
       });
 
-    case ActionTypes.app.SHOW_TOAST:
+    case SHOW_TOAST:
       return Object.assign({}, state, {
         ...state,
         globalToast: {
@@ -39,7 +50,7 @@ const appReducer = (state = APP_INITIAL_STATE, action) => {
           message: action.payload.message,
         },
       });
-    case ActionTypes.app.HIDE_TOAST:
+    case HIDE_TOAST:
       return Object.assign({}, state, {
         ...state,
         globalToast: {
@@ -48,7 +59,7 @@ const appReducer = (state = APP_INITIAL_STATE, action) => {
         },
       });
 
-    case ActionTypes.app.SET_DRAWER_MINIMIZATION:
+    case SET_DRAWER_MINIMIZATION:
       return Object.assign({}, state, {
         ...state,
         drawer: state.smallScreen ?
@@ -62,7 +73,7 @@ const appReducer = (state = APP_INITIAL_STATE, action) => {
           },
       });
 
-    case ActionTypes.app.SHOW_DIALOG:
+    case SHOW_DIALOG:
       return Object.assign({}, state, {
         ...state,
         globalDialog: {
@@ -71,7 +82,7 @@ const appReducer = (state = APP_INITIAL_STATE, action) => {
           data: action.payload.data,
         },
       });
-    case ActionTypes.app.HIDE_DIALOG:
+    case HIDE_DIALOG:
       return Object.assign({}, state, {
         ...state,
         globalDialog: {
