@@ -1,4 +1,4 @@
-import {LitElement, html} from '@polymer/lit-element';
+import {html, LitElement} from '@polymer/lit-element';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-toggle-button';
@@ -35,12 +35,18 @@ export default class MkDialogCreateStage extends LitElement {
         :host {
             display: block;
         }
+        .actions {
+        margin-top: 16px;
+        }
       </style>
     `;
   }
 
   _render({stage}) {
     let styles = this._renderStyles();
+    let toggleCanCreateTask = () => {
+      stage.canCreateTask = !stage.canCreateTask;
+    };
     return html`
       ${styles}
       <div class="header">
@@ -49,6 +55,7 @@ export default class MkDialogCreateStage extends LitElement {
       <div class="body">
         <paper-input
           label="Name"
+          always-float-label
           value="${stage.name}"
           on-change="${(e) => stage.name = e.target.value})"
           required
@@ -57,16 +64,20 @@ export default class MkDialogCreateStage extends LitElement {
         <paper-input
           label="Limit task"
           type="number"
+          always-float-label
           value="${stage.limit}"
           on-change="${(e) => stage.limit = e.target.value})"
           required
           error-message="This field is required !!!">
         </paper-input>
-        <paper-toggle-button></paper-toggle-button>
+        <div class="inline">
+          <label for="create-task-toogle">Can create task ?</label>
+          <paper-toggle-button id="create-task-toogle" checked="${stage.canCreateTask}" on-click="${toggleCanCreateTask}"></paper-toggle-button>
+        </div>
       </div>
       <div class="actions">
-        <paper-button dialog-dismiss onclick="${() => this._submit(stage)}">Cancel</paper-button>
-        <paper-button dialog-confirm onclick="${this._cancel}">Create</paper-button>
+        <paper-button dialog-dismiss on-click="${() => this._cancel()}">Cancel</paper-button>
+        <paper-button dialog-confirm on-click="${() => this._submit(stage)}">Create</paper-button>
       </div>`;
   }
 }

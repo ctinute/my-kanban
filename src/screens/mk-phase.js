@@ -32,10 +32,14 @@ export default class MkPhase extends connect(store)(PageViewElement) {
     this.phase = this.project ? this.project.phases[this.phaseId] : null;
   }
 
+  _createStage(stage) {
+    stage.phaseId = this.phase.id;
+    store.dispatch(Actions.stage.add(stage));
+  }
   _openCreateStageDialog() {
     let dialog = html`
       <mk-dialog-create-stage
-        on-submit="${()=>console.log('cancelled')}"
+        on-submit="${(e) => console.log('cancelled')}"
         on-cancel="${()=>console.log('cancelled')}"></mk-dialog-create-stage>`;
     store.dispatch(Actions.app.showDialog(dialog, null));
   }
