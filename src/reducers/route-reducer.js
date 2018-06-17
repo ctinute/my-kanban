@@ -1,4 +1,4 @@
-import {ActionTypes} from '../actions/action-types';
+import {SET_ROUTE_DATA} from '../actions/route';
 
 const initialAppState = {
   page: 'home',
@@ -8,7 +8,7 @@ const initialAppState = {
 
 const routeReducer = (state = initialAppState, action) => {
   switch (action.type) {
-    case ActionTypes.route.SET_ROUTE_DATA:
+    case SET_ROUTE_DATA:
       return Object.assign({}, state, {
         ...state,
         page: action.payload.page,
