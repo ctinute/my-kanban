@@ -8,7 +8,7 @@ import * as stage from './stage-saga';
 import {LOGIN, LOGOUT} from '../../actions/auth';
 import {CHANGE_ROUTE, NAVIGATE} from '../../actions/route';
 import {REFRESH_DATA, SET_TOAST} from '../../actions/app';
-import {PULL_ALL, PULL_ONE, PUSH_ALL, PUSH_ONE, SAGA_CREATE_PROJECT} from '../../actions/project';
+import {PULL_ALL, PULL_ONE, PUSH_ALL, PUSH_ONE, SAGA_CREATE_PROJECT, SYNC} from '../../actions/project';
 import {PHASE_SAGA_CREATE} from '../../actions/phase';
 import {ADD_STAGE, DELETE_STAGE, MOVE_STAGE, UPDATE_STAGE} from '../../actions/stage';
 
@@ -25,9 +25,9 @@ function* rootSaga() {
 
     takeLatest(PULL_ALL, project.pullAll),
     takeLatest(PUSH_ALL, project.pushAll),
-
     takeEvery(PULL_ONE, project.pullOne),
     takeEvery(PUSH_ONE, project.pushOne),
+    takeEvery(SYNC, project.sync),
 
     takeLatest(SAGA_CREATE_PROJECT, project.createProject),
 
