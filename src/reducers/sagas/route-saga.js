@@ -42,11 +42,11 @@ const computePage = (isAuthenticated, path) => {
             if (pathLevels[3] === 's' && pathLevels[4]) {
               // localhost/u/{projectId}/{phaseId}/s/{stageId}
               const stageId = pathLevels[4];
-              return {page: 'stage', pathData: {projectId, phaseId, stageId}};
+              return {page: 'phase', pathData: {projectId, phaseId, stageId}};
             } else if (pathLevels[3] === 't' && pathLevels[4]) {
               // localhost/u/{projectId}/{phaseId}/c/{cardId}
               const cardId = pathLevels[4];
-              return {page: 'stage', pathData: {projectId, phaseId, cardId}};
+              return {page: 'phase', pathData: {projectId, phaseId, cardId}};
             }
             return {page: '404', pathLevels};
           }
