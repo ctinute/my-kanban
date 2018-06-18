@@ -25,8 +25,8 @@ export const deleteById = (stage) => ({
   },
 });
 
-export const move = (oldIndex, newIndex) => ({
+export const move = (oldIndex, newIndex, projectId, phaseId) => ({
   type: MOVE_STAGE,
-  payload: {oldIndex, newIndex},
+  payload: {oldIndex, newIndex, projectId, phaseId},
 });
 

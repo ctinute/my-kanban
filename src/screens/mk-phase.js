@@ -11,6 +11,7 @@ import '@polymer/paper-card';
 import './components/mk-stage-list';
 import './components/mk-dialog-create-stage';
 import {Actions} from '../actions';
+import {move} from '../actions/stage';
 
 
 export default class MkPhase extends connect(store)(PageViewElement) {
@@ -103,6 +104,10 @@ export default class MkPhase extends connect(store)(PageViewElement) {
     `;
   }
 
+  _moveStage(src, des) {
+    store.dispatch(move(src, des, this.projectId, this.phaseId));
+  }
+
   _render({phase}) {
     let styles = this._renderStyles();
     let toolbar = this._renderToolbar(phase);
@@ -116,7 +121,7 @@ export default class MkPhase extends connect(store)(PageViewElement) {
         <mk-stage-list 
           class="list-item"
           stages="${stages}"
-          on-move-stage="${(e) => console.log(e)}"
+          on-move-stage="${(e) => this._moveStage(e.detail.oldIndex, e.detail.newIndex)}"
           on-move-task="${(e) => console.log(e)}">
         </mk-stage-list>
         <div class="list-item">
@@ -130,7 +135,7 @@ export default class MkPhase extends connect(store)(PageViewElement) {
     let stages = [];
     // re-order stage details
     for (let i = 0; i < phase.stages.length; i++) {
-      let stage = phase.stageDetails[phase.stages[i]];
+      let stage = JSON.parse(JSON.stringify(phase.stageDetails[phase.stages[i]]));
       // add cards to stage detail
       if (stage.tasks) {
         for (let j = 0; j < stage.tasks.length; j++) {

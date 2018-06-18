@@ -7,11 +7,15 @@ class MkStageList extends LitElement {
   constructor() {
     super();
     this.shouldMoveTaskEventFire = true;
+
+    // TODO: this is just a temporary fix for state change => re-order stage again
+    this.shadowStages = [];
   }
 
   static get properties() {
     return {
       stages: Array,
+      shadowStages: Array,
       shouldMoveTaskEventFire: Boolean,
     };
   }
@@ -30,7 +34,8 @@ class MkStageList extends LitElement {
     }
   }
 
-  _didRender() {
+  _firstRendered() {
+    this.shadowStages = this.stages;
     let stageListContainer = this.shadowRoot.querySelector('#list');
     Sortable.create(stageListContainer, {
       animation: 100,
@@ -59,11 +64,11 @@ class MkStageList extends LitElement {
     }
   }
 
-  _render({stages}) {
+  _render({shadowStages}) {
     return html`
       ${this._renderStyles()}
       <div id="list">
-        ${stages.map((stage, index) => this._renderStage(stage, index))}
+        ${shadowStages.map((stage, index) => this._renderStage(stage, index))}
       </div>  
     `;
   }
@@ -130,7 +135,8 @@ class MkStageList extends LitElement {
         class="stage" 
         stage="${stage}" 
         canCreateTask="${(index === 0)}" 
-        on-create-task-button-click="${() => console.log('createTask')}">
+        on-create-task-button-click="${() => {
+    }}">
         <div class="content" id="${stage.id}" data-index-number="${index}">
           ${taskList}
         </div>

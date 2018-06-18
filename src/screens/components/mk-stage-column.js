@@ -33,6 +33,10 @@ class MkStageColumn extends LitElement {
     this.dispatchEvent(new CustomEvent('createTaskButtonClick'));
   }
 
+  _shouldRender(props) {
+    return props.stage !== undefined;
+  }
+
   _render({stage}) {
     let styles = this._renderStyles();
     let actions = stage.canCreateTask ? html`<paper-button ripple on-click="${() => this._onCreateTaskButtonClick()}">New task...</paper-button>` : null;

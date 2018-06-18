@@ -18,6 +18,11 @@ class MkTaskItem extends LitElement {
     `;
   }
 
+  _shouldRender(props) {
+    return props.task !== undefined;
+  }
+
+
   _render({task, onTaskClick}) {
     let styles = this._renderStyles();
     return html`
