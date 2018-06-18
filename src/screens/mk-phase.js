@@ -38,8 +38,8 @@ export default class MkPhase extends connect(store)(PageViewElement) {
   _openCreateStageDialog() {
     let dialog = html`
       <mk-dialog-create-stage
-        on-submit="${(e) => console.log('cancelled')}"
-        on-cancel="${()=>console.log('cancelled')}"></mk-dialog-create-stage>`;
+        on-submit="${(e) => this._createStage(e.detail.stage)}"
+        on-cancel="${() => console.log('cancelled')}"></mk-dialog-create-stage>`;
     store.dispatch(Actions.app.showDialog(dialog, null));
   }
 
@@ -120,7 +120,7 @@ export default class MkPhase extends connect(store)(PageViewElement) {
           on-move-task="${(e) => console.log(e)}">
         </mk-stage-list>
         <div class="list-item">
-          <paper-button id="new-stage" flat on-click="${this._openCreateStageDialog}">New stage</paper-button>
+          <paper-button id="new-stage" flat on-click="${() => this._openCreateStageDialog()}">New stage</paper-button>
         </div>
       </div>
     `;

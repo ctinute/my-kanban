@@ -1,9 +1,34 @@
-import {all, call, put, select} from 'redux-saga/effects';
+import {put, select} from 'redux-saga/effects';
 import {showToast} from '../../actions/app';
+import {sync} from '../../actions/project';
+
+const computeId = (phase, stage) => {
+  let baseId = stage.name.toString().toLowerCase().split(' ').join('-');
+  let newId = baseId;
+  let n = 0;
+  let found = false;
+  while (!found) {
+    if (!phase.stageDetails.hasOwnProperty(newId)) {
+      found = true;
+    } else {
+      n++;
+      newId = baseId + n;
+    }
+  }
+  return newId;
+};
 
 export function* addStage(action) {
   try {
-    console.log(action);
+    let {stage, projectId, phaseId} = action.payload;
+    let project = yield select((state) => state.userData.projects[projectId]);
+    let phase = project.phases[phaseId];
+    stage.id = computeId(phase, stage);
+    stage.phaseId = phaseId;
+    stage.projectId = projectId;
+    project.phases[phaseId].stageDetails[stage.id] = stage;
+    project.phases[phaseId].stages.push(stage.id);
+    yield put(sync(project));
   } catch (e) {
     yield put(showToast(e.message));
   }
