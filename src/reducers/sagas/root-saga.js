@@ -4,11 +4,13 @@ import * as route from './route-saga';
 import * as app from './app-saga';
 import * as project from './project-saga';
 import * as phase from './phase-saga';
+import * as stage from './stage-saga';
 import {LOGIN, LOGOUT} from '../../actions/auth';
 import {CHANGE_ROUTE, NAVIGATE} from '../../actions/route';
 import {REFRESH_DATA, SET_TOAST} from '../../actions/app';
 import {PULL_ALL, PULL_ONE, PUSH_ALL, PUSH_ONE, SAGA_CREATE_PROJECT} from '../../actions/project';
 import {PHASE_SAGA_CREATE} from '../../actions/phase';
+import {ADD_STAGE, DELETE_STAGE, MOVE_STAGE, UPDATE_STAGE} from '../../actions/stage';
 
 function* rootSaga() {
   yield [
@@ -30,6 +32,11 @@ function* rootSaga() {
     takeLatest(SAGA_CREATE_PROJECT, project.createProject),
 
     takeLatest(PHASE_SAGA_CREATE, phase.createPhase),
+
+    takeEvery(ADD_STAGE, stage.addStage),
+    takeEvery(UPDATE_STAGE, stage.updateStage),
+    takeEvery(DELETE_STAGE, stage.deleteStage),
+    takeEvery(MOVE_STAGE, stage.moveStage),
   ];
 }
 

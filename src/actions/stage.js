@@ -4,12 +4,9 @@ export const DELETE_STAGE = 'DELETE_STAGE';
 
 export const MOVE_STAGE = 'MOVE_STAGE';
 
-export const add = (stage) => ({
+export const add = (stage, projectId, phaseId) => ({
   type: ADD_STAGE,
-  payload: {
-    stage: stage,
-    phaseId: stage.phaseId,
-  },
+  payload: {stage, projectId, phaseId},
 });
 
 export const update = (stage) => ({
@@ -27,3 +24,9 @@ export const deleteById = (stage) => ({
     phaseId: stage.phaseId,
   },
 });
+
+export const move = (oldIndex, newIndex) => ({
+  type: MOVE_STAGE,
+  payload: {oldIndex, newIndex},
+});
+

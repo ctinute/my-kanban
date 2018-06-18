@@ -33,8 +33,7 @@ export default class MkPhase extends connect(store)(PageViewElement) {
   }
 
   _createStage(stage) {
-    stage.phaseId = this.phase.id;
-    store.dispatch(Actions.stage.add(stage));
+    store.dispatch(Actions.stage.add(stage, this.projectId, this.phaseId));
   }
   _openCreateStageDialog() {
     let dialog = html`
