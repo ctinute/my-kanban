@@ -1,6 +1,6 @@
 import {html, LitElement} from '@polymer/lit-element';
 import 'sortablejs';
-import './mk-stage';
+import './mk-stage-column';
 import './mk-task-item';
 
 class MkStageList extends LitElement {
@@ -126,15 +126,15 @@ class MkStageList extends LitElement {
       html`${stage.tasks.map((task) => this._renderTask(task))}` : null;
       // html `<div class="no-task">No task. Drop new task here !</div>`;
     return html`
-      <mk-stage 
+      <mk-stage-column 
         class="stage" 
         stage="${stage}" 
         canCreateTask="${(index === 0)}" 
-        onCreateTaskButtonClick="${() => {}}">
+        on-create-task-button-click="${() => console.log('createTask')}">
         <div class="content" id="${stage.id}" data-index-number="${index}">
           ${taskList}
         </div>
-      </mk-stage>
+      </mk-stage-column>
     `;
   }
 

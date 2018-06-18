@@ -128,18 +128,18 @@ export default class MkPhase extends connect(store)(PageViewElement) {
 
   _createDisplayStages(phase) {
     let stages = [];
-    for (let stageId of phase.stages) {
-      let tasks = [];
-      if (phase.stageDetails[stageId].tasks) {
-        for (let taskId of phase.stageDetails[stageId].tasks) {
-          tasks.push(phase.taskDetails[taskId]);
+    // re-order stage details
+    for (let i = 0; i < phase.stages.length; i++) {
+      let stage = phase.stageDetails[phase.stages[i]];
+      // add cards to stage detail
+      if (stage.tasks) {
+        for (let j = 0; j < stage.tasks.length; j++) {
+          stage.tasks[j] = phase.taskDetails[stage.tasks[j]];
         }
+      } else {
+        stage.tasks = [];
       }
-      stages.push({
-        id: stageId,
-        name: phase.stageDetails[stageId].name,
-        tasks,
-      });
+      stages.push(stage);
     }
     return stages;
   }
