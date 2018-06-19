@@ -33,6 +33,10 @@ class MkStageColumn extends LitElement {
     this.dispatchEvent(new CustomEvent('createTaskButtonClick'));
   }
 
+  _fireSelectEvent() {
+    this.dispatchEvent(new CustomEvent('select'));
+  }
+
   _shouldRender(props) {
     return props.stage !== undefined;
   }
@@ -42,7 +46,7 @@ class MkStageColumn extends LitElement {
     let actions = stage.canCreateTask ? html`<paper-button ripple on-click="${() => this._onCreateTaskButtonClick()}">New task...</paper-button>` : null;
     return html`
       ${styles}
-      <div class="header">
+      <div class="header" on-click="${() => this._fireSelectEvent()}">
         ${stage.name}
       </div>
       <div class="content">

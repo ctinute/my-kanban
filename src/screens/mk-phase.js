@@ -22,6 +22,8 @@ export default class MkPhase extends connect(store)(PageViewElement) {
       phaseId: String,
       project: Object,
       phase: Object,
+      showToolbar: Boolean,
+      selectedStageIndex: Number,
     };
   }
 
@@ -31,6 +33,8 @@ export default class MkPhase extends connect(store)(PageViewElement) {
     this.phaseId = state.route.data.phaseId;
     this.project = state.userData.projects[this.projectId];
     this.phase = this.project ? this.project.phases[this.phaseId] : null;
+    this.selectedStageIndex = -1;
+    this.showToolbar = false;
   }
 
   _createStage(stage) {
@@ -55,10 +59,44 @@ export default class MkPhase extends connect(store)(PageViewElement) {
         .content {
             width: 100%;
             height: 100%;
+            padding-top: 16px;
         }
         app-header-layout > .content {
           padding: 16px 0;
           height: 100%;
+        }
+        app-header {
+          height: 64px;
+          overflow: hidden;
+        }
+        @keyframes slide-in {
+          from {
+            opacity: 0;
+            transform: translateY(-64px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes slide-out {
+          from {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateY(64px);
+          }
+        }
+        .toolbar {
+          width: 100%;
+          position: absolute;
+          box-sizing: border-box;
+          animation: slide-in 0.5s ease forwards;
+        }
+        .toolbar.hidden {
+          animation: slide-out 0.5s ease forwards;
         }
         
         .horizontal-list {
@@ -92,35 +130,47 @@ export default class MkPhase extends connect(store)(PageViewElement) {
     `;
   }
 
-  _renderToolbar(phase) {
-    return html`
-      <app-toolbar>
-        <div main-title>${phase.name}</div>
-        <paper-icon-button icon="delete"></paper-icon-button>
-        <paper-icon-button icon="search"></paper-icon-button>
-        <paper-icon-button icon="close"></paper-icon-button>
-        <paper-progress value="10" indeterminate bottom-item></paper-progress>
-      </app-toolbar>
-    `;
-  }
-
   _moveStage(src, des) {
     store.dispatch(move(src, des, this.projectId, this.phaseId));
   }
 
-  _render({phase}) {
+  _onSelectStage(e) {
+    this.showToolbar = e.detail.selected;
+    this.selectedStage = e.detail.stageId;
+  }
+
+  _deselectStage() {
+    // TODO: not working
+    this.selectedStageIndex = -1;
+  }
+
+  _render({project, phase, showToolbar, selectedStageIndex}) {
     let styles = this._renderStyles();
-    let toolbar = this._renderToolbar(phase);
     let stages = this._createDisplayStages(phase);
     return html`
       ${styles}
-      <app-header slot="header" fixed condenses effects="waterfall">
-        ${toolbar}
+      <app-header class="app-header" slot="header" fixed condenses effects="waterfall">
+        <app-toolbar class$="${showToolbar?'toolbar hidden':'toolbar'}">
+          <div main-title>
+            <a href="/u/${project.id}">${project.name}</a>
+            <span class="title-seperator"> / </span>
+            <a href="/u/${project.id}/${phase.id}">${phase.name}</a>
+          </div>
+        </app-toolbar>
+        <app-toolbar class$="${showToolbar?'toolbar':'toolbar hidden'}">
+          <div main-title>Select an action</div>
+          <paper-icon-button icon="edit"></paper-icon-button>
+          <paper-icon-button icon="delete"></paper-icon-button>
+          <paper-icon-button icon="close" on-click="${() => this._deselectStage()}"></paper-icon-button>
+        </app-toolbar>
       </app-header>
       <div class="content horizontal-list">
         <mk-stage-list 
+          id="stageList"
           class="list-item"
           stages="${stages}"
+          selectedIndex="${selectedStageIndex}"
+          on-stage-selection-changed="${(e) => this._onSelectStage(e)}"
           on-move-stage="${(e) => this._moveStage(e.detail.oldIndex, e.detail.newIndex)}"
           on-move-task="${(e) => console.log(e)}">
         </mk-stage-list>

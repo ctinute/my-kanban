@@ -10,6 +10,7 @@ class MkStageList extends LitElement {
 
     // TODO: this is just a temporary fix for state change => re-order stage again
     this.shadowStages = [];
+    this.selectedIndex = -1;
   }
 
   static get properties() {
@@ -17,7 +18,17 @@ class MkStageList extends LitElement {
       stages: Array,
       shadowStages: Array,
       shouldMoveTaskEventFire: Boolean,
+      selectedIndex: Number,
     };
+  }
+
+  _fireStageSelectionChanged() {
+    this.dispatchEvent(new CustomEvent('stage-selection-changed', {
+      detail: {
+        selected: this.selectedIndex !== -1,
+        stageId: this.selectedIndex !== -1 ? this.shadowStages[this.selectedIndex].id : null,
+      },
+    }));
   }
 
   _moveStage(oldIndex, newIndex) {
@@ -64,11 +75,11 @@ class MkStageList extends LitElement {
     }
   }
 
-  _render({shadowStages}) {
+  _render({shadowStages, selectedIndex}) {
     return html`
       ${this._renderStyles()}
       <div id="list">
-        ${shadowStages.map((stage, index) => this._renderStage(stage, index))}
+        ${shadowStages.map((stage, index) => this._renderStage(stage, index, index === selectedIndex))}
       </div>  
     `;
   }
@@ -100,6 +111,9 @@ class MkStageList extends LitElement {
           margin: 0 16px;
           padding: 8px;
         }
+        .stage.active {
+          box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
+        }
         .task {
           height: 48px;
           line-height: 48px;
@@ -126,17 +140,36 @@ class MkStageList extends LitElement {
     `;
   }
 
-  _renderStage(stage, index) {
+  _onStageClicked(index) {
+    if (index !== this.selectedIndex) {
+      this.selectStage(index);
+    } else {
+      this.deSelectStage();
+    }
+    this._fireStageSelectionChanged();
+  }
+
+  selectStage(index) {
+    this.selectedIndex = index;
+  }
+
+  deSelectStage() {
+    this.selectedIndex = -1;
+  }
+
+  _renderStage(stage, index, isActive) {
+    let classes = `stage ${isActive ? 'active' : ''}`;
     let taskList = stage.tasks.length > 0 ?
       html`${stage.tasks.map((task) => this._renderTask(task))}` : null;
-      // html `<div class="no-task">No task. Drop new task here !</div>`;
+    // html `<div class="no-task">No task. Drop new task here !</div>`;
     return html`
       <mk-stage-column 
-        class="stage" 
+        class$="${classes}" 
         stage="${stage}" 
-        canCreateTask="${(index === 0)}" 
+        canCreateTask="${stage.canCreateTask}" 
         on-create-task-button-click="${() => {
-    }}">
+    }}"
+        on-select="${() => this._onStageClicked(index)}">
         <div class="content" id="${stage.id}" data-index-number="${index}">
           ${taskList}
         </div>
