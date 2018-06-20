@@ -121,10 +121,11 @@ class MyApp extends connect(store)(LitElement) {
         main {
           width: 100%;
           height: 100%;
+          overflow: hidden;
         }
         
         main.has-toolbar {
-          padding-top: 64px;
+          /*padding-top: 64px;*/
         }
         
         main > * {
@@ -145,7 +146,6 @@ class MyApp extends connect(store)(LitElement) {
         .screen {
           width: 100%;
           height: 100%;
-          padding: 16px;
           box-sizing: border-box;
         }
         app-header {
