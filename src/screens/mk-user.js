@@ -1,13 +1,11 @@
-import {PageViewElement} from './page-view-element.js';
 import {html} from '@polymer/lit-element';
 import '@polymer/paper-button/paper-button.js';
-import {store} from '../store.js';
-import {connect} from 'pwa-helpers/connect-mixin.js';
 import './components/mk-dialog-create-project';
 import {showDialog} from '../actions/app';
 import {createProject} from '../actions/project';
+import {MkScreen} from './mk-screen';
 
-export default class MkUser extends connect(store)(PageViewElement) {
+export default class MkUser extends MkScreen {
   static get properties() {
     return {
       _user: Object,
@@ -21,8 +19,8 @@ export default class MkUser extends connect(store)(PageViewElement) {
   }
 
   _openCreateProjectDialog() {
-    let createNweProject = (project) => store.dispatch(createProject(project));
-    store.dispatch(showDialog(html`<mk-dialog-create-project on-submit="${(e) => createNweProject(e.detail.project)}"></mk-dialog-create-project>`));
+    let createNweProject = (project) => this._dispatch(createProject(project));
+    this._dispatch(showDialog(html`<mk-dialog-create-project on-submit="${(e) => createNweProject(e.detail.project)}"></mk-dialog-create-project>`));
   }
 
   _renderStyles() {

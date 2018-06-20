@@ -39,6 +39,7 @@ class MyApp extends connect(store)(LitElement) {
     this._globalToast = APP_INITIAL_STATE.globalToast;
     this._globalDialog = APP_INITIAL_STATE.globalDialog;
     this._drawer = APP_INITIAL_STATE.drawer;
+    this._toolbar = APP_INITIAL_STATE.toollbar;
 
     this._drawerItems = [{
       title: 'Dashboard',
@@ -57,6 +58,7 @@ class MyApp extends connect(store)(LitElement) {
 
       _drawer: Object,
       _drawerItems: Array,
+      _toolbar: Object,
 
       _offline: Boolean,
       _globalToast: Object,
@@ -72,6 +74,7 @@ class MyApp extends connect(store)(LitElement) {
     this._user = state.auth.user;
     this._smallScreen = state.app.smallScreen;
     this._drawer = state.app.drawer;
+    this._toolbar = state.app.toolbar;
     this._offline = state.app.offline;
     this._globalToast = state.app.globalToast;
     this._globalDialog = state.app.globalDialog;
@@ -106,13 +109,22 @@ class MyApp extends connect(store)(LitElement) {
           --app-drawer-width: 256px;
         }
         
-        app-header-layout {
-          overflow: hidden;
+        app-header-layout {}
+        
+        app-header {
+          height: 64px;
+        }
+        app-header.hidden {
+          height: 0;
         }
         
         main {
           width: 100%;
-          height: 100vh;
+          height: 100%;
+        }
+        
+        main.has-toolbar {
+          padding-top: 64px;
         }
         
         main > * {
@@ -133,25 +145,64 @@ class MyApp extends connect(store)(LitElement) {
         .screen {
           width: 100%;
           height: 100%;
+          padding: 16px;
+          box-sizing: border-box;
+        }
+        app-header {
+          max-height: 64px;
+          overflow: hidden;
+        }
+        @keyframes slide-in {
+          from {
+            opacity: 0;
+            transform: translateY(-64px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes slide-out {
+          from {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateY(64px);
+          }
+        }
+        .toolbar {
+          width: 100%;
+          position: absolute;
+          box-sizing: border-box;
+          animation: slide-in 0.5s ease forwards;
+        }
+        .toolbar.gone {
+          animation: slide-out 0.5s ease forwards;
+        }
+        .toolbar.hidden {
+          display: none;
         }
       </style>
     `;
   }
 
   _render({
-               _ready,
-               _page,
-               _path,
-               _user,
-               _smallScreen,
+            _ready,
+            _page,
+            _path,
+            _user,
+            _smallScreen,
 
-               _drawer,
-               _drawerItems,
+            _drawer,
+            _drawerItems,
+            _toolbar,
 
-               _offline,
-               _globalToast,
-               _globalDialog,
-             }) {
+            _offline,
+            _globalToast,
+            _globalDialog,
+          }) {
     const styles = this._renderStyles();
 
     const miniDrawerStyle = _drawer.minimized ? html`
@@ -179,9 +230,16 @@ class MyApp extends connect(store)(LitElement) {
         </app-drawer>
 
         <!-- Main content -->
-        <app-header-layout>
-            
-          <main id="pages">
+        <app-header-layout fullbleed>
+          <app-header class$="${_toolbar.show? '' : 'hidden'}" slot="header" fixed condenses>
+            <app-toolbar id="default-toolbar" class$="${!_toolbar.show ? 'toolbar hidden' : !_toolbar.showAction ? 'toolbar' : 'toolbar gone'}">
+             ${_toolbar.default} 
+            </app-toolbar>
+            <app-toolbar id="action-toolbar" class$="${!_toolbar.show ? 'toolbar hidden' : _toolbar.showAction ? 'toolbar' : 'toolbar gone'}">
+             ${_toolbar.action} 
+            </app-toolbar>
+          </app-header>
+          <main id="pages" class$="${_toolbar.show? 'has-toolbar' : ''}">
             <mk-home class="screen" active?="${_page === 'home'}"></mk-home>
             <mk-user class="screen" active?="${_page === 'user'}"></mk-user>
             <mk-project class="screen" active?="${_page === 'project'}"></mk-project>

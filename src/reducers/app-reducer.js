@@ -1,15 +1,16 @@
 import {APP_INITIAL_STATE} from '../initial-state';
 import {
+  HIDE_ACTION_TOOLBAR,
   HIDE_DIALOG,
-  HIDE_TOAST,
-  SET_APP_READY,
+  HIDE_TOAST, HIDE_TOOLBAR, SET_ACTION_TOOLBAR,
+  SET_APP_READY, SET_DEFAULT_TOOLBAR,
   SET_DRAWER_MINIMIZATION,
   SET_FETCH_END,
   SET_FETCH_START,
   SET_NETWORK_OFFLINE,
-  SET_NETWORK_ONLINE,
+  SET_NETWORK_ONLINE, SHOW_ACTION_TOOLBAR,
   SHOW_DIALOG,
-  SHOW_TOAST,
+  SHOW_TOAST, SHOW_TOOLBAR,
 } from '../actions/app';
 
 const appReducer = (state = APP_INITIAL_STATE, action) => {
@@ -72,6 +73,56 @@ const appReducer = (state = APP_INITIAL_STATE, action) => {
             minimized: action.payload.minimized,
           },
       });
+
+    case SET_DEFAULT_TOOLBAR:
+      return Object.assign({}, state, {
+        ...state,
+        toolbar: {
+          ...state.toolbar,
+          default: action.payload.toolbarContent,
+        },
+      });
+    case SET_ACTION_TOOLBAR:
+      return Object.assign({}, state, {
+        ...state,
+        toolbar: {
+          ...state.toolbar,
+          action: action.payload.toolbarContent,
+        },
+      });
+    case HIDE_TOOLBAR:
+      return Object.assign({}, state, {
+        ...state,
+        toolbar: {
+          ...state.toolbar,
+          show: false,
+        },
+      });
+    case SHOW_TOOLBAR:
+      return Object.assign({}, state, {
+        ...state,
+        toolbar: {
+          ...state.toolbar,
+          show: true,
+        },
+      });
+    case HIDE_ACTION_TOOLBAR:
+      return Object.assign({}, state, {
+        ...state,
+        toolbar: {
+          ...state.toolbar,
+          showAction: false,
+        },
+      });
+    case SHOW_ACTION_TOOLBAR:
+      return Object.assign({}, state, {
+        ...state,
+        toolbar: {
+          ...state.toolbar,
+          showAction: true,
+        },
+      });
+
 
     case SHOW_DIALOG:
       return Object.assign({}, state, {
