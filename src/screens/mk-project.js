@@ -1,16 +1,14 @@
-import {PageViewElement} from './page-view-element.js';
 import {html} from '@polymer/lit-element';
 import '@polymer/app-layout/app-header-layout/app-header-layout';
 import '@polymer/app-layout/app-header/app-header';
 import '@polymer/app-layout/app-toolbar/app-toolbar';
 import '@polymer/paper-icon-button';
 import '@polymer/paper-card';
-import {store} from '../store.js';
-import {connect} from 'pwa-helpers/connect-mixin.js';
 import {Actions} from '../actions';
 import './components/mk-dialog-create-phase';
+import {MkScreen} from './mk-screen';
 
-export default class MkProject extends connect(store)(PageViewElement) {
+export default class MkProject extends MkScreen {
   constructor() {
     super();
     this.user = null;
@@ -32,25 +30,25 @@ export default class MkProject extends connect(store)(PageViewElement) {
     this.project = state.userData.projects[this.projectId];
   }
 
+  _didRender(props, oldProps, changedProps) {
+    super._didRender(props, oldProps, changedProps);
+    this._requireDefaultToolbar();
+    this._setDefaultToolbar(html`
+      <div main-title>
+        <a href="/u/${props.project.id}">${props.project.name}</a>
+      </div>
+    `);
+    this._showToolbar();
+  }
+
   _openCreatePhaseDialog() {
-    let createProject = (phase) => store.dispatch(Actions.phase.createPhase(phase, this.projectId));
-    store.dispatch(Actions.app.showDialog(html`<mk-dialog-create-phase on-submit="${(e) => createProject(e.detail.phase)}"></mk-dialog-create-phase>`));
+    let createProject = (phase) => this._dispatch(Actions.phase.createPhase(phase, this.projectId));
+    this._dispatch(Actions.app.showDialog(html`<mk-dialog-create-phase on-submit="${(e) => createProject(e.detail.phase)}"></mk-dialog-create-phase>`));
   }
 
   _renderStyles() {
     return html`
       <style>
-        app-toolbar {
-          background-color: white;
-          color: black;
-          font-weight: bold;
-        }
-        
-        .content {
-            box-sizing: border-box;
-            padding: 16px;
-        }
-        
         .section {
             width: 100%;
             margin: 16px 0;
@@ -60,19 +58,7 @@ export default class MkProject extends connect(store)(PageViewElement) {
   }
 
   _navigateProjectDetailPage(projectName, projectId, phaseId) {
-    store.dispatch(Actions.route.navigate(projectName, `/u/${projectId}/${phaseId}`));
-  }
-
-  _renderToolbar(project) {
-    return html`
-      <app-toolbar>
-        <div main-title>My app</div>
-        <paper-icon-button icon="delete"></paper-icon-button>
-        <paper-icon-button icon="search"></paper-icon-button>
-        <paper-icon-button icon="close"></paper-icon-button>
-        <paper-progress value="10" indeterminate bottom-item></paper-progress>
-      </app-toolbar>
-    `;
+    this._dispatch(Actions.route.navigate(projectName, `/u/${projectId}/${phaseId}`));
   }
 
   _renderOverview(project) {
@@ -122,25 +108,17 @@ export default class MkProject extends connect(store)(PageViewElement) {
 
   _render({project}) {
     let styles = this._renderStyles();
-    let toolbar = this._renderToolbar(project);
     let overView = this._renderOverview(project);
     let phases = this._renderPhases(project);
     return html`
       ${styles}
-      <app-header-layout>
-        <app-header slot="header" fixed condenses effects="waterfall">
-            ${toolbar}
-        </app-header>
-        <div class="content">
-          <paper-card class="section overview">
-            ${overView}
-          </paper-card>
-          <paper-card class="section phases">
-            ${phases}
-          </paper-card>
-          <paper-card class="section"></paper-card>
-        </div>
-      </app-header-layout>
+      <paper-card class="section overview">
+        ${overView}
+      </paper-card>
+      <paper-card class="section phases">
+        ${phases}
+      </paper-card>
+      <paper-card class="section"></paper-card>
     `;
   }
 }

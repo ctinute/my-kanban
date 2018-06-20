@@ -1,8 +1,5 @@
 /* eslint-disable no-console */
-import {PageViewElement} from './page-view-element.js';
 import {html} from '@polymer/lit-element';
-import {store} from '../store.js';
-import {connect} from 'pwa-helpers/connect-mixin.js';
 import '@polymer/app-layout/app-header-layout/app-header-layout';
 import '@polymer/app-layout/app-header/app-header';
 import '@polymer/app-layout/app-toolbar/app-toolbar';
@@ -12,9 +9,10 @@ import './components/mk-stage-list';
 import './components/mk-dialog-create-stage';
 import {Actions} from '../actions';
 import {move} from '../actions/stage';
+import {MkScreen} from './mk-screen';
 
 
-export default class MkPhase extends connect(store)(PageViewElement) {
+export default class MkPhase extends MkScreen {
   static get properties() {
     return {
       user: Object,
@@ -22,7 +20,6 @@ export default class MkPhase extends connect(store)(PageViewElement) {
       phaseId: String,
       project: Object,
       phase: Object,
-      showToolbar: Boolean,
       selectedStageIndex: Number,
     };
   }
@@ -34,18 +31,29 @@ export default class MkPhase extends connect(store)(PageViewElement) {
     this.project = state.userData.projects[this.projectId];
     this.phase = this.project ? this.project.phases[this.phaseId] : null;
     this.selectedStageIndex = -1;
-    this.showToolbar = false;
+  }
+
+  _didRender(props, oldProps, changedProps) {
+    this._requireDefaultToolbar();
+    this._setDefaultToolbar(html`
+      <div main-title>
+        <a href="/u/${props.project.id}">${props.project.name}</a>
+        <span class="title-seperator"> / </span>
+        <a href="/u/${props.project.id}/${props.phase.id}">${props.phase.name}</a>
+      </div>
+    `);
+    this._showToolbar();
   }
 
   _createStage(stage) {
-    store.dispatch(Actions.stage.add(stage, this.projectId, this.phaseId));
+    this._dispatch(Actions.stage.add(stage, this.projectId, this.phaseId));
   }
   _openCreateStageDialog() {
     let dialog = html`
       <mk-dialog-create-stage
         on-submit="${(e) => this._createStage(e.detail.stage)}"
         on-cancel="${() => console.log('cancelled')}"></mk-dialog-create-stage>`;
-    store.dispatch(Actions.app.showDialog(dialog, null));
+    this._dispatch(Actions.app.showDialog(dialog, null));
   }
 
   _renderStyles() {
@@ -55,48 +63,6 @@ export default class MkPhase extends connect(store)(PageViewElement) {
             display: block;
             width: 100%;
             height: 100%;
-        }
-        .content {
-            width: 100%;
-            height: 100%;
-            padding-top: 16px;
-        }
-        app-header-layout > .content {
-          padding: 16px 0;
-          height: 100%;
-        }
-        app-header {
-          height: 64px;
-          overflow: hidden;
-        }
-        @keyframes slide-in {
-          from {
-            opacity: 0;
-            transform: translateY(-64px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes slide-out {
-          from {
-            opacity: 1;
-            transform: translateY(0);
-          }
-          to {
-            opacity: 0;
-            transform: translateY(64px);
-          }
-        }
-        .toolbar {
-          width: 100%;
-          position: absolute;
-          box-sizing: border-box;
-          animation: slide-in 0.5s ease forwards;
-        }
-        .toolbar.hidden {
-          animation: slide-out 0.5s ease forwards;
         }
         
         .horizontal-list {
@@ -131,11 +97,17 @@ export default class MkPhase extends connect(store)(PageViewElement) {
   }
 
   _moveStage(src, des) {
-    store.dispatch(move(src, des, this.projectId, this.phaseId));
+    this._dispatch(move(src, des, this.projectId, this.phaseId));
   }
 
   _onSelectStage(e) {
-    this.showToolbar = e.detail.selected;
+    this._setActionToolbar(html`
+      <div main-title>Select an action</div>
+      <paper-icon-button icon="edit"></paper-icon-button>
+      <paper-icon-button icon="delete"></paper-icon-button>
+      <paper-icon-button icon="close" on-click="${() => this._deselectStage()}"></paper-icon-button>
+    `);
+    this._requireActionToolbar();
     this.selectedStage = e.detail.stageId;
   }
 
@@ -149,21 +121,6 @@ export default class MkPhase extends connect(store)(PageViewElement) {
     let stages = this._createDisplayStages(phase);
     return html`
       ${styles}
-      <app-header class="app-header" slot="header" fixed condenses effects="waterfall">
-        <app-toolbar class$="${showToolbar?'toolbar hidden':'toolbar'}">
-          <div main-title>
-            <a href="/u/${project.id}">${project.name}</a>
-            <span class="title-seperator"> / </span>
-            <a href="/u/${project.id}/${phase.id}">${phase.name}</a>
-          </div>
-        </app-toolbar>
-        <app-toolbar class$="${showToolbar?'toolbar':'toolbar hidden'}">
-          <div main-title>Select an action</div>
-          <paper-icon-button icon="edit"></paper-icon-button>
-          <paper-icon-button icon="delete"></paper-icon-button>
-          <paper-icon-button icon="close" on-click="${() => this._deselectStage()}"></paper-icon-button>
-        </app-toolbar>
-      </app-header>
       <div class="content horizontal-list">
         <mk-stage-list 
           id="stageList"

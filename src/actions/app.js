@@ -1,3 +1,5 @@
+export const DISPATCH_CHAIN = 'DISPATCH_CHAIN';
+
 export const SET_APP_READY = 'SET_READY';
 export const REFRESH_DATA = 'REFRESH_DATA';
 
@@ -9,12 +11,21 @@ export const SET_FETCH_END = 'SET_FETCH_END';
 
 export const SET_DRAWER_MINIMIZATION = 'SET_DRAWER_MINIMIZATION';
 
+export const SET_ACTION_TOOLBAR = 'SET_ACTION_TOOLBAR';
+export const SET_DEFAULT_TOOLBAR = 'SET_DEFAULT_TOOLBAR';
+export const SHOW_TOOLBAR = 'SHOW_TOOLBAR';
+export const HIDE_TOOLBAR = 'HIDE_TOOLBAR';
+export const SHOW_ACTION_TOOLBAR = 'SHOW_ACTION_TOOLBAR';
+export const HIDE_ACTION_TOOLBAR = 'HIDE_ACTION_TOOLBAR';
+
 export const SET_TOAST = 'SET_TOAST';
 export const HIDE_TOAST = 'HIDE_TOAST';
 export const SHOW_TOAST = 'SHOW_TOAST';
 
 export const SHOW_DIALOG = 'SHOW_DIALOG';
 export const HIDE_DIALOG = 'HIDE_DIALOG';
+
+export const dispatchChain = (actions) => ({type: DISPATCH_CHAIN, payload: {actions}});
 
 export const setAppReady = () => ({type: SET_APP_READY});
 
@@ -31,6 +42,28 @@ export const setFetching = (isFetching) => isFetching ?
 export const setAppDrawerMinimization = (minimized = false) => ({
   type: SET_DRAWER_MINIMIZATION,
   payload: {minimized},
+});
+
+// TOOLBAR
+export const setActionToolbar = (toolbarContent) => ({
+  type: SET_ACTION_TOOLBAR,
+  payload: {toolbarContent},
+});
+export const setDefaultToolbar = (toolbarContent) => ({
+  type: SET_DEFAULT_TOOLBAR,
+  payload: {toolbarContent},
+});
+export const showToolbar = () => ({
+  type: SHOW_TOOLBAR,
+});
+export const hideToolbar = () => ({
+  type: HIDE_TOOLBAR,
+});
+export const showActionToolbar = () => ({
+  type: SHOW_ACTION_TOOLBAR,
+});
+export const hideActionToolbar = () => ({
+  type: HIDE_ACTION_TOOLBAR,
 });
 
 // GLOBAL TOAST

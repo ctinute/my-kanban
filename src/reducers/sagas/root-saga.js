@@ -1,4 +1,4 @@
-import {takeEvery, takeLatest} from 'redux-saga/effects';
+import {takeEvery, takeLatest, put} from 'redux-saga/effects';
 import * as auth from './auth-saga';
 import * as route from './route-saga';
 import * as app from './app-saga';
@@ -7,10 +7,22 @@ import * as phase from './phase-saga';
 import * as stage from './stage-saga';
 import {LOGIN, LOGOUT} from '../../actions/auth';
 import {CHANGE_ROUTE, NAVIGATE} from '../../actions/route';
-import {REFRESH_DATA, SET_TOAST} from '../../actions/app';
+import {DISPATCH_CHAIN, REFRESH_DATA, SET_TOAST} from '../../actions/app';
 import {PULL_ALL, PULL_ONE, PUSH_ALL, PUSH_ONE, SAGA_CREATE_PROJECT, SYNC} from '../../actions/project';
 import {PHASE_SAGA_CREATE} from '../../actions/phase';
 import {ADD_STAGE, DELETE_STAGE, MOVE_STAGE, UPDATE_STAGE} from '../../actions/stage';
+
+function* dispatchChain(action) {
+  try {
+    let chain = action.payload.actions || [];
+    for (let action of chain) {
+      yield put(action);
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.log(e);
+  }
+}
 
 function* rootSaga() {
   yield [
@@ -20,6 +32,7 @@ function* rootSaga() {
     takeLatest(CHANGE_ROUTE, route.updateLocation),
     takeLatest(NAVIGATE, route.navigate),
 
+    takeLatest(DISPATCH_CHAIN, dispatchChain),
     takeLatest(REFRESH_DATA, app.fetchNewData),
     takeLatest(SET_TOAST, app.setToast),
 
