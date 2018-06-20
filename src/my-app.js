@@ -24,9 +24,6 @@ import './screens/mk-home.js';
 import './screens/mk-user.js';
 import './screens/mk-project.js';
 import './screens/mk-phase.js';
-import './screens/mk-stage.js';
-import './screens/mk-card.js';
-import './screens/mk-cards.js';
 import {hideDialog, setAppDrawerMinimization, setNetworkStatus} from './actions/app';
 import {login, logout} from './actions/auth';
 import {changeRoute} from './actions/route';
@@ -189,8 +186,6 @@ class MyApp extends connect(store)(LitElement) {
             <mk-user class="screen" active?="${_page === 'user'}"></mk-user>
             <mk-project class="screen" active?="${_page === 'project'}"></mk-project>
             <mk-phase class="screen" active?="${_page === 'phase'}"></mk-phase>
-            <mk-card class="screen" active?="${_page === 'card'}"></mk-card>
-            <mk-cards class="screen" active?="${_page === 'cards'}"></mk-cards>
             <mk-404 class="screen" active?="${_page === '404'}"></mk-404>
           </main>
 

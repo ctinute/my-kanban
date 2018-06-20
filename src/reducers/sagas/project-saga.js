@@ -15,6 +15,16 @@ export function* createProject(action) {
   }
 }
 
+export function* sync(action) {
+  try {
+    let project = action.payload.project;
+    project = yield call(API.project.saveOrUpdate, project);
+    yield put(saveProjectToState(project));
+  } catch (e) {
+    yield put(Actions.app.showToast(e.message));
+  }
+}
+
 export function* pushAll() {
   try {
     let projects = yield select((state) => state.userData.projects);
