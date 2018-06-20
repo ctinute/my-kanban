@@ -7,7 +7,6 @@ import {installOfflineWatcher} from 'pwa-helpers/network.js';
 import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
 
 import {store} from './store.js';
-import {Actions} from './actions';
 import {APP_INITIAL_STATE} from './initial-state';
 
 import '@polymer/app-layout/app-header/app-header.js';
@@ -25,9 +24,9 @@ import './screens/mk-home.js';
 import './screens/mk-user.js';
 import './screens/mk-project.js';
 import './screens/mk-phase.js';
-import './screens/mk-stage.js';
-import './screens/mk-card.js';
-import './screens/mk-cards.js';
+import {hideDialog, setAppDrawerMinimization, setNetworkStatus} from './actions/app';
+import {login, logout} from './actions/auth';
+import {changeRoute} from './actions/route';
 
 class MyApp extends connect(store)(LitElement) {
   constructor() {
@@ -40,6 +39,7 @@ class MyApp extends connect(store)(LitElement) {
     this._globalToast = APP_INITIAL_STATE.globalToast;
     this._globalDialog = APP_INITIAL_STATE.globalDialog;
     this._drawer = APP_INITIAL_STATE.drawer;
+    this._toolbar = APP_INITIAL_STATE.toollbar;
 
     this._drawerItems = [{
       title: 'Dashboard',
@@ -58,6 +58,7 @@ class MyApp extends connect(store)(LitElement) {
 
       _drawer: Object,
       _drawerItems: Array,
+      _toolbar: Object,
 
       _offline: Boolean,
       _globalToast: Object,
@@ -73,14 +74,15 @@ class MyApp extends connect(store)(LitElement) {
     this._user = state.auth.user;
     this._smallScreen = state.app.smallScreen;
     this._drawer = state.app.drawer;
+    this._toolbar = state.app.toolbar;
     this._offline = state.app.offline;
     this._globalToast = state.app.globalToast;
     this._globalDialog = state.app.globalDialog;
   }
 
   _firstRendered() {
-    installRouter((location) => store.dispatch(Actions.route.changeRoute(location)));
-    installOfflineWatcher((offline) => store.dispatch(Actions.app.setNetworkStatus(offline)));
+    installRouter((location) => store.dispatch(changeRoute(location)));
+    installOfflineWatcher((offline) => store.dispatch(setNetworkStatus(offline)));
     installMediaQueryWatcher('(max-width: 767px)', (matches) => this._smallScreen = matches);
   }
 
@@ -107,13 +109,23 @@ class MyApp extends connect(store)(LitElement) {
           --app-drawer-width: 256px;
         }
         
-        app-header-layout {
-          overflow: hidden;
+        app-header-layout {}
+        
+        app-header {
+          height: 64px;
+        }
+        app-header.hidden {
+          height: 0;
         }
         
         main {
           width: 100%;
-          height: 100vh;
+          height: 100%;
+          overflow: hidden;
+        }
+        
+        main.has-toolbar {
+          /*padding-top: 64px;*/
         }
         
         main > * {
@@ -134,25 +146,63 @@ class MyApp extends connect(store)(LitElement) {
         .screen {
           width: 100%;
           height: 100%;
+          box-sizing: border-box;
+        }
+        app-header {
+          max-height: 64px;
+          overflow: hidden;
+        }
+        @keyframes slide-in {
+          from {
+            opacity: 0;
+            transform: translateY(-64px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes slide-out {
+          from {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateY(64px);
+          }
+        }
+        .toolbar {
+          width: 100%;
+          position: absolute;
+          box-sizing: border-box;
+          animation: slide-in 0.5s ease forwards;
+        }
+        .toolbar.gone {
+          animation: slide-out 0.5s ease forwards;
+        }
+        .toolbar.hidden {
+          display: none;
         }
       </style>
     `;
   }
 
   _render({
-               _ready,
-               _page,
-               _path,
-               _user,
-               _smallScreen,
+            _ready,
+            _page,
+            _path,
+            _user,
+            _smallScreen,
 
-               _drawer,
-               _drawerItems,
+            _drawer,
+            _drawerItems,
+            _toolbar,
 
-               _offline,
-               _globalToast,
-               _globalDialog,
-             }) {
+            _offline,
+            _globalToast,
+            _globalDialog,
+          }) {
     const styles = this._renderStyles();
 
     const miniDrawerStyle = _drawer.minimized ? html`
@@ -172,23 +222,28 @@ class MyApp extends connect(store)(LitElement) {
             user="${_user}"
             minimized="${_drawer.minimized}" 
             drawer-items="${_drawerItems}"
-            on-login="${() => store.dispatch(Actions.auth.login())}"
-            on-logout="${() => store.dispatch(Actions.auth.logout())}"
-            on-toggle-minimize="${(e) => store.dispatch(Actions.app.setAppDrawerMinimization(!e.detail.minimized))}"
+            on-login="${() => store.dispatch(login())}"
+            on-logout="${() => store.dispatch(logout())}"
+            on-toggle-minimize="${(e) => store.dispatch(setAppDrawerMinimization(!e.detail.minimized))}"
             store="${store}">
           </mk-drawer>
         </app-drawer>
 
         <!-- Main content -->
-        <app-header-layout>
-            
-          <main id="pages">
+        <app-header-layout fullbleed>
+          <app-header class$="${_toolbar.show? '' : 'hidden'}" slot="header" fixed condenses>
+            <app-toolbar id="default-toolbar" class$="${!_toolbar.show ? 'toolbar hidden' : !_toolbar.showAction ? 'toolbar' : 'toolbar gone'}">
+             ${_toolbar.default} 
+            </app-toolbar>
+            <app-toolbar id="action-toolbar" class$="${!_toolbar.show ? 'toolbar hidden' : _toolbar.showAction ? 'toolbar' : 'toolbar gone'}">
+             ${_toolbar.action} 
+            </app-toolbar>
+          </app-header>
+          <main id="pages" class$="${_toolbar.show? 'has-toolbar' : ''}">
             <mk-home class="screen" active?="${_page === 'home'}"></mk-home>
             <mk-user class="screen" active?="${_page === 'user'}"></mk-user>
             <mk-project class="screen" active?="${_page === 'project'}"></mk-project>
             <mk-phase class="screen" active?="${_page === 'phase'}"></mk-phase>
-            <mk-card class="screen" active?="${_page === 'card'}"></mk-card>
-            <mk-cards class="screen" active?="${_page === 'cards'}"></mk-cards>
             <mk-404 class="screen" active?="${_page === '404'}"></mk-404>
           </main>
 
@@ -212,7 +267,7 @@ class MyApp extends connect(store)(LitElement) {
   _onDialogVisibilityChanged(e) {
     const opened = e.detail.value;
     if (!opened) {
-      store.dispatch(Actions.app.hideDialog());
+      store.dispatch(hideDialog());
     }
   }
 }

@@ -1,12 +1,10 @@
 import {html, LitElement} from '@polymer/lit-element';
 import 'sortablejs';
 
-class MkStage extends LitElement {
+class MkStageColumn extends LitElement {
   static get properties() {
     return {
       stage: Object,
-      canCreateTask: Boolean,
-      onCreateTaskButtonClick: Function,
     };
   }
 
@@ -31,12 +29,24 @@ class MkStage extends LitElement {
     `;
   }
 
-  _render({stage, canCreateTask, onCreateTaskButtonClick}) {
+  _onCreateTaskButtonClick() {
+    this.dispatchEvent(new CustomEvent('createTaskButtonClick'));
+  }
+
+  _fireSelectEvent() {
+    this.dispatchEvent(new CustomEvent('select'));
+  }
+
+  _shouldRender(props) {
+    return props.stage !== undefined;
+  }
+
+  _render({stage}) {
     let styles = this._renderStyles();
-    let actions = canCreateTask ? html`<paper-button ripple on-click="${onCreateTaskButtonClick}">New task...</paper-button>` : null;
+    let actions = stage.canCreateTask ? html`<paper-button ripple on-click="${() => this._onCreateTaskButtonClick()}">New task...</paper-button>` : null;
     return html`
       ${styles}
-      <div class="header">
+      <div class="header" on-click="${() => this._fireSelectEvent()}">
         ${stage.name}
       </div>
       <div class="content">
@@ -49,4 +59,4 @@ class MkStage extends LitElement {
   }
 }
 
-customElements.define('mk-stage', MkStage);
+customElements.define('mk-stage-column', MkStageColumn);

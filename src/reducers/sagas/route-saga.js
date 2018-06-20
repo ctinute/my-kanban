@@ -1,14 +1,15 @@
 import {call, put, select, take} from 'redux-saga/effects';
 import {Actions} from '../../actions/index';
-import {ActionTypes} from '../../actions/action-types/index';
 import {API} from '../../api/index';
+import {APP_ROUTE_CHANGED, APP_ROUTE_CHANGING} from '../../actions/route';
+import {SET_APP_READY} from '../../actions/app';
 
 export function* updateLocation(action) {
-  yield put({type: ActionTypes.route.APP_ROUTE_CHANGING});
+  yield put({type: APP_ROUTE_CHANGING});
 
   const ready = yield select((state) => state.app.ready);
   if (!ready) {
-    yield take(ActionTypes.app.SET_APP_READY);
+    yield take(SET_APP_READY);
   }
 
   const isAuthenticated = yield select((state) => state.auth.user);
@@ -17,7 +18,7 @@ export function* updateLocation(action) {
   const {page, pathData} = computePage(isAuthenticated, path);
 
   yield put(Actions.route.setRouteData(page, pathData));
-  yield put({type: ActionTypes.route.APP_ROUTE_CHANGED});
+  yield put({type: APP_ROUTE_CHANGED});
 }
 
 const computePage = (isAuthenticated, path) => {
@@ -41,11 +42,11 @@ const computePage = (isAuthenticated, path) => {
             if (pathLevels[3] === 's' && pathLevels[4]) {
               // localhost/u/{projectId}/{phaseId}/s/{stageId}
               const stageId = pathLevels[4];
-              return {page: 'stage', pathData: {projectId, phaseId, stageId}};
+              return {page: 'phase', pathData: {projectId, phaseId, stageId}};
             } else if (pathLevels[3] === 't' && pathLevels[4]) {
               // localhost/u/{projectId}/{phaseId}/c/{cardId}
               const cardId = pathLevels[4];
-              return {page: 'stage', pathData: {projectId, phaseId, cardId}};
+              return {page: 'phase', pathData: {projectId, phaseId, cardId}};
             }
             return {page: '404', pathLevels};
           }
@@ -60,7 +61,7 @@ const computePage = (isAuthenticated, path) => {
 };
 
 export function* navigate(action) {
-  yield put({type: ActionTypes.route.APP_ROUTE_CHANGING});
+  yield put({type: APP_ROUTE_CHANGING});
 
   const isAuthenticated = yield call(API.auth.getCurrentUser);
 
@@ -71,5 +72,5 @@ export function* navigate(action) {
   window.history.pushState('', title, path);
   yield put(Actions.route.setRouteData(page, pathData));
 
-  yield put({type: ActionTypes.route.APP_ROUTE_CHANGED});
+  yield put({type: APP_ROUTE_CHANGED});
 }

@@ -1,7 +1,8 @@
-import * as app from './app-actions';
-import * as auth from './auth-actions';
-import * as route from './route-actions';
-import * as project from './project-actions';
-import * as phase from './phase-actions';
+import * as app from './app';
+import * as auth from './auth';
+import * as route from './route';
+import * as project from './project';
+import * as phase from './phase';
+import * as stage from './stage';
 
-export const Actions = {app, auth, route, project, phase};
+export const Actions = {app, auth, route, project, phase, stage};
