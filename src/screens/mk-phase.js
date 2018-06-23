@@ -75,11 +75,13 @@ export default class MkPhase extends MkScreen {
     return html`
       <style>
         :host {
-            display: block;
-            width: 100%;
-            height: 100%;
+          display: block;
+          width: 100%;
+          height: 100%;
         }
-        
+        .content {
+          height: 100%;
+        }
         .horizontal-list {
           width: auto;
           white-space: nowrap;
@@ -92,8 +94,8 @@ export default class MkPhase extends MkScreen {
         }
         
         mk-stage-list {
-            height: 100%;
-            width: auto;
+          height: 100%;
+          width: auto;
         }
         
         #new-stage {
