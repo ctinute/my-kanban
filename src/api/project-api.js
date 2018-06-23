@@ -36,7 +36,12 @@ export const saveOrUpdate = async (project) => {
 };
 
 export const deleteProject = async (project) => {
-  // TODO: implement delete project
+  const projectDetailPath = `/projectsByUser/${project.owner}/${project.id}`;
+  const projectListOfUserPath = `/users/${project.owner}/projects/${project.id}`;
+  let data = {};
+  data[projectDetailPath] = null;
+  data[projectListOfUserPath] = null;
+  return database.ref().update(data);
 };
 
 export const getAll = async (uid) => {
