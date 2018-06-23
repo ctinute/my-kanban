@@ -26,8 +26,8 @@ export function* logout() {
     yield put(Actions.app.setFetching(true));
     yield call(API.auth.firebaseLogout);
     yield put(Actions.auth.deleteCredential());
+    yield put(Actions.app.deleteUserData());
 
-    // TODO: delete user data
     yield put(Actions.route.navigate('Home', '/'));
 
     yield put(Actions.app.setFetching(false));
