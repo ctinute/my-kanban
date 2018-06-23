@@ -7,6 +7,7 @@ import '@polymer/paper-icon-button';
 import '@polymer/paper-card';
 import './components/mk-stage-list';
 import './components/mk-dialog-create-stage';
+import './components/mk-dialog-create-task';
 import {Actions} from '../actions';
 import {move} from '../actions/stage';
 import {MkScreen} from './mk-screen';
@@ -48,11 +49,25 @@ export default class MkPhase extends MkScreen {
   _createStage(stage) {
     this._dispatch(Actions.stage.add(stage, this.projectId, this.phaseId));
   }
+
+  _createTask(task, stageId) {
+    task.projectId = this.projectId;
+    task.phaseId = this.phaseId;
+    this._dispatch(Actions.task.add(task));
+  }
   _openCreateStageDialog() {
     let dialog = html`
       <mk-dialog-create-stage
         on-submit="${(e) => this._createStage(e.detail.stage)}"
         on-cancel="${() => console.log('cancelled')}"></mk-dialog-create-stage>`;
+    this._dispatch(Actions.app.showDialog(dialog, null));
+  }
+
+  _openCreateTaskDialog(stageId) {
+    let dialog = html`
+      <mk-dialog-create-task
+        on-submit="${(e) => this._createTask(e.detail.task, stageId)}"
+        on-cancel="${() => console.log('cancelled')}"></mk-dialog-create-task>`;
     this._dispatch(Actions.app.showDialog(dialog, null));
   }
 
@@ -129,7 +144,8 @@ export default class MkPhase extends MkScreen {
           selectedIndex="${selectedStageIndex}"
           on-stage-selection-changed="${(e) => this._onSelectStage(e)}"
           on-move-stage="${(e) => this._moveStage(e.detail.oldIndex, e.detail.newIndex)}"
-          on-move-task="${(e) => console.log(e)}">
+          on-move-task="${(e) => console.log(e)}"
+          on-create-task="${(e) => this._openCreateTaskDialog(e.detail.stageId)}">
         </mk-stage-list>
         <div class="list-item">
           <paper-button id="new-stage" flat on-click="${() => this._openCreateStageDialog()}">New stage</paper-button>

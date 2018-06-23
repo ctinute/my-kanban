@@ -157,6 +157,14 @@ class MkStageList extends LitElement {
     this.selectedIndex = -1;
   }
 
+  _onCreateTaskClicked(stageId) {
+    this.dispatchEvent(new CustomEvent('create-task', {
+      detail: {
+        stageId,
+      },
+    }));
+  }
+
   _renderStage(stage, index, isActive) {
     let classes = `stage ${isActive ? 'active' : ''}`;
     let taskList = stage.tasks.length > 0 ?
@@ -167,8 +175,7 @@ class MkStageList extends LitElement {
         class$="${classes}" 
         stage="${stage}" 
         canCreateTask="${stage.canCreateTask}" 
-        on-create-task-button-click="${() => {
-    }}"
+        on-create-task-button-click="${() => this._onCreateTaskClicked(stage.id)}"
         on-select="${() => this._onStageClicked(index)}">
         <div class="content" id="${stage.id}" data-index-number="${index}">
           ${taskList}
