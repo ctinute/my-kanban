@@ -1,11 +1,6 @@
 import {html, LitElement} from '@polymer/lit-element';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings.js';
-
-import {connect} from 'pwa-helpers/connect-mixin.js';
-import {installRouter} from 'pwa-helpers/router.js';
-import {installOfflineWatcher} from 'pwa-helpers/network.js';
-import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
-
+import {connect, installMediaQueryWatcher, installOfflineWatcher, installRouter} from 'pwa-helpers';
 import {store} from './store.js';
 import {APP_INITIAL_STATE} from './initial-state';
 
