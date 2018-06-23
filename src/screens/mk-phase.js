@@ -53,6 +53,7 @@ export default class MkPhase extends MkScreen {
   _createTask(task, stageId) {
     task.projectId = this.projectId;
     task.phaseId = this.phaseId;
+    task.stageId = stageId;
     this._dispatch(Actions.task.add(task));
   }
   _openCreateStageDialog() {
@@ -157,6 +158,7 @@ export default class MkPhase extends MkScreen {
   }
 
   _createDisplayStages(phase) {
+    // console.log('_createDisplayStages');
     let stages = [];
     // re-order stage details
     for (let i = 0; i < phase.stages.length; i++) {

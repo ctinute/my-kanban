@@ -7,16 +7,12 @@ class MkStageList extends LitElement {
   constructor() {
     super();
     this.shouldMoveTaskEventFire = true;
-
-    // TODO: this is just a temporary fix for state change => re-order stage again
-    this.shadowStages = [];
     this.selectedIndex = -1;
   }
 
   static get properties() {
     return {
       stages: Array,
-      shadowStages: Array,
       shouldMoveTaskEventFire: Boolean,
       selectedIndex: Number,
     };
@@ -26,7 +22,7 @@ class MkStageList extends LitElement {
     this.dispatchEvent(new CustomEvent('stage-selection-changed', {
       detail: {
         selected: this.selectedIndex !== -1,
-        stageId: this.selectedIndex !== -1 ? this.shadowStages[this.selectedIndex].id : null,
+        stageId: this.selectedIndex !== -1 ? this.stages[this.selectedIndex].id : null,
       },
     }));
   }
@@ -46,7 +42,10 @@ class MkStageList extends LitElement {
   }
 
   _firstRendered() {
-    this.shadowStages = this.stages;
+    this._initSortable();
+  }
+
+  _initSortable() {
     let stageListContainer = this.shadowRoot.querySelector('#list');
     Sortable.create(stageListContainer, {
       animation: 100,
@@ -75,11 +74,11 @@ class MkStageList extends LitElement {
     }
   }
 
-  _render({shadowStages, selectedIndex}) {
+  _render({stages, selectedIndex}) {
     return html`
       ${this._renderStyles()}
       <div id="list">
-        ${shadowStages.map((stage, index) => this._renderStage(stage, index, index === selectedIndex))}
+        ${stages.map((stage, index) => this._renderStage(stage, index, index === selectedIndex))}
       </div>  
     `;
   }
@@ -163,6 +162,32 @@ class MkStageList extends LitElement {
         stageId,
       },
     }));
+  }
+
+  _shouldRender(props, changedProps, oldProps) {
+    let shouldRender = true;
+    if (changedProps.stages && oldProps.stages) {
+      shouldRender = false;
+      let oldStages = oldProps.stages;
+      let newStages = props.stages;
+      if (oldStages.length !== newStages.length) {
+        shouldRender = true;
+        // console.log('number of stage has changed')
+      } else {
+        let oldTotalTasks = 0;
+        let newTotalTasks = 0;
+        for (let i = 0; i < newStages.length; i++) {
+          newTotalTasks += newStages[i].tasks.length;
+          oldTotalTasks += oldStages[i].tasks.length;
+        }
+        if (oldTotalTasks !== newTotalTasks) {
+          shouldRender = true;
+          // console.log('number of task has changed')
+        }
+      }
+    }
+    // console.log(`MK-stage-list should render: ${shouldRender}`);
+    return shouldRender;
   }
 
   _renderStage(stage, index, isActive) {
