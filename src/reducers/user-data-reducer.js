@@ -4,6 +4,7 @@ import {
   SAVE_PROJECT_TO_STATE,
   SAVE_PROJECTS_TO_STATE,
 } from '../actions/project';
+import {DELETE_USER_DATA} from '../actions/app';
 
 const initialAppState = {
   projects: [],
@@ -42,6 +43,8 @@ const userDataReducer = (state = initialAppState, action) => {
         projects: [],
       });
 
+    case DELETE_USER_DATA:
+      return initialAppState;
 
     default:
       return state;

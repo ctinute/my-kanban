@@ -25,6 +25,8 @@ export const SHOW_TOAST = 'SHOW_TOAST';
 export const SHOW_DIALOG = 'SHOW_DIALOG';
 export const HIDE_DIALOG = 'HIDE_DIALOG';
 
+export const DELETE_USER_DATA = 'DELETE_USER_DATA';
+
 export const dispatchChain = (actions) => ({type: DISPATCH_CHAIN, payload: {actions}});
 
 export const setAppReady = () => ({type: SET_APP_READY});
@@ -94,3 +96,5 @@ export const showDialog = (dialog) => ({
 export const hideDialog = () => ({
   type: HIDE_DIALOG,
 });
+
+export const deleteUserData = () => ({type: DELETE_USER_DATA});
