@@ -28,7 +28,7 @@ class MkTaskItem extends LitElement {
     return html`
       ${styles}
       <div on-click="${onTaskClick}">
-        ${task.title}
+        ${task.name}
       </div>
     `;
   }

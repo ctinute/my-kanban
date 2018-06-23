@@ -5,7 +5,7 @@ import '@polymer/paper-card';
 import '@polymer/iron-icons/iron-icons';
 import './components/mk-dialog-create-project';
 import {showDialog} from '../actions/app';
-import {createProject} from '../actions/project';
+import {createProject, deleteProject} from '../actions/project';
 
 export default class MkUser extends MkScreen {
   static get properties() {
@@ -98,13 +98,17 @@ export default class MkUser extends MkScreen {
       </style>`;
   }
 
+  _deleteProject(projectId) {
+    this._dispatch(deleteProject(projectId));
+  }
+
   _renderProjectItem(project) {
     return html`
       <paper-card class="item project" elevation="0">
         <a class="title" href="/u/${project.id}">${project.name}</a>
         <div class="actions">
           <iron-icon icon="icons:create"></iron-icon>
-          <iron-icon icon="icons:delete"></iron-icon>
+          <iron-icon icon="icons:delete" on-click="${() => this._deleteProject(project.id)}"></iron-icon>
         </div>
       </paper-card>
     `;

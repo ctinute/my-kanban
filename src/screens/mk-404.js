@@ -1,9 +1,7 @@
-import {PageViewElement} from './page-view-element.js';
 import {html} from '@polymer/lit-element';
-import {store} from '../store.js';
-import {connect} from 'pwa-helpers/connect-mixin.js';
+import {MkScreen} from './mk-screen';
 
-export default class Mk404 extends connect(store)(PageViewElement) {
+export default class Mk404 extends MkScreen {
   static get properties() {
     return {};
   }
