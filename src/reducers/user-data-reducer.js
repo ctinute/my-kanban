@@ -1,8 +1,8 @@
 import {
-  PROJECT_REMOVE_FROM_STATE,
-  PROJECT_REMOVE_SINGLE_PROJECT_FROM_STATE,
-  PROJECT_SAVE_SINGLE_PROJECT_TO_STATE,
-  PROJECT_SAVE_TO_STATE,
+  REMOVE_PROJECT_FROM_STATE,
+  REMOVE_PROJECTS_FROM_STATE,
+  SAVE_PROJECT_TO_STATE,
+  SAVE_PROJECTS_TO_STATE,
 } from '../actions/project';
 
 const initialAppState = {
@@ -11,7 +11,7 @@ const initialAppState = {
 
 const userDataReducer = (state = initialAppState, action) => {
   switch (action.type) {
-    case PROJECT_SAVE_SINGLE_PROJECT_TO_STATE:
+    case SAVE_PROJECT_TO_STATE:
       return Object.assign({}, state, {
         ...state,
         projects: {
@@ -19,7 +19,7 @@ const userDataReducer = (state = initialAppState, action) => {
           [action.payload.project.id]: JSON.parse(JSON.stringify(action.payload.project)),
         },
       });
-    case PROJECT_REMOVE_SINGLE_PROJECT_FROM_STATE:
+    case REMOVE_PROJECT_FROM_STATE:
       return Object.assign({}, state, {
         ...state,
         projects: Object.keys(state.projects).reduce((result, key) => {
@@ -30,13 +30,13 @@ const userDataReducer = (state = initialAppState, action) => {
         }, {}),
       });
 
-    case PROJECT_SAVE_TO_STATE:
+    case SAVE_PROJECTS_TO_STATE:
       return Object.assign({}, state, {
         ...state,
         projects: action.payload.projects,
       });
 
-    case PROJECT_REMOVE_FROM_STATE:
+    case REMOVE_PROJECTS_FROM_STATE:
       return Object.assign({}, state, {
         ...state,
         projects: [],
