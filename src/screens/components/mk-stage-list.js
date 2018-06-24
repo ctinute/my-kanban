@@ -120,8 +120,10 @@ class MkStageList extends LitElement {
           width: 256px;
           margin: 0 16px;
           box-sizing: border-box;
+          border-radius: 4px;
         }
         .stage.active {
+          background-color: #e3f2fd;
           box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
         }
         .task {
@@ -180,7 +182,7 @@ class MkStageList extends LitElement {
   _renderStage(stage, index, isActive) {
     let classes = `stage ${isActive ? 'active' : ''}`;
     let taskList = stage.tasks.length > 0 ?
-      html`${stage.tasks.map((task) => this._renderTask(task))}` : null;
+      html`${stage.tasks.map((task) => this._renderTask(task, isActive))}` : null;
     // html `<div class="no-task">No task. Drop new task here !</div>`;
     return html`
       <mk-stage-column 
@@ -217,9 +219,9 @@ class MkStageList extends LitElement {
   }
 
   // noinspection JSMethodCanBeStatic
-  _renderTask(task) {
+  _renderTask(task, hostColumnActive) {
     return html`
-      <paper-card class="task">
+      <paper-card class="task" elevation="${hostColumnActive ? 0 : 1}">
         <mk-task-item task="${task}">
       </paper-card>
     `;

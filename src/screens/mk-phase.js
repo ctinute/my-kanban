@@ -44,15 +44,19 @@ export default class MkPhase extends MkScreen {
     this._dispatch(move(src, des, this.project.id, this.phase.id));
   }
 
-  _selectStage(e) {
-    this._setActionToolbar(html`
-      <div main-title>Select an action</div>
-      <paper-icon-button icon="edit"></paper-icon-button>
-      <paper-icon-button icon="delete"></paper-icon-button>
-      <paper-icon-button icon="close" on-click="${() => this._deselectStage()}"></paper-icon-button>
-    `);
-    this._requireActionToolbar();
-    // this.selectedStageId = e.detail.stageId;
+  _selectStage(stageId) {
+    if (stageId) {
+      this._setActionToolbar(html`
+        <div main-title>Select an action</div>
+        <paper-icon-button icon="edit"></paper-icon-button>
+        <paper-icon-button icon="delete"></paper-icon-button>
+        <paper-icon-button icon="close" on-click="${() => this._deselectStage()}"></paper-icon-button>
+      `);
+      this._requireActionToolbar();
+    } else {
+      this._setActionToolbar(null);
+      this._requireDefaultToolbar();
+    }
   }
 
   _deselectStage() {
@@ -136,7 +140,7 @@ export default class MkPhase extends MkScreen {
           id="stageList"
           class="list-item"
           phase="${phase}"
-          on-select-stage="${(e) => this._selectStage(e)}"
+          on-select-stage="${(e) => this._selectStage(e.detail.stageId)}"
           on-move-stage="${(e) => this._moveStage(e.detail.oldIndex, e.detail.newIndex)}"
           on-move-task="${(e) => console.log(e)}"
           on-create-task="${(e) => this._openCreateTaskDialog(e.detail.stageId)}">
