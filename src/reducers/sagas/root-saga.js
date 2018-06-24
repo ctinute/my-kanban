@@ -51,7 +51,7 @@ function* rootSaga() {
     takeEvery(UPDATE_PHASE, phase.updatePhase),
     takeEvery(DELETE_PHASE, phase.deletePhase),
 
-    takeEvery(CREATE_STAGE, stage.addStage),
+    takeEvery(CREATE_STAGE, stage.createStage),
     takeEvery(UPDATE_STAGE, stage.updateStage),
     takeEvery(DELETE_STAGE, stage.deleteStage),
     takeEvery(MOVE_STAGE, stage.moveStage),

@@ -19,7 +19,7 @@ const computeId = (phase, stage) => {
   return newId;
 };
 
-export function* addStage(action) {
+export function* createStage(action) {
   try {
     let stage = action.payload.stage;
     let project = yield select((state) => state.userData.projects[stage.projectId]);

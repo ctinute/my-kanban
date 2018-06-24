@@ -44,6 +44,8 @@ export default class MkPhase extends MkScreen {
   }
 
   _createStage(stage) {
+    stage.projectId = this.project.id;
+    stage.phaseId = this.phase.id;
     this._dispatch(createStageAction(stage));
   }
 
