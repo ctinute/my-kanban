@@ -1,9 +1,7 @@
-import {PageViewElement} from './page-view-element.js';
 import {html} from '@polymer/lit-element';
-import {store} from '../store.js';
-import {connect} from 'pwa-helpers/connect-mixin.js';
+import {MkScreen} from './mk-screen';
 
-export default class MkHome extends connect(store)(PageViewElement) {
+export default class MkHome extends MkScreen {
   constructor() {
     super();
   }
@@ -17,19 +15,19 @@ export default class MkHome extends connect(store)(PageViewElement) {
 
   _render(props) {
     const style = html`
-            <style>
-                :host {
-                    width: 100%;
-                    height: 100%;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;                
-                }
-            </style>`;
+      <style>
+        :host {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;                
+        }
+      </style>`;
     return html`
-            ${style}
-            Home
-        `;
+      ${style}
+      Home
+    `;
   }
 }
 
