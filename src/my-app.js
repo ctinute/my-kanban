@@ -106,8 +106,20 @@ class MyApp extends connect(store)(LitElement) {
         
         app-header-layout {}
         
+        #main-content {
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          position: relative;
+        }
+        
         app-header {
           height: 64px;
+          width: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          
         }
         app-header.hidden {
           height: 0;
@@ -116,11 +128,12 @@ class MyApp extends connect(store)(LitElement) {
         main {
           width: 100%;
           height: 100%;
-          overflow: hidden;
+          overflow-x: hidden;
+          overflow-y: auto;
         }
         
         main.has-toolbar {
-          /*padding-top: 64px;*/
+          padding-top: 64px;
         }
         
         main > * {
@@ -149,32 +162,35 @@ class MyApp extends connect(store)(LitElement) {
         }
         @keyframes slide-in {
           from {
+            position: absolute;
             opacity: 0;
             transform: translateY(-64px);
           }
           to {
+          position: relative;
             opacity: 1;
             transform: translateY(0);
           }
         }
         @keyframes slide-out {
           from {
+            position: relative;
             opacity: 1;
             transform: translateY(0);
           }
           to {
+            position: absolute;
             opacity: 0;
             transform: translateY(64px);
           }
         }
         .toolbar {
           width: 100%;
-          position: absolute;
           box-sizing: border-box;
-          animation: slide-in 0.5s ease forwards;
+          animation: slide-in 0.3s ease forwards;
         }
         .toolbar.gone {
-          animation: slide-out 0.5s ease forwards;
+          animation: slide-out 0.3s ease forwards;
         }
         .toolbar.hidden {
           display: none;
@@ -226,22 +242,23 @@ class MyApp extends connect(store)(LitElement) {
 
         <!-- Main content -->
         <app-header-layout fullbleed>
-          <app-header class$="${_toolbar.show? '' : 'hidden'}" slot="header" fixed condenses>
-            <app-toolbar id="default-toolbar" class$="${!_toolbar.show ? 'toolbar hidden' : !_toolbar.showAction ? 'toolbar' : 'toolbar gone'}">
-             ${_toolbar.default} 
-            </app-toolbar>
-            <app-toolbar id="action-toolbar" class$="${!_toolbar.show ? 'toolbar hidden' : _toolbar.showAction ? 'toolbar' : 'toolbar gone'}">
-             ${_toolbar.action} 
-            </app-toolbar>
-          </app-header>
-          <main id="pages" class$="${_toolbar.show? 'has-toolbar' : ''}">
-            <mk-home class="screen" active?="${_page === 'home'}"></mk-home>
-            <mk-user class="screen" active?="${_page === 'user'}"></mk-user>
-            <mk-project class="screen" active?="${_page === 'project'}"></mk-project>
-            <mk-phase class="screen" active?="${_page === 'phase'}"></mk-phase>
-            <mk-404 class="screen" active?="${_page === '404'}"></mk-404>
-          </main>
-
+          <div id="main-content">
+            <app-header class$="${_toolbar.show ? '' : 'hidden'}" slot="header" fixed condenses>
+              <app-toolbar id="default-toolbar" class$="${!_toolbar.show ? 'toolbar hidden' : !_toolbar.showAction ? 'toolbar' : 'toolbar gone'}">
+               ${_toolbar.default} 
+              </app-toolbar>
+              <app-toolbar id="action-toolbar" class$="${!_toolbar.show ? 'toolbar hidden' : _toolbar.showAction ? 'toolbar' : 'toolbar gone'}">
+               ${_toolbar.action} 
+              </app-toolbar>
+            </app-header>
+            <main id="pages" class$="${_toolbar.show ? 'has-toolbar' : ''}">
+              <mk-home class="screen" active?="${_page === 'home'}"></mk-home>
+              <mk-user class="screen" active?="${_page === 'user'}"></mk-user>
+              <mk-project class="screen" active?="${_page === 'project'}"></mk-project>
+              <mk-phase class="screen" active?="${_page === 'phase'}"></mk-phase>
+              <mk-404 class="screen" active?="${_page === '404'}"></mk-404>
+            </main>
+          </div>
         </app-header-layout>
       </app-drawer-layout>     
       

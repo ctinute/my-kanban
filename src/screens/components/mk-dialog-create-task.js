@@ -1,8 +1,7 @@
 import {html, LitElement} from '@polymer/lit-element';
-import '@polymer/paper-button/paper-button';
-import '@polymer/paper-toggle-button/paper-toggle-button';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-input/paper-textarea';
+import '@polymer/paper-button/paper-button';
 
 export default class MkDialogCreateTask extends LitElement {
   static get properties() {
@@ -31,6 +30,7 @@ export default class MkDialogCreateTask extends LitElement {
     this.dispatchEvent(new CustomEvent('cancel'));
   }
 
+  // noinspection JSMethodCanBeStatic
   _renderStyles() {
     return html`
       <style>
