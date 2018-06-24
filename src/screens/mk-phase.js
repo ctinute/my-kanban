@@ -65,7 +65,7 @@ export default class MkPhase extends MkScreen {
       this._setActionToolbar(html`
         <div main-title>Select an action</div>
         <paper-icon-button icon="edit"></paper-icon-button>
-        <paper-icon-button icon="delete"></paper-icon-button>
+        <paper-icon-button icon="delete" on-click="${() => this._deleteStage()}"></paper-icon-button>
         <paper-icon-button icon="close" on-click="${() => this._deselectStage()}"></paper-icon-button>
       `);
       this._requireActionToolbar();

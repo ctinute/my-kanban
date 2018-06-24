@@ -55,7 +55,7 @@ export function* deleteStage(action) {
     let project = yield select((state) => state.userData.projects[stage.projectId]);
     let phase = project.phases[stage.phaseId];
 
-    for (let i = 0; i < phase.stages; i++) {
+    for (let i = 0; i < phase.stages.length; i++) {
       if (phase.stages[i] === stage.id) {
         phase.stages = removeItem(phase.stages, i);
         break;
