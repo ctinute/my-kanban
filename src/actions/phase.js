@@ -1,8 +1,3 @@
-export const PHASE_SAVE_TO_STATE = 'PHASE_SAVE_TO_STATE';
-
-export const PHASE_PULL_ALL = 'PHASE_PULL_ALL';
-export const PHASE_PUSH_ALL = 'PHASE_PUSH_ALL';
-
 export const PHASE_SAGA_CREATE = 'PHASE_SAGA_CREATE';
 export const PHASE_SAGA_CANCEL_CREATE = 'PHASE_SAGA_CANCEL_CREATE';
 
@@ -22,6 +17,9 @@ export const createPhase = (phase, projectId) => {
   };
 };
 
-export const cancelCreatePhase = () => ({
-  type: PHASE_SAGA_CANCEL_CREATE,
+export const DELETE_PHASE = 'DELETE_PHASE';
+
+export const deletePhaseAction = (phase) => ({
+  type: DELETE_PHASE,
+  payload: {phase},
 });

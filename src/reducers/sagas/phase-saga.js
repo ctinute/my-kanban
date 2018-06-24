@@ -27,3 +27,15 @@ export function* createPhase(action) {
     yield put(Actions.app.showToast(e.message));
   }
 }
+
+export function* deletePhase(action) {
+  try {
+    let phase = action.payload.phase;
+    let project = yield select((state) => state.userData.projects[phase.projectId]);
+    delete project.phases[phase.id];
+    yield put(Actions.project.pushOne(project.id));
+    yield put(Actions.project.saveProjectToState(project));
+  } catch (e) {
+    yield put(Actions.app.showToast(e.message));
+  }
+}

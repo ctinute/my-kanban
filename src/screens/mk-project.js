@@ -4,6 +4,7 @@ import '@polymer/paper-card';
 import {Actions} from '../actions';
 import './components/mk-dialog-create-phase';
 import {MkScreen} from './mk-screen';
+import {deletePhaseAction} from '../actions/phase';
 
 export default class MkProject extends MkScreen {
   constructor() {
@@ -117,13 +118,17 @@ export default class MkProject extends MkScreen {
       </div>`;
   }
 
+  _deletePhase(phase) {
+    this._dispatch(deletePhaseAction(phase));
+  }
+
   _renderPhaseItem(phase, projectId) {
     return html`
       <paper-card class="item phase" elevation="0">
         <a class="title" href="/u/${projectId}/${phase.id}">${phase.name}</a>
         <div class="actions">
           <iron-icon icon="icons:create"></iron-icon>
-          <iron-icon icon="icons:delete"></iron-icon>
+          <iron-icon icon="icons:delete" on-click="${() => this._deletePhase(phase)}"></iron-icon>
         </div>
       </paper-card>
     `;
