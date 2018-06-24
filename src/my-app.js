@@ -162,32 +162,35 @@ class MyApp extends connect(store)(LitElement) {
         }
         @keyframes slide-in {
           from {
+            position: absolute;
             opacity: 0;
             transform: translateY(-64px);
           }
           to {
+          position: relative;
             opacity: 1;
             transform: translateY(0);
           }
         }
         @keyframes slide-out {
           from {
+            position: relative;
             opacity: 1;
             transform: translateY(0);
           }
           to {
+            position: absolute;
             opacity: 0;
             transform: translateY(64px);
           }
         }
         .toolbar {
           width: 100%;
-          position: absolute;
           box-sizing: border-box;
-          animation: slide-in 0.5s ease forwards;
+          animation: slide-in 0.3s ease forwards;
         }
         .toolbar.gone {
-          animation: slide-out 0.5s ease forwards;
+          animation: slide-out 0.3s ease forwards;
         }
         .toolbar.hidden {
           display: none;
