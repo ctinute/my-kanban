@@ -1,27 +1,18 @@
-export const PHASE_SAVE_TO_STATE = 'PHASE_SAVE_TO_STATE';
+export const CREATE_PHASE = 'CREATE_PHASE';
+export const UPDATE_PHASE = 'UPDATE_PHASE';
+export const DELETE_PHASE = 'DELETE_PHASE';
 
-export const PHASE_PULL_ALL = 'PHASE_PULL_ALL';
-export const PHASE_PUSH_ALL = 'PHASE_PUSH_ALL';
+export const createPhaseAction = (phase) => ({
+  type: CREATE_PHASE,
+  payload: {phase},
+});
 
-export const PHASE_SAGA_CREATE = 'PHASE_SAGA_CREATE';
-export const PHASE_SAGA_CANCEL_CREATE = 'PHASE_SAGA_CANCEL_CREATE';
+export const updatePhaseAction = (phase) => ({
+  type: CREATE_PHASE,
+  payload: {phase},
+});
 
-
-export const createPhase = (phase, projectId) => {
-  let newId = phase.name.toString().toLowerCase();
-  newId = newId.split(' ').join('-');
-  return {
-    type: PHASE_SAGA_CREATE,
-    payload: {
-      phase: {
-        ...phase,
-        id: newId,
-        projectId: projectId,
-      },
-    },
-  };
-};
-
-export const cancelCreatePhase = () => ({
-  type: PHASE_SAGA_CANCEL_CREATE,
+export const deletePhaseAction = (phase) => ({
+  type: DELETE_PHASE,
+  payload: {phase},
 });

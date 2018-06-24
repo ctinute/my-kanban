@@ -1,9 +1,10 @@
 import {html} from '@polymer/lit-element';
 import '@polymer/paper-icon-button';
 import '@polymer/paper-card';
-import {Actions} from '../actions';
 import './components/mk-dialog-create-phase';
 import {MkScreen} from './mk-screen';
+import {createPhaseAction, deletePhaseAction} from '../actions/phase';
+import {showDialog} from '../actions/app';
 
 export default class MkProject extends MkScreen {
   constructor() {
@@ -39,8 +40,12 @@ export default class MkProject extends MkScreen {
   }
 
   _openCreatePhaseDialog() {
-    let createProject = (phase) => this._dispatch(Actions.phase.createPhase(phase, this.projectId));
-    this._dispatch(Actions.app.showDialog(html`<mk-dialog-create-phase on-submit="${(e) => createProject(e.detail.phase)}"></mk-dialog-create-phase>`));
+    let createPhase = (phase) => {
+      phase.projectId = this.projectId;
+      this._dispatch(createPhaseAction(phase));
+    };
+    let dialog = html`<mk-dialog-create-phase on-submit="${(e) => createPhase(e.detail.phase)}"></mk-dialog-create-phase>`;
+    this._dispatch(showDialog(dialog));
   }
 
   _renderStyles() {
@@ -117,13 +122,17 @@ export default class MkProject extends MkScreen {
       </div>`;
   }
 
+  _deletePhase(phase) {
+    this._dispatch(deletePhaseAction(phase));
+  }
+
   _renderPhaseItem(phase, projectId) {
     return html`
       <paper-card class="item phase" elevation="0">
         <a class="title" href="/u/${projectId}/${phase.id}">${phase.name}</a>
         <div class="actions">
           <iron-icon icon="icons:create"></iron-icon>
-          <iron-icon icon="icons:delete"></iron-icon>
+          <iron-icon icon="icons:delete" on-click="${() => this._deletePhase(phase)}"></iron-icon>
         </div>
       </paper-card>
     `;
