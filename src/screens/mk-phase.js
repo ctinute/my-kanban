@@ -6,16 +6,23 @@ import '@polymer/paper-button/paper-button';
 import './components/mk-stage-list';
 import './components/mk-dialog-create-stage';
 import './components/mk-dialog-create-task';
-import {Actions} from '../actions';
-import {move} from '../actions/stage';
+import {createStageAction, deleteStageAction, moveStageAction} from '../actions/stage';
 import {MkScreen} from './mk-screen';
+import {showDialog} from '../actions/app';
+import {createTaskAction} from '../actions/task';
 
 
 export default class MkPhase extends MkScreen {
+  constructor() {
+    super();
+    this.selectedStage = null;
+  }
+
   static get properties() {
     return {
       project: Object,
       phase: Object,
+      selectedStage: Object,
     };
   }
 
@@ -37,15 +44,22 @@ export default class MkPhase extends MkScreen {
   }
 
   _createStage(stage) {
-    this._dispatch(Actions.stage.add(stage, this.project.Id, this.phase.id));
+    this._dispatch(createStageAction(stage));
   }
 
   _moveStage(src, des) {
-    this._dispatch(move(src, des, this.project.id, this.phase.id));
+    const stageId = this.phase.stages[src];
+    let stage = this.phase.stageDetails[stageId];
+    this._dispatch(moveStageAction(stage, src, des));
+  }
+
+  _deleteStage() {
+    this._dispatch(deleteStageAction(this.selectedStage));
   }
 
   _selectStage(stageId) {
     if (stageId) {
+      this.selectedStage = this.phase.stageDetails[stageId];
       this._setActionToolbar(html`
         <div main-title>Select an action</div>
         <paper-icon-button icon="edit"></paper-icon-button>
@@ -60,6 +74,7 @@ export default class MkPhase extends MkScreen {
   }
 
   _deselectStage() {
+    this.selectedStage = null;
     this.shadowRoot.querySelector('#stageList').deSelectStage();
     this._requireDefaultToolbar();
   }
@@ -69,7 +84,7 @@ export default class MkPhase extends MkScreen {
     task.phaseId = this.phase.id;
     task.stageId = stageId;
     console.log('_createTask');
-    this._dispatch(Actions.task.add(task));
+    this._dispatch(createTaskAction(task));
   }
 
   _openCreateStageDialog() {
@@ -77,7 +92,7 @@ export default class MkPhase extends MkScreen {
       <mk-dialog-create-stage
         on-submit="${(e) => this._createStage(e.detail.stage)}"
         on-cancel="${() => console.log('cancelled')}"></mk-dialog-create-stage>`;
-    this._dispatch(Actions.app.showDialog(dialog, null));
+    this._dispatch(showDialog(dialog, null));
   }
 
   _openCreateTaskDialog(stageId) {
@@ -85,7 +100,7 @@ export default class MkPhase extends MkScreen {
       <mk-dialog-create-task
         on-submit="${(e) => this._createTask(e.detail.task, stageId)}"
         on-cancel="${() => console.log('cancelled')}"></mk-dialog-create-task>`;
-    this._dispatch(Actions.app.showDialog(dialog, null));
+    this._dispatch(showDialog(dialog, null));
   }
 
   // noinspection JSMethodCanBeStatic

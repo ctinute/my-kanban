@@ -11,8 +11,8 @@ import {CHANGE_ROUTE, NAVIGATE} from '../../actions/route';
 import {DISPATCH_CHAIN, REFRESH_DATA, SET_TOAST} from '../../actions/app';
 import {DELETE_PROJECT, PULL_ALL, PULL_ONE, PUSH_ALL, PUSH_ONE, SAGA_CREATE_PROJECT, SYNC} from '../../actions/project';
 import {CREATE_PHASE, DELETE_PHASE, UPDATE_PHASE} from '../../actions/phase';
-import {ADD_STAGE, DELETE_STAGE, MOVE_STAGE, UPDATE_STAGE} from '../../actions/stage';
-import {ADD_TASK, DELETE_TASK, MOVE_TASK, UPDATE_TASK} from '../../actions/task';
+import {CREATE_STAGE, DELETE_STAGE, MOVE_STAGE, UPDATE_STAGE} from '../../actions/stage';
+import {CREATE_TASK, DELETE_TASK, MOVE_TASK, UPDATE_TASK} from '../../actions/task';
 
 function* dispatchChain(action) {
   try {
@@ -51,12 +51,12 @@ function* rootSaga() {
     takeEvery(UPDATE_PHASE, phase.updatePhase),
     takeEvery(DELETE_PHASE, phase.deletePhase),
 
-    takeEvery(ADD_STAGE, stage.addStage),
+    takeEvery(CREATE_STAGE, stage.addStage),
     takeEvery(UPDATE_STAGE, stage.updateStage),
     takeEvery(DELETE_STAGE, stage.deleteStage),
     takeEvery(MOVE_STAGE, stage.moveStage),
 
-    takeEvery(ADD_TASK, task.addTask),
+    takeEvery(CREATE_TASK, task.addTask),
     takeEvery(UPDATE_TASK, task.updateTask),
     takeEvery(DELETE_TASK, task.deleteTask),
     takeEvery(MOVE_TASK, task.moveTask),
