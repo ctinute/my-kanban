@@ -2,6 +2,7 @@ import {html, LitElement} from '@polymer/lit-element';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
 
+// noinspection JSUnusedGlobalSymbols
 export default class MkDialogCreatePhase extends LitElement {
   static get properties() {
     return {
@@ -24,6 +25,7 @@ export default class MkDialogCreatePhase extends LitElement {
     this.dispatchEvent(new CustomEvent('cancel'));
   }
 
+  // noinspection JSMethodCanBeStatic
   _renderStyles() {
     return html`<style>:host{display: block;}</style>`;
   }

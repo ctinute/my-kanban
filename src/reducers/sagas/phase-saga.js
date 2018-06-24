@@ -1,30 +1,54 @@
 import {put, select} from 'redux-saga/effects';
-import {Actions} from '../../actions/index';
+import {pushOne, saveProjectToState} from '../../actions/project';
+import {showToast} from '../../actions/app';
+
+const computeId = (phase, project) => {
+  let baseId = phase.name.toString().toLowerCase().split(' ').join('-');
+  let newId = baseId;
+  let n = 0;
+  let found = false;
+  while (!found) {
+    if (!project.phases.hasOwnProperty(newId)) {
+      found = true;
+    } else {
+      n++;
+      newId = baseId + n;
+    }
+  }
+  return newId;
+};
 
 export function* createPhase(action) {
-  let phase = action.payload.phase;
-  let project = yield select((state) => state.userData.projects[phase.projectId]);
-
   try {
-    // check new id
-    let nTry = 0;
-    let nextId = phase.id;
-    let hasId = project.hasOwnProperty(nextId);
-    while (hasId) {
-      nextId = `${phase.id}-${nTry}`;
-      nTry++;
-      hasId = project.hasOwnProperty(nextId);
-    }
-    phase.id = nextId;
+    let phase = action.payload.phase;
+    let project = yield select((state) => state.userData.projects[phase.projectId]);
 
+    phase.id = computeId(phase, project);
     project.phases[phase.id] = phase;
 
-    // save
-    yield put(Actions.project.saveProjectToState(project));
-    yield put(Actions.project.pushOne(project.id));
+    yield put(saveProjectToState(project));
+    yield put(pushOne(project.id));
   } catch (e) {
-    // show error message on dialog
-    yield put(Actions.app.showToast(e.message));
+    yield put(showToast(e.message));
+  }
+}
+
+export function* updatePhase(action) {
+  try {
+    let phase = action.payload.phase;
+    let project = yield select((state) => state.userData.projects[phase.projectId]);
+
+    if (!project.phases.hasOwnProperty(phase.id)) {
+      yield put(showToast('Can not edit un-existed phase!', 5000));
+      return;
+    } else {
+      project.phases[phase.id] = phase;
+    }
+
+    yield put(saveProjectToState(project));
+    yield put(pushOne(project.id));
+  } catch (e) {
+    yield put(showToast(e.message));
   }
 }
 
@@ -33,9 +57,9 @@ export function* deletePhase(action) {
     let phase = action.payload.phase;
     let project = yield select((state) => state.userData.projects[phase.projectId]);
     delete project.phases[phase.id];
-    yield put(Actions.project.pushOne(project.id));
-    yield put(Actions.project.saveProjectToState(project));
+    yield put(pushOne(project.id));
+    yield put(saveProjectToState(project));
   } catch (e) {
-    yield put(Actions.app.showToast(e.message));
+    yield put(showToast(e.message));
   }
 }

@@ -10,7 +10,7 @@ import {LOGIN, LOGOUT} from '../../actions/auth';
 import {CHANGE_ROUTE, NAVIGATE} from '../../actions/route';
 import {DISPATCH_CHAIN, REFRESH_DATA, SET_TOAST} from '../../actions/app';
 import {DELETE_PROJECT, PULL_ALL, PULL_ONE, PUSH_ALL, PUSH_ONE, SAGA_CREATE_PROJECT, SYNC} from '../../actions/project';
-import {DELETE_PHASE, PHASE_SAGA_CREATE} from '../../actions/phase';
+import {CREATE_PHASE, DELETE_PHASE, UPDATE_PHASE} from '../../actions/phase';
 import {ADD_STAGE, DELETE_STAGE, MOVE_STAGE, UPDATE_STAGE} from '../../actions/stage';
 import {ADD_TASK, DELETE_TASK, MOVE_TASK, UPDATE_TASK} from '../../actions/task';
 
@@ -47,7 +47,8 @@ function* rootSaga() {
 
     takeLatest(SAGA_CREATE_PROJECT, project.createProject),
 
-    takeLatest(PHASE_SAGA_CREATE, phase.createPhase),
+    takeEvery(CREATE_PHASE, phase.createPhase),
+    takeEvery(UPDATE_PHASE, phase.updatePhase),
     takeEvery(DELETE_PHASE, phase.deletePhase),
 
     takeEvery(ADD_STAGE, stage.addStage),

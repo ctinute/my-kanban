@@ -1,10 +1,10 @@
 import {html} from '@polymer/lit-element';
 import '@polymer/paper-icon-button';
 import '@polymer/paper-card';
-import {Actions} from '../actions';
 import './components/mk-dialog-create-phase';
 import {MkScreen} from './mk-screen';
-import {deletePhaseAction} from '../actions/phase';
+import {createPhaseAction, deletePhaseAction} from '../actions/phase';
+import {showDialog} from '../actions/app';
 
 export default class MkProject extends MkScreen {
   constructor() {
@@ -40,8 +40,12 @@ export default class MkProject extends MkScreen {
   }
 
   _openCreatePhaseDialog() {
-    let createProject = (phase) => this._dispatch(Actions.phase.createPhase(phase, this.projectId));
-    this._dispatch(Actions.app.showDialog(html`<mk-dialog-create-phase on-submit="${(e) => createProject(e.detail.phase)}"></mk-dialog-create-phase>`));
+    let createPhase = (phase) => {
+      phase.projectId = this.projectId;
+      this._dispatch(createPhaseAction(phase));
+    };
+    let dialog = html`<mk-dialog-create-phase on-submit="${(e) => createPhase(e.detail.phase)}"></mk-dialog-create-phase>`;
+    this._dispatch(showDialog(dialog));
   }
 
   _renderStyles() {
