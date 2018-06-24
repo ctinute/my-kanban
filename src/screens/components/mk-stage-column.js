@@ -12,8 +12,9 @@ class MkStageColumn extends LitElement {
     return html`
       <style>
         :host {
-            display: block;
-            min-width: 300px;
+          display: block;
+          min-width: 300px;
+          padding: 8px;
         }
         .header {
           width: 100%;

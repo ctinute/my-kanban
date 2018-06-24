@@ -8,30 +8,47 @@ class MkStageList extends LitElement {
     super();
     this.shouldMoveTaskEventFire = true;
     this.selectedIndex = -1;
+    this.shouldRerender = true;
   }
 
   static get properties() {
     return {
+      phase: Object,
       stages: Array,
-      shouldMoveTaskEventFire: Boolean,
       selectedIndex: Number,
+      shouldMoveTaskEventFire: Boolean,
+      shouldRerender: Boolean,
     };
   }
 
-  _fireStageSelectionChanged() {
-    this.dispatchEvent(new CustomEvent('stage-selection-changed', {
+  _onSelectStage() {
+    this.shouldRerender = true;
+    this.dispatchEvent(new CustomEvent('select-stage', {
       detail: {
         selected: this.selectedIndex !== -1,
-        stageId: this.selectedIndex !== -1 ? this.stages[this.selectedIndex].id : null,
+        stageId: this.selectedIndex !== -1 ? this.selectedStage.id : null,
       },
     }));
   }
 
-  _moveStage(oldIndex, newIndex) {
+  _onMoveStage(oldIndex, newIndex) {
+    // console.log('set skip next render');
+    this.shouldRerender = false;
     this.dispatchEvent(new CustomEvent('move-stage', {detail: {oldIndex, newIndex}}));
   }
 
-  _moveTask(from, to, oldIndex, newIndex) {
+  _onCreateTask(stageId) {
+    this.shouldRerender = true;
+    this.dispatchEvent(new CustomEvent('create-task', {
+      detail: {
+        stageId,
+      },
+    }));
+  }
+
+  _onMoveTask(from, to, oldIndex, newIndex) {
+    // console.log('set skip next render');
+    this.shouldRerender = false;
     from = from.id;
     to = to.id;
     // only emit 1 event
@@ -55,7 +72,7 @@ class MkStageList extends LitElement {
       dragClass: 'item-dragging',
       ghostClass: 'item-new',
       onSort: (evt) => {
-        this._moveStage(evt.oldIndex, evt.newIndex);
+        this._onMoveStage(evt.oldIndex, evt.newIndex);
       },
     });
     let taskListContainer = stageListContainer.getElementsByClassName('content');
@@ -68,34 +85,27 @@ class MkStageList extends LitElement {
         dragClass: 'item-dragging',
         ghostClass: 'item-new',
         onSort: (evt) => {
-          this._moveTask(evt.from, evt.to, evt.oldIndex, evt.newIndex);
+          this._onMoveTask(evt.from, evt.to, evt.oldIndex, evt.newIndex);
         },
       });
     }
   }
 
-  _render({stages, selectedIndex}) {
-    return html`
-      ${this._renderStyles()}
-      <div id="list">
-        ${stages.map((stage, index) => this._renderStage(stage, index, index === selectedIndex))}
-      </div>  
-    `;
-  }
-
+  // noinspection JSMethodCanBeStatic
   _renderStyles() {
     return html`
       <style>
         :host {
-            display: block;
+          display: block;
         }
         #list {
-            white-space: nowrap;
-            width: auto;
-            height: 100%;
+          white-space: nowrap;
+          width: auto;
+          height: 100%;
+          padding: 8px 0;
         }
         .content {
-            min-height: 16px;
+          min-height: 16px;
         }
         .stages,
         .new-stage {
@@ -104,13 +114,16 @@ class MkStageList extends LitElement {
           white-space: nowrap;
         }
         .stage {
+          max-height: 100%;
           display: inline-block;
           vertical-align: top;
           width: 256px;
           margin: 0 16px;
-          padding: 8px;
+          box-sizing: border-box;
+          border-radius: 4px;
         }
         .stage.active {
+          background-color: #e3f2fd;
           box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
         }
         .task {
@@ -139,69 +152,45 @@ class MkStageList extends LitElement {
     `;
   }
 
-  _onStageClicked(index) {
+  _onStageSelected(index, stage) {
     if (index !== this.selectedIndex) {
       this.selectStage(index);
+      this.selectedStage = stage;
     } else {
       this.deSelectStage();
+      this.selectedStage = null;
     }
-    this._fireStageSelectionChanged();
+    this._onSelectStage(stage);
   }
 
   selectStage(index) {
+    this.shouldRerender = true;
     this.selectedIndex = index;
   }
 
   deSelectStage() {
+    this.shouldRerender = true;
     this.selectedIndex = -1;
   }
 
-  _onCreateTaskClicked(stageId) {
-    this.dispatchEvent(new CustomEvent('create-task', {
-      detail: {
-        stageId,
-      },
-    }));
-  }
 
   _shouldRender(props, changedProps, oldProps) {
-    let shouldRender = true;
-    if (changedProps.stages && oldProps.stages) {
-      shouldRender = false;
-      let oldStages = oldProps.stages;
-      let newStages = props.stages;
-      if (oldStages.length !== newStages.length) {
-        shouldRender = true;
-        // console.log('number of stage has changed')
-      } else {
-        let oldTotalTasks = 0;
-        let newTotalTasks = 0;
-        for (let i = 0; i < newStages.length; i++) {
-          newTotalTasks += newStages[i].tasks.length;
-          oldTotalTasks += oldStages[i].tasks.length;
-        }
-        if (oldTotalTasks !== newTotalTasks) {
-          shouldRender = true;
-          // console.log('number of task has changed')
-        }
-      }
-    }
-    // console.log(`MK-stage-list should render: ${shouldRender}`);
-    return shouldRender;
+    // console.log('should render: ' + this.shouldRerender);
+    return this.shouldRerender;
   }
 
   _renderStage(stage, index, isActive) {
     let classes = `stage ${isActive ? 'active' : ''}`;
     let taskList = stage.tasks.length > 0 ?
-      html`${stage.tasks.map((task) => this._renderTask(task))}` : null;
+      html`${stage.tasks.map((task) => this._renderTask(task, isActive))}` : null;
     // html `<div class="no-task">No task. Drop new task here !</div>`;
     return html`
       <mk-stage-column 
         class$="${classes}" 
         stage="${stage}" 
         canCreateTask="${stage.canCreateTask}" 
-        on-create-task-button-click="${() => this._onCreateTaskClicked(stage.id)}"
-        on-select="${() => this._onStageClicked(index)}">
+        on-create-task-button-click="${() => this._onCreateTask(stage.id)}"
+        on-select="${() => this._onStageSelected(index, stage)}">
         <div class="content" id="${stage.id}" data-index-number="${index}">
           ${taskList}
         </div>
@@ -209,11 +198,42 @@ class MkStageList extends LitElement {
     `;
   }
 
-  _renderTask(task) {
+  // noinspection JSMethodCanBeStatic
+  _createDisplayStages(phase) {
+    // console.log('_createDisplayStages');
+    let stages = [];
+    // re-order stage details
+    for (let i = 0; i < phase.stages.length; i++) {
+      let stage = JSON.parse(JSON.stringify(phase.stageDetails[phase.stages[i]]));
+      // add cards to stage detail
+      if (stage.tasks) {
+        for (let j = 0; j < stage.tasks.length; j++) {
+          stage.tasks[j] = phase.taskDetails[stage.tasks[j]];
+        }
+      } else {
+        stage.tasks = [];
+      }
+      stages.push(stage);
+    }
+    return stages;
+  }
+
+  // noinspection JSMethodCanBeStatic
+  _renderTask(task, hostColumnActive) {
     return html`
-      <paper-card class="task">
+      <paper-card class="task" elevation="${hostColumnActive ? 0 : 1}">
         <mk-task-item task="${task}">
       </paper-card>
+    `;
+  }
+
+  _render({phase, selectedIndex}) {
+    let stages = this._createDisplayStages(phase);
+    return html`
+      ${this._renderStyles()}
+      <div id="list">
+        ${stages.map((stage, index) => this._renderStage(stage, index, index === selectedIndex))}
+      </div>  
     `;
   }
 }
