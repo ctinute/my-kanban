@@ -51,8 +51,10 @@ class MkStageList extends LitElement {
     this.shouldRerender = false;
     from = from.id;
     to = to.id;
-    // only emit 1 event
-    this.shouldMoveTaskEventFire = !this.shouldMoveTaskEventFire;
+    // skip emitting 1 event if moving card to another stage
+    if (from !== to) {
+      this.shouldMoveTaskEventFire = !this.shouldMoveTaskEventFire;
+    }
     if (this.shouldMoveTaskEventFire) {
       this.dispatchEvent(new CustomEvent('move-task', {detail: {from, to, oldIndex, newIndex}}));
     }

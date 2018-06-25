@@ -8,7 +8,7 @@ import './components/mk-dialog-create-task';
 import {createStageAction, deleteStageAction, moveStageAction} from '../actions/stage';
 import {MkScreen} from './mk-screen';
 import {showDialog} from '../actions/app';
-import {createTaskAction} from '../actions/task';
+import {createTaskAction, moveTaskAction} from '../actions/task';
 
 
 export default class MkPhase extends MkScreen {
@@ -90,8 +90,13 @@ export default class MkPhase extends MkScreen {
     task.projectId = this.project.id;
     task.phaseId = this.phase.id;
     task.stageId = stageId;
-    console.log('_createTask');
     this._dispatch(createTaskAction(task));
+  }
+
+  _moveTask(from, to, oldIndex, newIndex) {
+    const taskId = this.phase.stageDetails[from].tasks[oldIndex];
+    let task = this.phase.taskDetails[taskId];
+    this._dispatch(moveTaskAction(task, to, oldIndex, newIndex));
   }
 
   _openCreateStageDialog() {
@@ -164,7 +169,7 @@ export default class MkPhase extends MkScreen {
           phase="${phase}"
           on-select-stage="${(e) => this._selectStage(e.detail.stageId)}"
           on-move-stage="${(e) => this._moveStage(e.detail.oldIndex, e.detail.newIndex)}"
-          on-move-task="${(e) => console.log(e)}"
+          on-move-task="${(e) => this._moveTask(e.detail.from, e.detail.to, e.detail.oldIndex, e.detail.newIndex)}"
           on-create-task="${(e) => this._openCreateTaskDialog(e.detail.stageId)}">
         </mk-stage-list>
         <div class="list-item">
