@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {html} from '@polymer/lit-element';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-card/paper-card';
@@ -16,6 +15,7 @@ export default class MkPhase extends MkScreen {
   constructor() {
     super();
     this.selectedStage = null;
+    this.firstRender = true;
   }
 
   static get properties() {
@@ -23,6 +23,7 @@ export default class MkPhase extends MkScreen {
       project: Object,
       phase: Object,
       selectedStage: Object,
+      firstRender: Boolean,
     };
   }
 
@@ -31,16 +32,20 @@ export default class MkPhase extends MkScreen {
     this.phase = this.project ? this.project.phases[state.route.data.phaseId] : null;
   }
 
-  _didRender(props, oldProps, changedProps) {
-    this._requireDefaultToolbar();
-    this._setDefaultToolbar(html`
-      <div main-title>
-        <a href="/u/${props.project.id}">${props.project.name}</a>
-        <span class="title-seperator"> / </span>
-        <a href="/u/${props.project.id}/${props.phase.id}">${props.phase.name}</a>
-      </div>
-    `);
-    this._showToolbar();
+  _didRender(props, changedProps, oldProps) {
+    // since props.project does not exist in first render, using custom firstRender boolean flag instead
+    if (props.firstRender) {
+      this._requireDefaultToolbar();
+      this._setDefaultToolbar(html`
+        <div main-title>
+          <a href="/u/${props.project.id}">${props.project.name}</a>
+          <span class="title-seperator"> / </span>
+          <a href="/u/${props.project.id}/${props.phase.id}">${props.phase.name}</a>
+        </div>
+      `);
+      this._showToolbar();
+      this.firstRender = false;
+    }
   }
 
   _createStage(stage) {
