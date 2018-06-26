@@ -7,8 +7,9 @@ class MkStageList extends LitElement {
   constructor() {
     super();
     this.shouldMoveTaskEventFire = true;
-    this.selectedIndex = -1;
     this.shouldRerender = true;
+    this.selectedStageId = null;
+    this.selectedTaskId = null;
   }
 
   static get properties() {
@@ -18,26 +19,77 @@ class MkStageList extends LitElement {
       selectedIndex: Number,
       shouldMoveTaskEventFire: Boolean,
       shouldRerender: Boolean,
+      selectedTaskId: String,
+      selectedStageId: String,
     };
   }
 
-  _onSelectStage() {
-    this.shouldRerender = true;
-    this.dispatchEvent(new CustomEvent('select-stage', {
-      detail: {
-        selected: this.selectedIndex !== -1,
-        stageId: this.selectedIndex !== -1 ? this.selectedStage.id : null,
-      },
-    }));
+  _shouldRender(props, changedProps, oldProps) {
+    return this.shouldRerender;
   }
 
-  _onMoveStage(oldIndex, newIndex) {
+  _firstRendered() {
+    this._initSortable();
+  }
+
+  _initSortable() {
+    let stageListContainer = this.shadowRoot.querySelector('#list');
+    Sortable.create(stageListContainer, {
+      animation: 100,
+      draggable: '.column',
+      handle: '.header',
+      chosenClass: 'item-old',
+      dragClass: 'item-dragging',
+      ghostClass: 'item-new',
+      onSort: (evt) => {
+        this._fireMoveStageEvent(evt.oldIndex, evt.newIndex);
+      },
+    });
+    let taskListContainer = stageListContainer.getElementsByClassName('column-content');
+    for (let cardList of taskListContainer) {
+      Sortable.create(cardList, {
+        group: 'card',
+        draggable: '.task',
+        animation: 100,
+        chosenClass: 'item-old',
+        dragClass: 'item-dragging',
+        ghostClass: 'item-new',
+        onSort: (evt) => {
+          this._fireMoveTaskEvent(evt.from, evt.to, evt.oldIndex, evt.newIndex);
+        },
+      });
+    }
+  }
+
+  // PUBLIC METHODS
+  selectTask(taskId) {
+    this.shouldRerender = true;
+    this.selectedTaskId = taskId;
+  }
+
+  selectStage(stageId) {
+    this.shouldRerender = true;
+    this.selectedStageId = stageId;
+  }
+
+  // STAGE EVENTS
+  _fireCreateStageEvent() {
+    this.dispatchEvent(new CustomEvent('create-stage'));
+  }
+
+  _fireSelectStageEvent(stageId) {
+    this.shouldRerender = true;
+    this.dispatchEvent(new CustomEvent('select-stage', {detail: {stageId}}));
+  }
+
+  _fireMoveStageEvent(oldIndex, newIndex) {
     // console.log('set skip next render');
     this.shouldRerender = false;
     this.dispatchEvent(new CustomEvent('move-stage', {detail: {oldIndex, newIndex}}));
   }
 
-  _onCreateTask(stageId) {
+  // TASK EVENTS
+  _fireCreateTaskEvent(stageId) {
     this.shouldRerender = true;
     this.dispatchEvent(new CustomEvent('create-task', {
       detail: {
@@ -46,7 +98,11 @@ class MkStageList extends LitElement {
     }));
   }
 
-  _onMoveTask(from, to, oldIndex, newIndex) {
+  _fireSelectTaskEvent(taskId) {
+    this.dispatchEvent(new CustomEvent('select-taskId', {detail: {task: taskId}}));
+  }
+
+  _fireMoveTaskEvent(from, to, oldIndex, newIndex) {
     // console.log('set skip next render');
     this.shouldRerender = false;
     from = from.id;
@@ -60,144 +116,25 @@ class MkStageList extends LitElement {
     }
   }
 
-  _firstRendered() {
-    this._initSortable();
-  }
-
-  _initSortable() {
-    let stageListContainer = this.shadowRoot.querySelector('#list');
-    Sortable.create(stageListContainer, {
-      animation: 100,
-      draggable: '.stage',
-      handle: '.header',
-      chosenClass: 'item-old',
-      dragClass: 'item-dragging',
-      ghostClass: 'item-new',
-      onSort: (evt) => {
-        this._onMoveStage(evt.oldIndex, evt.newIndex);
-      },
-    });
-    let taskListContainer = stageListContainer.getElementsByClassName('content');
-    for (let cardList of taskListContainer) {
-      Sortable.create(cardList, {
-        group: 'card',
-        draggable: '.task',
-        animation: 100,
-        chosenClass: 'item-old',
-        dragClass: 'item-dragging',
-        ghostClass: 'item-new',
-        onSort: (evt) => {
-          this._onMoveTask(evt.from, evt.to, evt.oldIndex, evt.newIndex);
-        },
-      });
-    }
-  }
-
-  // noinspection JSMethodCanBeStatic
-  _renderStyles() {
-    return html`
-      <style>
-        :host {
-          display: block;
-        }
-        #list {
-          white-space: nowrap;
-          width: auto;
-          height: 100%;
-          padding: 8px 0;
-        }
-        .content {
-          min-height: 16px;
-        }
-        .stages,
-        .new-stage {
-          display: inline-block;
-          vertical-align: top;
-          white-space: nowrap;
-        }
-        .stage {
-          max-height: 100%;
-          display: inline-block;
-          vertical-align: top;
-          width: 256px;
-          margin: 0 16px;
-          box-sizing: border-box;
-          border-radius: 4px;
-        }
-        .stage.active {
-          background-color: #e3f2fd;
-          box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
-        }
-        .task {
-          height: 48px;
-          line-height: 48px;
-          width: 100%;
-          margin: 8px 0;
-          padding: 4px 8px;
-          display: block;
-          cursor: pointer;
-          border-radius: 4px;
-        }
-        .no-task {
-          text-align: center;
-          opacity: 0.8;
-          padding: 16px 0;
-        }
-        .item-new {
-          opacity: 0.2;
-          border: 1px dashed black;
-        }
-        .item-dragging {
-          opacity: 1;
-        }
-      </style>
-    `;
-  }
-
-  _onStageSelected(index, stage) {
-    if (index !== this.selectedIndex) {
-      this.selectStage(index);
-      this.selectedStage = stage;
+  // EVENT HANDLERS
+  _onClickTask(taskId) {
+    if (taskId !== this.selectedTaskId) {
+      this.selectTask(taskId);
+      this._fireSelectTaskEvent(taskId);
     } else {
-      this.deSelectStage();
-      this.selectedStage = null;
+      this.selectTask(null);
+      this._fireSelectTaskEvent(null);
     }
-    this._onSelectStage(stage);
   }
 
-  selectStage(index) {
-    this.shouldRerender = true;
-    this.selectedIndex = index;
-  }
-
-  deSelectStage() {
-    this.shouldRerender = true;
-    this.selectedIndex = -1;
-  }
-
-
-  _shouldRender(props, changedProps, oldProps) {
-    // console.log('should render: ' + this.shouldRerender);
-    return this.shouldRerender;
-  }
-
-  _renderStage(stage, index, isActive) {
-    let classes = `stage ${isActive ? 'active' : ''}`;
-    let taskList = stage.tasks.length > 0 ?
-      html`${stage.tasks.map((task) => this._renderTask(task, isActive))}` : null;
-    // html `<div class="no-task">No task. Drop new task here !</div>`;
-    return html`
-      <mk-stage-column 
-        class$="${classes}" 
-        stage="${stage}" 
-        canCreateTask="${stage.canCreateTask}" 
-        on-create-task-button-click="${() => this._onCreateTask(stage.id)}"
-        on-select="${() => this._onStageSelected(index, stage)}">
-        <div class="content" id="${stage.id}" data-index-number="${index}">
-          ${taskList}
-        </div>
-      </mk-stage-column>
-    `;
+  _onClickStage(stageId) {
+    if (stageId !== this.selectedStageId) {
+      this.selectStage(stageId);
+      this._fireSelectStageEvent(stageId);
+    } else {
+      this.selectStage(null);
+      this._fireSelectStageEvent(null);
+    }
   }
 
   // noinspection JSMethodCanBeStatic
@@ -221,21 +158,123 @@ class MkStageList extends LitElement {
   }
 
   // noinspection JSMethodCanBeStatic
-  _renderTask(task, hostColumnActive) {
+  _renderStyles() {
     return html`
-      <paper-card class="task" elevation="${hostColumnActive ? 0 : 1}">
-        <mk-task-item task="${task}">
-      </paper-card>
+      <style>
+        :host {
+          display: block;
+        }
+        #list {
+          height: 100%;
+          width: 100%;
+          padding: 8px 0;
+          position: relative;
+          vertical-align: top;
+          white-space: nowrap;
+          overflow-x: scroll;
+          overflow-y: hidden;
+        }
+        /*#list.full {*/
+          /*height: 100%;*/
+          /*width: 100%;*/
+        /*}*/
+        #new-stage-btn {
+          display: inline-block;
+          vertical-align: top;
+          width: 256px;
+          margin: 0 16px;
+          padding: 8px;
+          font-size: 1.2em;
+          line-height: 2.5em;
+          height: 2.5em;
+          text-align: center;
+        }
+        .column {
+          display: inline-block;
+          max-height: 100%;
+          width: 256px;
+          vertical-align: top;
+          box-sizing: border-box;
+          opacity: 1;
+          transition: width, opacity, margin;
+          transition-duration: 0.3s;
+        }
+        .stage {
+          width: 90%;
+          max-width: 600px;
+          margin: auto;
+          border-radius: 4px;
+          transition: box-shadow, background-color;
+          transition-duration: 0.3s;
+        }
+        .column.active {
+          width: 100%;
+        }
+        .column.active .stage {
+          background-color: #fafafa;
+          box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
+        }
+        .column.inactive {
+          width: 0;
+          opacity: 0;
+        }
+        .column.inactive .stage {
+          box-shadow: none;
+        }
+        .column-content {
+          min-height: 16px;
+        }
+        .task {
+          width: 100%;
+          margin: 8px 0;
+          cursor: pointer;
+        }
+        .no-task {
+          text-align: center;
+          opacity: 0.8;
+          padding: 16px 0;
+        }
+        .item-new {
+          opacity: 0.2;
+          border: 1px dashed black;
+        }
+        .item-dragging {
+          opacity: 1;
+        }
+      </style>
     `;
   }
 
-  _render({phase, selectedIndex}) {
+  _renderStage(stage, selectedStageId, selectedTaskId) {
+    let classes = `column ${selectedStageId !== null ? (stage.id === selectedStageId ? 'active' : 'inactive') : ''}`;
+    let taskList = stage.tasks || [];
+    return html`
+      <div class$="${classes}">
+        <mk-stage-column 
+          class="stage" 
+          stage="${stage}" 
+          canCreateTask="${stage.canCreateTask}" 
+          on-create-task-button-click="${() => this._fireCreateTaskEvent(stage.id)}"
+          on-select="${() => this._onClickStage(stage.id)}">
+          <div class="column-content" id="${stage.id}">
+            ${taskList.map((task) => html`
+              <mk-task-item class="task" task="${task}" selected?=${task.id === selectedTaskId} on-click="${() => this._onClickTask(task.id)}"></mk-task-item>
+            `)}
+          </div>
+        </mk-stage-column>
+      </div>
+    `;
+  }
+
+  _render({phase, selectedStageId, selectedTaskId}) {
+    let styles = this._renderStyles();
     let stages = this._createDisplayStages(phase);
     return html`
-      ${this._renderStyles()}
+      ${styles}
       <div id="list">
-        ${stages.map((stage, index) => this._renderStage(stage, index, index === selectedIndex))}
-      </div>  
+        ${stages.map((stage) => this._renderStage(stage, selectedStageId, selectedTaskId))}
+        <paper-button id="new-stage-btn" hidden?="${selectedStageId || selectedTaskId}" flat on-click="${() => this._fireCreateStageEvent()}">New stage</paper-button>
+      </div>
     `;
   }
 }
