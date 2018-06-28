@@ -13,7 +13,6 @@ class MkStageColumn extends LitElement {
       <style>
         :host {
           display: block;
-          min-width: 300px;
           padding: 8px;
         }
         .header {
