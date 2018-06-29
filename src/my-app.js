@@ -24,25 +24,6 @@ import {login, logout} from './actions/auth';
 import {changeRoute} from './actions/route';
 
 class MyApp extends connect(store)(LitElement) {
-  constructor() {
-    super();
-    setPassiveTouchGestures(true);
-
-    this._ready = false;
-    this._smallScreen = false;
-
-    this._globalToast = APP_INITIAL_STATE.globalToast;
-    this._globalDialog = APP_INITIAL_STATE.globalDialog;
-    this._drawer = APP_INITIAL_STATE.drawer;
-    this._toolbar = APP_INITIAL_STATE.toollbar;
-
-    this._drawerItems = [{
-      title: 'Dashboard',
-      icon: 'icons:dashboard',
-      link: 'dashboard',
-    }];
-  }
-
   static get properties() {
     return {
       _ready: Boolean,
@@ -52,7 +33,6 @@ class MyApp extends connect(store)(LitElement) {
       _smallScreen: Boolean,
 
       _drawer: Object,
-      _drawerItems: Array,
       _toolbar: Object,
 
       _offline: Boolean,
@@ -60,6 +40,23 @@ class MyApp extends connect(store)(LitElement) {
       _globalDialog: Object,
       shouldRender: Boolean,
     };
+  }
+
+  constructor() {
+    super();
+
+    this._ready = false;
+    this._smallScreen = false;
+
+    this._globalToast = APP_INITIAL_STATE.globalToast;
+    this._globalDialog = APP_INITIAL_STATE.globalDialog;
+    this._drawer = APP_INITIAL_STATE.drawer;
+    this._toolbar = APP_INITIAL_STATE.toollbar;
+
+    setPassiveTouchGestures(true);
+    installRouter((location) => store.dispatch(changeRoute(location)));
+    installOfflineWatcher((offline) => store.dispatch(setNetworkStatus(offline)));
+    installMediaQueryWatcher('(max-width: 767px)', (matches) => this._smallScreen = matches);
   }
 
   _stateChanged(state) {
@@ -73,12 +70,6 @@ class MyApp extends connect(store)(LitElement) {
     this._offline = state.app.offline;
     this._globalToast = state.app.globalToast;
     this._globalDialog = state.app.globalDialog;
-  }
-
-  _firstRendered() {
-    installRouter((location) => store.dispatch(changeRoute(location)));
-    installOfflineWatcher((offline) => store.dispatch(setNetworkStatus(offline)));
-    installMediaQueryWatcher('(max-width: 767px)', (matches) => this._smallScreen = matches);
   }
 
   _renderStyles() {
@@ -207,7 +198,6 @@ class MyApp extends connect(store)(LitElement) {
             _smallScreen,
 
             _drawer,
-            _drawerItems,
             _toolbar,
 
             _offline,
@@ -232,7 +222,7 @@ class MyApp extends connect(store)(LitElement) {
           <mk-drawer 
             user="${_user}"
             minimized="${_drawer.minimized}" 
-            drawer-items="${_drawerItems}"
+            drawer-items="${_drawer.items}"
             on-login="${() => store.dispatch(login())}"
             on-logout="${() => store.dispatch(logout())}"
             on-toggle-minimize="${(e) => store.dispatch(setAppDrawerMinimization(!e.detail.minimized))}"
