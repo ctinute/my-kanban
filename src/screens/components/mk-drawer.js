@@ -1,16 +1,12 @@
 import {html, LitElement} from '@polymer/lit-element';
-import '@polymer/iron-icons/iron-icons';
-
-import {Actions} from '../../actions/index';
-
-import './mk-logo.js';
-import './/mk-drawer-item.js';
+import {navigate} from '../../actions/route';
+import './mk-drawer-item';
+import './mk-drawer-item-user';
 
 class MkDrawer extends LitElement {
   static get properties() {
     return {
       minimized: Boolean,
-      drawerItems: Array,
       user: Object,
       store: Object,
     };
@@ -29,12 +25,12 @@ class MkDrawer extends LitElement {
   }
 
   _navigateUserDashboard() {
-    this.store.dispatch(Actions.route.navigate('Dashboard', '/u'));
+    this.store.dispatch(navigate('Dashboard', '/u'));
   }
 
   _render({minimized, narrow, drawerItems, user}) {
     const styles = html`
-      <style include="shared-styles">
+      <style>
         :host {
           width: 100%;
           height: 100vh;
@@ -71,32 +67,29 @@ class MkDrawer extends LitElement {
         .drawer-pinned-bottom {
           width: 100%;
         }
+        .section {
+          background-color: #fefefe;
+          border-top: 1px solid white;
+          border-bottom: 1px solid #efefef;
+        }
       </style>`;
-
-    let userBlock = user ?
-      html`
-        <mk-drawer-item
-          icon="icons:account-circle" 
-          text="${user.displayName}"
-          minimized="${minimized}"
-          class="drawer-item"
-          on-click="${() => this._navigateUserDashboard()}">
-        </mk-drawer-item>
+    let userBlock = html`
+      <mk-drawer-item-user 
+        user="${user}" 
+        minimized="${minimized}" 
+        on-click="${() => {
+      user ? this._navigateUserDashboard() : this._login();
+    }}">
+      </mk-drawer-item-user>
+      ${user ? html`
         <mk-drawer-item
           icon="icons:exit-to-app" 
           text="Sign out"
           minimized="${minimized}"
           class="drawer-item"
           on-click="${() => this._logout()}">
-        </mk-drawer-item>` :
-      html`
-        <mk-drawer-item
-          icon="icons:account-circle" 
-          text="Sign in"
-          minimized="${minimized}"
-          class="drawer-item"
-          on-click="${() => this._login()}">
-        </mk-drawer-item>`;
+        </mk-drawer-item>` : null}
+    `;
 
     let dynamicItemsBlock = drawerItems ?
       drawerItems.map((item) => html`
@@ -111,7 +104,7 @@ class MkDrawer extends LitElement {
     let bottomBlock = !narrow ?
       html`
         <mk-drawer-item 
-          icon="icons:chevron-left"
+          icon="${minimized ? 'icons:chevron-right' : 'icons:chevron-left'}"
           text="Minimize"
           class="drawer-item" 
           minimized="${minimized}" 
@@ -121,14 +114,10 @@ class MkDrawer extends LitElement {
 
     return html`
       ${styles}
-      <!-- Logo & App name -->
-      <div class="drawer-header">
-        <!--<mk-logo minimized=""></mk-logo>-->
-      </div>
       <div class="drawer-content">
-        <div class="drawer-pinned-top">${userBlock}</div>
-        <div class="drawer-dynamic">${dynamicItemsBlock}</div>
-        <div class="drawer-pinned-bottom">${bottomBlock}</div>
+        <div class="section drawer-pinned-top">${userBlock}</div>
+        <div class="section drawer-dynamic">${dynamicItemsBlock}</div>
+        <div class="section drawer-pinned-bottom">${bottomBlock}</div>
       </div>
     `;
   }
