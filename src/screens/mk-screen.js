@@ -7,6 +7,7 @@ import {
   hideToolbar,
   setActionToolbar,
   setDefaultToolbar,
+  setDrawerItems,
   showActionToolbar,
   showToolbar,
 } from '../actions/app';
@@ -71,6 +72,14 @@ export class MkScreen extends connect(store)(PageViewElement) {
   //     this._hideToolbar(),
   //   ]);
   // }
+
+  _requireDrawerShorcuts(items) {
+    this._dispatch(setDrawerItems(items));
+  }
+
+  _firstRendered() {
+    this._requireDrawerShorcuts(null);
+  }
 
   _didRender(props, oldProps, changedProps) {
     super._didRender(props, oldProps, changedProps);

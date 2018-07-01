@@ -50,7 +50,7 @@ export const setAppDrawerMinimization = (minimized = false) => ({
 });
 export const showDrawerAction = () => ({type: SHOW_DRAWER});
 export const hideDrawerAction = () => ({type: HIDE_DRAWER});
-export const setDrawerItems = (items) => ({type: HIDE_DRAWER, payload: {items}});
+export const setDrawerItems = (items) => ({type: SET_DRAWER_ITEMS, payload: {items}});
 
 // TOOLBAR
 export const setActionToolbar = (toolbarContent) => ({

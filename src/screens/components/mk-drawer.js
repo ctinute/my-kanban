@@ -91,16 +91,6 @@ class MkDrawer extends LitElement {
         </mk-drawer-item>` : null}
     `;
 
-    let dynamicItemsBlock = drawerItems ?
-      drawerItems.map((item) => html`
-        <mk-drawer-item
-          icon="${item.icon}"
-          text="${item.title}"
-          minimized="${minimized}"
-          on-click="${item.link}">
-        </mk-drawer-item>`) :
-      html``;
-
     let bottomBlock = !narrow ?
       html`
         <mk-drawer-item 
@@ -116,7 +106,7 @@ class MkDrawer extends LitElement {
       ${styles}
       <div class="drawer-content">
         <div class="section drawer-pinned-top">${userBlock}</div>
-        <div class="section drawer-dynamic">${dynamicItemsBlock}</div>
+        <div class="section drawer-dynamic"><slot></slot></div>
         <div class="section drawer-pinned-bottom">${bottomBlock}</div>
       </div>
     `;

@@ -29,6 +29,14 @@ export default class MkUser extends MkScreen {
       </div>
     `);
     this._showToolbar();
+    this._requireDrawerShorcuts(html`
+      <mk-drawer-item 
+        icon="icons:dashboard"
+        text="Dashboard"
+        class="drawer-item" 
+        on-click="${() => {
+    }}">
+      </mk-drawer-item>`);
   }
 
   _openCreateProjectDialog() {

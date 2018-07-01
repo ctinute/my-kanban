@@ -227,6 +227,7 @@ class MyApp extends connect(store)(LitElement) {
             on-logout="${() => store.dispatch(logout())}"
             on-toggle-minimize="${(e) => store.dispatch(setAppDrawerMinimization(!e.detail.minimized))}"
             store="${store}">
+            ${_drawer.items}
           </mk-drawer>
         </app-drawer>
 
