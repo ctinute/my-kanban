@@ -6,6 +6,7 @@ import '@polymer/iron-icons/iron-icons';
 import './components/mk-dialog-create-project';
 import {showDialog} from '../actions/app';
 import {createProject, deleteProject} from '../actions/project';
+import {navigate} from '../actions/route';
 
 export default class MkUser extends MkScreen {
   static get properties() {
@@ -29,14 +30,11 @@ export default class MkUser extends MkScreen {
       </div>
     `);
     this._showToolbar();
-    this._requireDrawerShorcuts(html`
-      <mk-drawer-item 
-        icon="icons:dashboard"
-        text="Dashboard"
-        class="drawer-item" 
-        on-click="${() => {
-    }}">
-      </mk-drawer-item>`);
+    this._requireDrawerShorcuts([{
+      icon: 'icons:dashboard',
+      title: 'Dashboard',
+      action: () => this._dispatch(navigate('Dashboard', '/u')),
+    }]);
   }
 
   _openCreateProjectDialog() {

@@ -6,7 +6,7 @@ export const APP_INITIAL_STATE = {
   drawer: {
     minimized: false,
     opened: true,
-    items: null,
+    items: [],
   },
   toolbar: {
     show: false,
