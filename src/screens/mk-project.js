@@ -5,6 +5,7 @@ import './components/mk-dialog-create-phase';
 import {MkScreen} from './mk-screen';
 import {createPhaseAction, deletePhaseAction} from '../actions/phase';
 import {showDialog} from '../actions/app';
+import {navigate} from "../actions/route";
 
 export default class MkProject extends MkScreen {
   constructor() {
@@ -37,6 +38,23 @@ export default class MkProject extends MkScreen {
       </div>
     `);
     this._showToolbar();
+    this._requireDrawerShorcuts([
+      {
+        icon: 'icons:dashboard',
+        title: 'Dashboard',
+        action: () => this._dispatch(navigate('Dashboard', '/u')),
+      },
+      {
+        icon: 'icons:view-day',
+        title: 'Current phase',
+        action: () => this._dispatch(navigate('Dashboard', `/u/${this.project.id}/${this.project.currentPhase}`)),
+      },
+      {
+        icon: 'icons:view-agenda',
+        title: 'Phases',
+        action: () => this._dispatch(navigate('Dashboard', `/u/${this.project.id}`)),
+      },
+    ]);
   }
 
   _openCreatePhaseDialog() {
