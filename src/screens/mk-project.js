@@ -73,6 +73,7 @@ export default class MkProject extends MkScreen {
       {
         icon: 'icons:view-agenda',
         title: 'Phases',
+        active: true,
         action: () => this._dispatch(navigate('Dashboard', `/u/${this.project.id}`)),
       },
     ]);

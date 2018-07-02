@@ -237,6 +237,16 @@ class MyApp extends connect(store)(LitElement) {
           --paper-item-icon-width: 40px;
           padding: 0 12px;
           box-sizing: border-box;
+          cursor: pointer;
+        }
+        .drawer-item.active {
+          background-color: #f0f0f0;
+          color: #5f7985;
+          box-shadow: 0 14px 18px -8px rgba(0,0,0,0.35);
+        }
+        .drawer-item:not(.active):hover {
+          background-color: #78909C;
+          color: white;
         }
         .drawer-item .text {
           flex-grow: 1;
@@ -254,6 +264,8 @@ class MyApp extends connect(store)(LitElement) {
           width: 32px;
           height: 32px;
           border-radius: 50%;
+          border: 2px solid white;
+          box-sizing: border-box;
         }
         .drawer-item.minimized .text {
           opacity: 0;
@@ -265,6 +277,9 @@ class MyApp extends connect(store)(LitElement) {
           display: flex;
           flex-flow: column;
           overflow: hidden;
+          background-color: #546E7A;
+          box-shadow: inset -14px 0 18px -8px rgba(0,0,0,0.35);
+          color: #CFD8DC;
         }
         #drawer-content .section {
           width: 100%;
@@ -277,9 +292,9 @@ class MyApp extends connect(store)(LitElement) {
         #drawer-content .pinned-bottom {
         }
         #drawer-content .separator {
-          background-color: #fefefe;
-          border-top: 1px solid #efefef;
-          border-bottom: 1px solid #fff;
+          background-color: #5f7985;
+          border-top: 1px solid #485d67db;
+          border-bottom: 1px solid #5c7986;
           width: 100%;
           height: 0;
         }
@@ -292,7 +307,7 @@ class MyApp extends connect(store)(LitElement) {
         <div class="separator"></div>
         <div class="section dynamic">
           ${items.map((item) => html`
-            <paper-icon-item class$="${drawerItemClasses}" on-click="${item.action}">
+            <paper-icon-item class$="${item.active ? (drawerItemClasses + ' active') : drawerItemClasses}" on-click="${item.action}">
               <iron-icon slot="item-icon" icon="${item.icon}"></iron-icon>
               <div class="text">${item.title}</div>
             </paper-icon-item>
@@ -320,18 +335,11 @@ class MyApp extends connect(store)(LitElement) {
             _globalDialog,
           }) {
     const styles = this._renderStyles();
-    let toolbarStyles = html`
-      <style>
-        app-toolbar.default-toolbar {
-          background-color: red;
-        }
-      </style>`;
 
     let drawer = this._renderDrawer(_drawer.show, _drawer.minimized, _user, _drawer.items);
 
     return html`
       ${styles}
-      ${toolbarStyles}
       <app-drawer-layout fullbleed narrow="${_smallScreen}" class$="${_drawer.minimized ? 'minimized' : ''}">
   
         <!-- Drawer content -->

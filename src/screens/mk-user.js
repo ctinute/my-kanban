@@ -34,6 +34,7 @@ export default class MkUser extends MkScreen {
       {
         icon: 'icons:dashboard',
         title: 'Dashboard',
+        active: true,
         action: () => this._dispatch(navigate('Dashboard', '/u')),
       },
     ]);

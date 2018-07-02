@@ -9,6 +9,7 @@ import {createStageAction, deleteStageAction, moveStageAction} from '../actions/
 import {MkScreen} from './mk-screen';
 import {showDialog} from '../actions/app';
 import {createTaskAction, moveTaskAction} from '../actions/task';
+import {navigate} from "../actions/route";
 
 
 export default class MkPhase extends MkScreen {
@@ -69,6 +70,24 @@ export default class MkPhase extends MkScreen {
         </div>
       `);
       this._showToolbar();
+      this._requireDrawerShorcuts([
+        {
+          icon: 'icons:dashboard',
+          title: 'Dashboard',
+          action: () => this._dispatch(navigate('Dashboard', '/u')),
+        },
+        {
+          icon: 'icons:view-day',
+          title: 'Current phase',
+          active: this.phase.id === this.project.currentPhase,
+          action: () => this._dispatch(navigate('Dashboard', `/u/${this.project.id}/${this.project.currentPhase}`)),
+        },
+        {
+          icon: 'icons:view-agenda',
+          title: 'Phases',
+          action: () => this._dispatch(navigate('Dashboard', `/u/${this.project.id}`)),
+        },
+      ]);
       this.firstRender = false;
     }
   }
