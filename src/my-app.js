@@ -71,6 +71,10 @@ class MyApp extends connect(store)(LitElement) {
     this._globalDialog = state.app.globalDialog;
   }
 
+  _shouldRender(props, changedProps, oldProps) {
+    return props._ready;
+  }
+
   _renderStyles() {
     return html`
       <!--suppress ALL -->
@@ -88,10 +92,17 @@ class MyApp extends connect(store)(LitElement) {
           --paper-spinner-color: var(--app-accent-color);
           -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
           color: var(--app-primary-color);
+          
+          
         }
         
         app-drawer-layout {
           --app-drawer-width: 256px;
+          transition: --app-drawer-width 0.3s;
+          /*--app-drawer-layout-content-transition:  --app-drawer-width 0.3s;*/
+        }
+        app-drawer-layout.minimized {
+          --app-drawer-width: 56px;
         }
         
         app-header-layout {}
@@ -104,12 +115,11 @@ class MyApp extends connect(store)(LitElement) {
         }
         
         app-header {
-          height: 64px;
+          height: 48px;
           width: 100%;
           position: absolute;
           top: 0;
           left: 0;
-          
         }
         app-header.hidden {
           height: 0;
@@ -123,7 +133,7 @@ class MyApp extends connect(store)(LitElement) {
         }
         
         main.has-toolbar {
-          padding-top: 64px;
+          padding-top: 48px;
         }
         
         main > * {
@@ -137,7 +147,7 @@ class MyApp extends connect(store)(LitElement) {
         /* small screen */
         @media (max-width: 767px) {
           :host {
-            padding-top: 64px;
+            padding-top: 48px;
           }
         }
         
@@ -147,14 +157,14 @@ class MyApp extends connect(store)(LitElement) {
           box-sizing: border-box;
         }
         app-header {
-          max-height: 64px;
-          overflow: hidden;
+          height: 48px;
+          transform: translate3d(0,0,0) !important;
         }
         @keyframes slide-in {
           from {
             position: absolute;
             opacity: 0;
-            transform: translateY(-64px);
+            transform: translateY(-48px);
           }
           to {
           position: relative;
@@ -171,10 +181,11 @@ class MyApp extends connect(store)(LitElement) {
           to {
             position: absolute;
             opacity: 0;
-            transform: translateY(64px);
+            transform: translateY(-48px);
           }
         }
         .toolbar {
+          height: 48px;
           width: 100%;
           box-sizing: border-box;
           animation: slide-in 0.3s ease forwards;
@@ -226,6 +237,16 @@ class MyApp extends connect(store)(LitElement) {
           --paper-item-icon-width: 40px;
           padding: 0 12px;
           box-sizing: border-box;
+          cursor: pointer;
+        }
+        .drawer-item.active {
+          background-color: #f0f0f0;
+          color: #5f7985;
+          box-shadow: 0 14px 18px -8px rgba(0,0,0,0.35);
+        }
+        .drawer-item:not(.active):hover {
+          background-color: #78909C;
+          color: white;
         }
         .drawer-item .text {
           flex-grow: 1;
@@ -243,6 +264,8 @@ class MyApp extends connect(store)(LitElement) {
           width: 32px;
           height: 32px;
           border-radius: 50%;
+          border: 2px solid white;
+          box-sizing: border-box;
         }
         .drawer-item.minimized .text {
           opacity: 0;
@@ -254,6 +277,9 @@ class MyApp extends connect(store)(LitElement) {
           display: flex;
           flex-flow: column;
           overflow: hidden;
+          background-color: #546E7A;
+          box-shadow: inset -14px 0 18px -8px rgba(0,0,0,0.35);
+          color: #CFD8DC;
         }
         #drawer-content .section {
           width: 100%;
@@ -266,11 +292,35 @@ class MyApp extends connect(store)(LitElement) {
         #drawer-content .pinned-bottom {
         }
         #drawer-content .separator {
-          background-color: #fefefe;
-          border-top: 1px solid #efefef;
-          border-bottom: 1px solid #fff;
+          background-color: #5f7985;
+          border-top: 1px solid #485d67db;
+          border-bottom: 1px solid #5c7986;
           width: 100%;
           height: 0;
+        }
+        app-toolbar .page-title {
+          width: auto;
+          height: 32px;
+          box-sizing: border-box;
+          margin: 12px 0;
+          padding: 4px 16px;
+          line-height: 24px;
+          border-radius: 16px;
+          background-color: #607D8B;
+          color: #ECEFF1;
+          box-shadow: var(--shadow-elevation-2dp_-_box-shadow);
+        }
+        app-toolbar a, a:visited {
+          text-decoration: none;
+          color: #ECEFF1;
+          font-size: 16px;
+        }
+        app-toolbar a:hover {
+          color: #FFFFFF;
+        }
+        app-toolbar .title-separator {
+          margin: 0 4px;
+          font-size: 0.8em;
         }
       </style>
       <div id="drawer-content">
@@ -281,7 +331,7 @@ class MyApp extends connect(store)(LitElement) {
         <div class="separator"></div>
         <div class="section dynamic">
           ${items.map((item) => html`
-            <paper-icon-item class$="${drawerItemClasses}" on-click="${item.action}">
+            <paper-icon-item class$="${item.active ? (drawerItemClasses + ' active') : drawerItemClasses}" on-click="${item.action}">
               <iron-icon slot="item-icon" icon="${item.icon}"></iron-icon>
               <div class="text">${item.title}</div>
             </paper-icon-item>
@@ -310,22 +360,14 @@ class MyApp extends connect(store)(LitElement) {
           }) {
     const styles = this._renderStyles();
 
-    const miniDrawerStyle = _drawer.minimized ? html`
-      <style>
-        app-drawer-layout {
-          --app-drawer-width: 56px;
-        }
-      </style>` : null;
-
     let drawer = this._renderDrawer(_drawer.show, _drawer.minimized, _user, _drawer.items);
 
     return html`
       ${styles}
-      ${miniDrawerStyle}
-      <app-drawer-layout fullbleed narrow="${_smallScreen}">
+      <app-drawer-layout fullbleed narrow="${_smallScreen}" class$="${_drawer.minimized ? 'minimized' : ''}">
   
         <!-- Drawer content -->
-        <app-drawer id="drawer" slot="drawer" swipe-open="${_smallScreen}" opened="${_drawer.opened}">
+        <app-drawer id="drawer" slot="drawer" swipe-open="${_smallScreen}" opened?=${_drawer.opened}>
           ${drawer}
         </app-drawer>
 

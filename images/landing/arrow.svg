@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200px" height="200px" viewBox="170 230 450 90"
+     preserveAspectRatio="xMidYMid meet">
+    <rect id="svgEditorBackground" x="0" y="0" width="600" height="600" style="fill: none; stroke: none;"/>
+    <path d="M174,72a472.64587,472.64587,0,0,1,407.99999999995,369.9999999999375"
+          style="fill:none;stroke:black;stroke-width:1px;" id="e3_circleArc"/>
+    <line id="e6_line" x1="174.29639434814453" y1="71.72398376464844" x2="174.29639434814453" y2="72.22398376464844"
+          style="stroke:black;fill:none;stroke-width:1px;"/>
+    <line id="e7_line" x1="173.859" y1="72.1615" x2="187.296" y2="62.224"
+          style="stroke:black;fill:none;stroke-width:1px;"/>
+    <line id="e8_line" x1="185.046" y1="84.1615" x2="174.171" y2="71.6615"
+          style="stroke:black;fill:none;stroke-width:1px;"/>
+</svg>

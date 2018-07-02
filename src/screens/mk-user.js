@@ -25,16 +25,19 @@ export default class MkUser extends MkScreen {
     super._didRender(props, oldProps, changedProps);
     this._requireDefaultToolbar();
     this._setDefaultToolbar(html`
-      <div main-title>
-        <h3 class="page-title">Dashboard</h3>
+      <div class="page-title">
+        Dashboard
       </div>
     `);
     this._showToolbar();
-    this._requireDrawerShorcuts([{
-      icon: 'icons:dashboard',
-      title: 'Dashboard',
-      action: () => this._dispatch(navigate('Dashboard', '/u')),
-    }]);
+    this._requireDrawerShorcuts([
+      {
+        icon: 'icons:dashboard',
+        title: 'Dashboard',
+        active: true,
+        action: () => this._dispatch(navigate('Dashboard', '/u')),
+      },
+    ]);
   }
 
   _openCreateProjectDialog() {

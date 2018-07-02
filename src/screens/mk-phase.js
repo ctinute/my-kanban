@@ -9,6 +9,7 @@ import {createStageAction, deleteStageAction, moveStageAction} from '../actions/
 import {MkScreen} from './mk-screen';
 import {showDialog} from '../actions/app';
 import {createTaskAction, moveTaskAction} from '../actions/task';
+import {navigate} from "../actions/route";
 
 
 export default class MkPhase extends MkScreen {
@@ -37,13 +38,31 @@ export default class MkPhase extends MkScreen {
     if (props.firstRender) {
       this._requireDefaultToolbar();
       this._setDefaultToolbar(html`
-        <div main-title>
+        <div class="page-title">
           <a href="/u/${props.project.id}">${props.project.name}</a>
-          <span class="title-seperator"> / </span>
+          <span class="title-separator"> / </span>
           <a href="/u/${props.project.id}/${props.phase.id}">${props.phase.name}</a>
         </div>
       `);
       this._showToolbar();
+      this._requireDrawerShorcuts([
+        {
+          icon: 'icons:dashboard',
+          title: 'Dashboard',
+          action: () => this._dispatch(navigate('Dashboard', '/u')),
+        },
+        {
+          icon: 'icons:view-agenda',
+          title: 'Phases',
+          action: () => this._dispatch(navigate('Dashboard', `/u/${this.project.id}`)),
+        },
+        {
+          icon: 'icons:view-day',
+          title: 'Current phase',
+          active: this.phase.id === this.project.currentPhase,
+          action: () => this._dispatch(navigate('Dashboard', `/u/${this.project.id}/${this.project.currentPhase}`)),
+        },
+      ]);
       this.firstRender = false;
     }
   }
