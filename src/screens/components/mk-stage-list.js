@@ -7,59 +7,45 @@ class MkStageList extends LitElement {
   constructor() {
     super();
     this.shouldMoveTaskEventFire = true;
-
-    // TODO: this is just a temporary fix for state change => re-order stage again
-    this.shadowStages = [];
-    this.selectedIndex = -1;
+    this.shouldRerender = true;
+    this.selectedStageId = null;
+    this.selectedTaskId = null;
   }
 
   static get properties() {
     return {
+      phase: Object,
       stages: Array,
-      shadowStages: Array,
-      shouldMoveTaskEventFire: Boolean,
       selectedIndex: Number,
+      shouldMoveTaskEventFire: Boolean,
+      shouldRerender: Boolean,
+      selectedTaskId: String,
+      selectedStageId: String,
     };
   }
 
-  _fireStageSelectionChanged() {
-    this.dispatchEvent(new CustomEvent('stage-selection-changed', {
-      detail: {
-        selected: this.selectedIndex !== -1,
-        stageId: this.selectedIndex !== -1 ? this.shadowStages[this.selectedIndex].id : null,
-      },
-    }));
-  }
-
-  _moveStage(oldIndex, newIndex) {
-    this.dispatchEvent(new CustomEvent('move-stage', {detail: {oldIndex, newIndex}}));
-  }
-
-  _moveTask(from, to, oldIndex, newIndex) {
-    from = from.id;
-    to = to.id;
-    // only emit 1 event
-    this.shouldMoveTaskEventFire = !this.shouldMoveTaskEventFire;
-    if (this.shouldMoveTaskEventFire) {
-      this.dispatchEvent(new CustomEvent('move-task', {detail: {from, to, oldIndex, newIndex}}));
-    }
+  _shouldRender(props, changedProps, oldProps) {
+    return this.shouldRerender;
   }
 
   _firstRendered() {
-    this.shadowStages = this.stages;
+    this._initSortable();
+  }
+
+  _initSortable() {
     let stageListContainer = this.shadowRoot.querySelector('#list');
     Sortable.create(stageListContainer, {
       animation: 100,
-      draggable: '.stage',
+      draggable: '.column',
       handle: '.header',
       chosenClass: 'item-old',
       dragClass: 'item-dragging',
       ghostClass: 'item-new',
       onSort: (evt) => {
-        this._moveStage(evt.oldIndex, evt.newIndex);
+        this._fireMoveStageEvent(evt.oldIndex, evt.newIndex);
       },
     });
-    let taskListContainer = stageListContainer.getElementsByClassName('content');
+    let taskListContainer = stageListContainer.getElementsByClassName('column-content');
     for (let cardList of taskListContainer) {
       Sortable.create(cardList, {
         group: 'card',
@@ -69,60 +55,179 @@ class MkStageList extends LitElement {
         dragClass: 'item-dragging',
         ghostClass: 'item-new',
         onSort: (evt) => {
-          this._moveTask(evt.from, evt.to, evt.oldIndex, evt.newIndex);
+          this._fireMoveTaskEvent(evt.from, evt.to, evt.oldIndex, evt.newIndex);
         },
       });
     }
   }
 
-  _render({shadowStages, selectedIndex}) {
-    return html`
-      ${this._renderStyles()}
-      <div id="list">
-        ${shadowStages.map((stage, index) => this._renderStage(stage, index, index === selectedIndex))}
-      </div>  
-    `;
+  // PUBLIC METHODS
+  selectTask(taskId) {
+    this.shouldRerender = true;
+    this.selectedTaskId = taskId;
   }
 
+  selectStage(stageId) {
+    this.shouldRerender = true;
+    this.selectedStageId = stageId;
+  }
+
+  // STAGE EVENTS
+  _fireCreateStageEvent() {
+    this.dispatchEvent(new CustomEvent('create-stage'));
+  }
+
+  _fireSelectStageEvent(stageId) {
+    this.shouldRerender = true;
+    this.dispatchEvent(new CustomEvent('select-stage', {detail: {stageId}}));
+  }
+
+  _fireMoveStageEvent(oldIndex, newIndex) {
+    // console.log('set skip next render');
+    this.shouldRerender = false;
+    this.dispatchEvent(new CustomEvent('move-stage', {detail: {oldIndex, newIndex}}));
+  }
+
+  // TASK EVENTS
+  _fireCreateTaskEvent(stageId) {
+    this.shouldRerender = true;
+    this.dispatchEvent(new CustomEvent('create-task', {
+      detail: {
+        stageId,
+      },
+    }));
+  }
+
+  _fireSelectTaskEvent(taskId) {
+    this.dispatchEvent(new CustomEvent('select-taskId', {detail: {task: taskId}}));
+  }
+
+  _fireMoveTaskEvent(from, to, oldIndex, newIndex) {
+    // console.log('set skip next render');
+    this.shouldRerender = false;
+    from = from.id;
+    to = to.id;
+    // skip emitting 1 event if moving card to another stage
+    if (from !== to) {
+      this.shouldMoveTaskEventFire = !this.shouldMoveTaskEventFire;
+    }
+    if (this.shouldMoveTaskEventFire) {
+      this.dispatchEvent(new CustomEvent('move-task', {detail: {from, to, oldIndex, newIndex}}));
+    }
+  }
+
+  // EVENT HANDLERS
+  _onClickTask(taskId) {
+    if (taskId !== this.selectedTaskId) {
+      this.selectTask(taskId);
+      this._fireSelectTaskEvent(taskId);
+    } else {
+      this.selectTask(null);
+      this._fireSelectTaskEvent(null);
+    }
+  }
+
+  _onClickStage(stageId) {
+    if (stageId !== this.selectedStageId) {
+      this.selectStage(stageId);
+      this._fireSelectStageEvent(stageId);
+    } else {
+      this.selectStage(null);
+      this._fireSelectStageEvent(null);
+    }
+  }
+
+  // noinspection JSMethodCanBeStatic
+  _createDisplayStages(phase) {
+    // console.log('_createDisplayStages');
+    let stages = [];
+    // re-order stage details
+    for (let i = 0; i < phase.stages.length; i++) {
+      let stage = JSON.parse(JSON.stringify(phase.stageDetails[phase.stages[i]]));
+      // add cards to stage detail
+      if (stage.tasks) {
+        for (let j = 0; j < stage.tasks.length; j++) {
+          stage.tasks[j] = phase.taskDetails[stage.tasks[j]];
+        }
+      } else {
+        stage.tasks = [];
+      }
+      stages.push(stage);
+    }
+    return stages;
+  }
+
+  // noinspection JSMethodCanBeStatic
   _renderStyles() {
     return html`
       <style>
         :host {
-            display: block;
+          display: block;
         }
         #list {
-            white-space: nowrap;
-            width: auto;
-            height: 100%;
-        }
-        .content {
-            min-height: 16px;
-        }
-        .stages,
-        .new-stage {
-          display: inline-block;
+          height: 100%;
+          width: 100%;
+          padding: 8px 0;
+          position: relative;
           vertical-align: top;
           white-space: nowrap;
+          overflow-x: scroll;
+          overflow-y: hidden;
         }
-        .stage {
+        /*#list.full {*/
+          /*height: 100%;*/
+          /*width: 100%;*/
+        /*}*/
+        #new-stage-btn {
           display: inline-block;
           vertical-align: top;
           width: 256px;
           margin: 0 16px;
           padding: 8px;
+          font-size: 1.2em;
+          line-height: 2.5em;
+          height: 2.5em;
+          text-align: center;
         }
-        .stage.active {
+        .column {
+          display: inline-block;
+          max-height: 100%;
+          width: 256px;
+          vertical-align: top;
+          box-sizing: border-box;
+          opacity: 1;
+          transition: width, opacity, margin;
+          transition-duration: 0.3s;
+        }
+        .stage {
+          width: 90%;
+          max-width: 600px;
+          margin: auto;
+          border-radius: 4px;
+          transition: box-shadow, background-color;
+          transition-duration: 0.3s;
+        }
+        .column.active {
+          width: 100%;
+        }
+        .column.active .stage {
+          background-color: #fafafa;
           box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
         }
+        .column.inactive {
+          width: 0;
+          opacity: 0;
+        }
+        .column.inactive .stage {
+          box-shadow: none;
+        }
+        .column-content {
+          min-height: 16px;
+        }
         .task {
-          height: 48px;
-          line-height: 48px;
           width: 100%;
           margin: 8px 0;
-          padding: 4px 8px;
-          display: block;
           cursor: pointer;
-          border-radius: 4px;
         }
         .no-task {
           text-align: center;
@@ -140,48 +245,36 @@ class MkStageList extends LitElement {
     `;
   }
 
-  _onStageClicked(index) {
-    if (index !== this.selectedIndex) {
-      this.selectStage(index);
-    } else {
-      this.deSelectStage();
-    }
-    this._fireStageSelectionChanged();
-  }
-
-  selectStage(index) {
-    this.selectedIndex = index;
-  }
-
-  deSelectStage() {
-    this.selectedIndex = -1;
-  }
-
-  _renderStage(stage, index, isActive) {
-    let classes = `stage ${isActive ? 'active' : ''}`;
-    let taskList = stage.tasks.length > 0 ?
-      html`${stage.tasks.map((task) => this._renderTask(task))}` : null;
-    // html `<div class="no-task">No task. Drop new task here !</div>`;
+  _renderStage(stage, selectedStageId, selectedTaskId) {
+    let classes = `column ${selectedStageId !== null ? (stage.id === selectedStageId ? 'active' : 'inactive') : ''}`;
+    let taskList = stage.tasks || [];
     return html`
-      <mk-stage-column 
-        class$="${classes}" 
-        stage="${stage}" 
-        canCreateTask="${stage.canCreateTask}" 
-        on-create-task-button-click="${() => {
-    }}"
-        on-select="${() => this._onStageClicked(index)}">
-        <div class="content" id="${stage.id}" data-index-number="${index}">
-          ${taskList}
-        </div>
-      </mk-stage-column>
+      <div class$="${classes}">
+        <mk-stage-column 
+          class="stage" 
+          stage="${stage}" 
+          canCreateTask="${stage.canCreateTask}" 
+          on-create-task-button-click="${() => this._fireCreateTaskEvent(stage.id)}"
+          on-select="${() => this._onClickStage(stage.id)}">
+          <div class="column-content" id="${stage.id}">
+            ${taskList.map((task) => html`
+              <mk-task-item class="task" task="${task}" selected?=${task.id === selectedTaskId} on-click="${() => this._onClickTask(task.id)}"></mk-task-item>
+            `)}
+          </div>
+        </mk-stage-column>
+      </div>
     `;
   }
 
-  _renderTask(task) {
+  _render({phase, selectedStageId, selectedTaskId}) {
+    let styles = this._renderStyles();
+    let stages = this._createDisplayStages(phase);
     return html`
-      <paper-card class="task">
-        <mk-task-item task="${task}">
-      </paper-card>
+      ${styles}
+      <div id="list">
+        ${stages.map((stage) => this._renderStage(stage, selectedStageId, selectedTaskId))}
+        <paper-button id="new-stage-btn" hidden?="${selectedStageId || selectedTaskId}" flat on-click="${() => this._fireCreateStageEvent()}">New stage</paper-button>
+      </div>
     `;
   }
 }

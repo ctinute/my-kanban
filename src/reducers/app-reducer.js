@@ -2,15 +2,23 @@ import {APP_INITIAL_STATE} from '../initial-state';
 import {
   HIDE_ACTION_TOOLBAR,
   HIDE_DIALOG,
-  HIDE_TOAST, HIDE_TOOLBAR, SET_ACTION_TOOLBAR,
-  SET_APP_READY, SET_DEFAULT_TOOLBAR,
+  HIDE_DRAWER,
+  HIDE_TOAST,
+  HIDE_TOOLBAR,
+  SET_ACTION_TOOLBAR,
+  SET_APP_READY,
+  SET_DEFAULT_TOOLBAR,
+  SET_DRAWER_ITEMS,
   SET_DRAWER_MINIMIZATION,
   SET_FETCH_END,
   SET_FETCH_START,
   SET_NETWORK_OFFLINE,
-  SET_NETWORK_ONLINE, SHOW_ACTION_TOOLBAR,
+  SET_NETWORK_ONLINE,
+  SHOW_ACTION_TOOLBAR,
   SHOW_DIALOG,
-  SHOW_TOAST, SHOW_TOOLBAR,
+  SHOW_DRAWER,
+  SHOW_TOAST,
+  SHOW_TOOLBAR,
 } from '../actions/app';
 
 const appReducer = (state = APP_INITIAL_STATE, action) => {
@@ -65,13 +73,39 @@ const appReducer = (state = APP_INITIAL_STATE, action) => {
         ...state,
         drawer: state.smallScreen ?
           {
+            ...state.drawer,
             opened: state.drawer.opened,
             minimized: false,
           } :
           {
+            ...state.drawer,
             opened: true,
             minimized: action.payload.minimized,
           },
+      });
+    case HIDE_DRAWER:
+      return Object.assign({}, state, {
+        ...state,
+        drawer: {
+          ...state.drawer,
+          opened: false,
+        },
+      });
+    case SHOW_DRAWER:
+      return Object.assign({}, state, {
+        ...state,
+        drawer: {
+          ...state.drawer,
+          opened: true,
+        },
+      });
+    case SET_DRAWER_ITEMS:
+      return Object.assign({}, state, {
+        ...state,
+        drawer: {
+          ...state.drawer,
+          items: action.payload.items,
+        },
       });
 
     case SET_DEFAULT_TOOLBAR:

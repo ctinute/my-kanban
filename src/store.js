@@ -40,7 +40,7 @@ const logger = createLogger({
 export const store = createStore(
   rootReducer,
   {},
-  compose(lazyReducerEnhancer(combineReducers), applyMiddleware(sagaMiddleware, logger))
+  compose(lazyReducerEnhancer(combineReducers), applyMiddleware(sagaMiddleware))
 );
 
 sagaMiddleware.run(rootSaga);

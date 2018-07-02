@@ -12,8 +12,8 @@ class MkStageColumn extends LitElement {
     return html`
       <style>
         :host {
-            display: block;
-            min-width: 300px;
+          display: block;
+          padding: 8px;
         }
         .header {
           width: 100%;
@@ -29,8 +29,8 @@ class MkStageColumn extends LitElement {
     `;
   }
 
-  _onCreateTaskButtonClick() {
-    this.dispatchEvent(new CustomEvent('createTaskButtonClick'));
+  _fireOnCreateTaskButtonClick() {
+    this.dispatchEvent(new CustomEvent('create-task-button-click'));
   }
 
   _fireSelectEvent() {
@@ -43,7 +43,7 @@ class MkStageColumn extends LitElement {
 
   _render({stage}) {
     let styles = this._renderStyles();
-    let actions = stage.canCreateTask ? html`<paper-button ripple on-click="${() => this._onCreateTaskButtonClick()}">New task...</paper-button>` : null;
+    let actions = stage.canCreateTask ? html`<paper-button ripple on-click="${() => this._fireOnCreateTaskButtonClick()}">New task...</paper-button>` : null;
     return html`
       ${styles}
       <div class="header" on-click="${() => this._fireSelectEvent()}">

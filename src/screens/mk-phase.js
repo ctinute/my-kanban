@@ -1,159 +1,151 @@
-/* eslint-disable no-console */
 import {html} from '@polymer/lit-element';
-import '@polymer/app-layout/app-header-layout/app-header-layout';
-import '@polymer/app-layout/app-header/app-header';
-import '@polymer/app-layout/app-toolbar/app-toolbar';
-import '@polymer/paper-icon-button';
-import '@polymer/paper-card';
+import '@polymer/paper-icon-button/paper-icon-button';
+import '@polymer/paper-card/paper-card';
+import '@polymer/paper-button/paper-button';
 import './components/mk-stage-list';
 import './components/mk-dialog-create-stage';
-import {Actions} from '../actions';
-import {move} from '../actions/stage';
+import './components/mk-dialog-create-task';
+import {createStageAction, deleteStageAction, moveStageAction} from '../actions/stage';
 import {MkScreen} from './mk-screen';
+import {showDialog} from '../actions/app';
+import {createTaskAction, moveTaskAction} from '../actions/task';
 
 
 export default class MkPhase extends MkScreen {
+  constructor() {
+    super();
+    this.selectedStage = null;
+    this.firstRender = true;
+  }
+
   static get properties() {
     return {
-      user: Object,
-      projectId: String,
-      phaseId: String,
       project: Object,
       phase: Object,
-      selectedStageIndex: Number,
+      selectedStage: Object,
+      firstRender: Boolean,
     };
   }
 
   _stateChanged(state) {
-    this.user = state.auth.user;
-    this.projectId = state.route.data.projectId;
-    this.phaseId = state.route.data.phaseId;
-    this.project = state.userData.projects[this.projectId];
-    this.phase = this.project ? this.project.phases[this.phaseId] : null;
-    this.selectedStageIndex = -1;
+    this.project = state.userData.projects[state.route.data.projectId];
+    this.phase = this.project ? this.project.phases[state.route.data.phaseId] : null;
   }
 
-  _didRender(props, oldProps, changedProps) {
-    this._requireDefaultToolbar();
-    this._setDefaultToolbar(html`
-      <div main-title>
-        <a href="/u/${props.project.id}">${props.project.name}</a>
-        <span class="title-seperator"> / </span>
-        <a href="/u/${props.project.id}/${props.phase.id}">${props.phase.name}</a>
-      </div>
-    `);
-    this._showToolbar();
+  _didRender(props, changedProps, oldProps) {
+    // since props.project does not exist in first render, using custom firstRender boolean flag instead
+    if (props.firstRender) {
+      this._requireDefaultToolbar();
+      this._setDefaultToolbar(html`
+        <div main-title>
+          <a href="/u/${props.project.id}">${props.project.name}</a>
+          <span class="title-seperator"> / </span>
+          <a href="/u/${props.project.id}/${props.phase.id}">${props.phase.name}</a>
+        </div>
+      `);
+      this._showToolbar();
+      this.firstRender = false;
+    }
   }
 
   _createStage(stage) {
-    this._dispatch(Actions.stage.add(stage, this.projectId, this.phaseId));
+    stage.projectId = this.project.id;
+    stage.phaseId = this.phase.id;
+    this._dispatch(createStageAction(stage));
   }
+
+  _moveStage(src, des) {
+    const stageId = this.phase.stages[src];
+    let stage = this.phase.stageDetails[stageId];
+    this._dispatch(moveStageAction(stage, src, des));
+  }
+
+  _deleteStage() {
+    this._dispatch(deleteStageAction(this.selectedStage));
+  }
+
+  _selectStage(stageId) {
+    if (stageId) {
+      this.selectedStage = this.phase.stageDetails[stageId];
+      this._setActionToolbar(html`
+        <div main-title>Select an action</div>
+        <paper-icon-button icon="edit"></paper-icon-button>
+        <paper-icon-button icon="delete" on-click="${() => this._deleteStage()}"></paper-icon-button>
+        <paper-icon-button icon="close" on-click="${() => this._deselectStage()}"></paper-icon-button>
+      `);
+      this._requireActionToolbar();
+    } else {
+      this._setActionToolbar(null);
+      this._requireDefaultToolbar();
+    }
+  }
+
+  _deselectStage() {
+    this.selectedStage = null;
+    this.shadowRoot.querySelector('mk-stage-list').selectStage(null);
+    this._requireDefaultToolbar();
+  }
+
+  _createTask(task, stageId) {
+    task.projectId = this.project.id;
+    task.phaseId = this.phase.id;
+    task.stageId = stageId;
+    this._dispatch(createTaskAction(task));
+  }
+
+  _moveTask(from, to, oldIndex, newIndex) {
+    const taskId = this.phase.stageDetails[from].tasks[oldIndex];
+    let task = this.phase.taskDetails[taskId];
+    this._dispatch(moveTaskAction(task, to, oldIndex, newIndex));
+  }
+
   _openCreateStageDialog() {
     let dialog = html`
       <mk-dialog-create-stage
         on-submit="${(e) => this._createStage(e.detail.stage)}"
         on-cancel="${() => console.log('cancelled')}"></mk-dialog-create-stage>`;
-    this._dispatch(Actions.app.showDialog(dialog, null));
+    this._dispatch(showDialog(dialog, null));
   }
 
+  _openCreateTaskDialog(stageId) {
+    let dialog = html`
+      <mk-dialog-create-task
+        on-submit="${(e) => this._createTask(e.detail.task, stageId)}"
+        on-cancel="${() => console.log('cancelled')}"></mk-dialog-create-task>`;
+    this._dispatch(showDialog(dialog, null));
+  }
+
+  // noinspection JSMethodCanBeStatic
   _renderStyles() {
     return html`
       <style>
         :host {
-            display: block;
-            width: 100%;
-            height: 100%;
+          display: block;
+          width: 100%;
+          height: 100%;
         }
-        
-        .horizontal-list {
-          width: auto;
-          white-space: nowrap;
-          overflow-y: hidden;
-          overflow-x: scroll;
-        }
-        .horizontal-list > .list-item {
-          display: inline-block;
-          vertical-align: top;
-        }
-        
         mk-stage-list {
-            height: 100%;
-            width: auto;
-        }
-        
-        #new-stage {
-          display: inline-block;
-          vertical-align: top;
-          width: 256px;
-          margin: 0 16px;
-          padding: 8px;
-          font-size: 1.2em;
-          line-height: 2.5em;
-          height: 2.5em;
-          text-align: center;
+          height: 100%;
+          width: 100%;
         }
       </style>
     `;
   }
 
-  _moveStage(src, des) {
-    this._dispatch(move(src, des, this.projectId, this.phaseId));
-  }
-
-  _onSelectStage(e) {
-    this._setActionToolbar(html`
-      <div main-title>Select an action</div>
-      <paper-icon-button icon="edit"></paper-icon-button>
-      <paper-icon-button icon="delete"></paper-icon-button>
-      <paper-icon-button icon="close" on-click="${() => this._deselectStage()}"></paper-icon-button>
-    `);
-    this._requireActionToolbar();
-    this.selectedStage = e.detail.stageId;
-  }
-
-  _deselectStage() {
-    // TODO: not working
-    this.selectedStageIndex = -1;
-  }
-
-  _render({project, phase, showToolbar, selectedStageIndex}) {
+  _render({phase}) {
     let styles = this._renderStyles();
-    let stages = this._createDisplayStages(phase);
     return html`
       ${styles}
-      <div class="content horizontal-list">
-        <mk-stage-list 
-          id="stageList"
-          class="list-item"
-          stages="${stages}"
-          selectedIndex="${selectedStageIndex}"
-          on-stage-selection-changed="${(e) => this._onSelectStage(e)}"
-          on-move-stage="${(e) => this._moveStage(e.detail.oldIndex, e.detail.newIndex)}"
-          on-move-task="${(e) => console.log(e)}">
-        </mk-stage-list>
-        <div class="list-item">
-          <paper-button id="new-stage" flat on-click="${() => this._openCreateStageDialog()}">New stage</paper-button>
-        </div>
-      </div>
+      <mk-stage-list
+        phase="${phase}"
+        on-create-stage="${(e) => this._openCreateStageDialog()}"
+        on-create-task="${(e) => this._openCreateTaskDialog(e.detail.stageId)}"
+        on-select-stage="${(e) => this._selectStage(e.detail.stageId)}"
+        on-select-task="${(e) => this._selectTask(e.detail.taskId)}"   
+        on-move-stage="${(e) => this._moveStage(e.detail.oldIndex, e.detail.newIndex)}"
+        on-move-task="${(e) => this._moveTask(e.detail.from, e.detail.to, e.detail.oldIndex, e.detail.newIndex)}">
+      </mk-stage-list>
     `;
-  }
-
-  _createDisplayStages(phase) {
-    let stages = [];
-    // re-order stage details
-    for (let i = 0; i < phase.stages.length; i++) {
-      let stage = JSON.parse(JSON.stringify(phase.stageDetails[phase.stages[i]]));
-      // add cards to stage detail
-      if (stage.tasks) {
-        for (let j = 0; j < stage.tasks.length; j++) {
-          stage.tasks[j] = phase.taskDetails[stage.tasks[j]];
-        }
-      } else {
-        stage.tasks = [];
-      }
-      stages.push(stage);
-    }
-    return stages;
   }
 }
 

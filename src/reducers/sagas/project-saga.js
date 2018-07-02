@@ -68,3 +68,14 @@ export function* pullOne(action) {
     yield put(Actions.app.showToast(e.message));
   }
 }
+
+export function* deleteProject(action) {
+  try {
+    let projectId = action.payload.projectId;
+    let project = yield select((state) => state.userData.projects[projectId]);
+    yield call(API.project.deleteProject, project);
+    yield put(Actions.project.removeProjectFromState(projectId));
+  } catch (e) {
+    yield put(Actions.app.showToast(e.message));
+  }
+}
