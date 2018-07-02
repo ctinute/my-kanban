@@ -71,6 +71,10 @@ class MyApp extends connect(store)(LitElement) {
     this._globalDialog = state.app.globalDialog;
   }
 
+  _shouldRender(props, changedProps, oldProps) {
+    return props._ready;
+  }
+
   _renderStyles() {
     return html`
       <!--suppress ALL -->
@@ -88,10 +92,17 @@ class MyApp extends connect(store)(LitElement) {
           --paper-spinner-color: var(--app-accent-color);
           -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
           color: var(--app-primary-color);
+          
+          
         }
         
         app-drawer-layout {
           --app-drawer-width: 256px;
+          transition: --app-drawer-width 0.3s;
+          /*--app-drawer-layout-content-transition:  --app-drawer-width 0.3s;*/
+        }
+        app-drawer-layout.minimized {
+          --app-drawer-width: 56px;
         }
         
         app-header-layout {}
@@ -109,7 +120,6 @@ class MyApp extends connect(store)(LitElement) {
           position: absolute;
           top: 0;
           left: 0;
-          
         }
         app-header.hidden {
           height: 0;
@@ -310,22 +320,14 @@ class MyApp extends connect(store)(LitElement) {
           }) {
     const styles = this._renderStyles();
 
-    const miniDrawerStyle = _drawer.minimized ? html`
-      <style>
-        app-drawer-layout {
-          --app-drawer-width: 56px;
-        }
-      </style>` : null;
-
     let drawer = this._renderDrawer(_drawer.show, _drawer.minimized, _user, _drawer.items);
 
     return html`
       ${styles}
-      ${miniDrawerStyle}
-      <app-drawer-layout fullbleed narrow="${_smallScreen}">
+      <app-drawer-layout fullbleed narrow="${_smallScreen}" class$="${_drawer.minimized ? 'minimized' : ''}">
   
         <!-- Drawer content -->
-        <app-drawer id="drawer" slot="drawer" swipe-open="${_smallScreen}" opened="${_drawer.opened}">
+        <app-drawer id="drawer" slot="drawer" swipe-open="${_smallScreen}" opened?=${_drawer.opened}>
           ${drawer}
         </app-drawer>
 
