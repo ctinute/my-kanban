@@ -10,6 +10,9 @@ export const SET_FETCH_START = 'SET_FETCH_START';
 export const SET_FETCH_END = 'SET_FETCH_END';
 
 export const SET_DRAWER_MINIMIZATION = 'SET_DRAWER_MINIMIZATION';
+export const SHOW_DRAWER = 'SHOW_DRAWER';
+export const HIDE_DRAWER = 'HIDE_DRAWER';
+export const SET_DRAWER_ITEMS = 'SET_DRAWER_ITEM';
 
 export const SET_ACTION_TOOLBAR = 'SET_ACTION_TOOLBAR';
 export const SET_DEFAULT_TOOLBAR = 'SET_DEFAULT_TOOLBAR';
@@ -45,6 +48,9 @@ export const setAppDrawerMinimization = (minimized = false) => ({
   type: SET_DRAWER_MINIMIZATION,
   payload: {minimized},
 });
+export const showDrawerAction = () => ({type: SHOW_DRAWER});
+export const hideDrawerAction = () => ({type: HIDE_DRAWER});
+export const setDrawerItems = (items) => ({type: SET_DRAWER_ITEMS, payload: {items}});
 
 // TOOLBAR
 export const setActionToolbar = (toolbarContent) => ({
