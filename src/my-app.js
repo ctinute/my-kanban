@@ -115,7 +115,7 @@ class MyApp extends connect(store)(LitElement) {
         }
         
         app-header {
-          height: 64px;
+          height: 48px;
           width: 100%;
           position: absolute;
           top: 0;
@@ -133,7 +133,7 @@ class MyApp extends connect(store)(LitElement) {
         }
         
         main.has-toolbar {
-          padding-top: 64px;
+          padding-top: 48px;
         }
         
         main > * {
@@ -147,7 +147,7 @@ class MyApp extends connect(store)(LitElement) {
         /* small screen */
         @media (max-width: 767px) {
           :host {
-            padding-top: 64px;
+            padding-top: 48px;
           }
         }
         
@@ -157,14 +157,14 @@ class MyApp extends connect(store)(LitElement) {
           box-sizing: border-box;
         }
         app-header {
-          max-height: 64px;
-          overflow: hidden;
+          height: 48px;
+          transform: translate3d(0,0,0) !important;
         }
         @keyframes slide-in {
           from {
             position: absolute;
             opacity: 0;
-            transform: translateY(-64px);
+            transform: translateY(-48px);
           }
           to {
           position: relative;
@@ -181,10 +181,11 @@ class MyApp extends connect(store)(LitElement) {
           to {
             position: absolute;
             opacity: 0;
-            transform: translateY(64px);
+            transform: translateY(-48px);
           }
         }
         .toolbar {
+          height: 48px;
           width: 100%;
           box-sizing: border-box;
           animation: slide-in 0.3s ease forwards;
@@ -319,11 +320,18 @@ class MyApp extends connect(store)(LitElement) {
             _globalDialog,
           }) {
     const styles = this._renderStyles();
+    let toolbarStyles = html`
+      <style>
+        app-toolbar.default-toolbar {
+          background-color: red;
+        }
+      </style>`;
 
     let drawer = this._renderDrawer(_drawer.show, _drawer.minimized, _user, _drawer.items);
 
     return html`
       ${styles}
+      ${toolbarStyles}
       <app-drawer-layout fullbleed narrow="${_smallScreen}" class$="${_drawer.minimized ? 'minimized' : ''}">
   
         <!-- Drawer content -->
