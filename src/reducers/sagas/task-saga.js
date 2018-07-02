@@ -1,7 +1,7 @@
 import {put, select} from 'redux-saga/effects';
 import {showToast} from '../../actions/app';
 import {sync} from '../../actions/project';
-import {moveItem} from '../../utils/array';
+import {insertItem, removeItem} from '../../utils/array';
 
 const computeId = (phase) => {
   return phase.taskDetails ? phase.taskDetails.length : 0;
@@ -49,11 +49,20 @@ export function* deleteTask(action) {
 
 export function* moveTask(action) {
   try {
-    let {oldIndex, newIndex, projectId, phaseId} = action.payload;
-    let project = yield select((state) => state.userData.projects[projectId]);
-    let phase = project.phases[phaseId];
-    phase.stages = moveItem(phase.stages, oldIndex, newIndex);
-    project.phases[phaseId] = phase;
+    let {task, newStageId, oldIndex, newIndex} = action.payload;
+    let project = yield select((state) => state.userData.projects[task.projectId]);
+    let phase = project.phases[task.phaseId];
+    let oldStage = phase.stageDetails[task.stageId];
+    let newStage = phase.stageDetails[newStageId];
+
+    task.stageId = newStage.id;
+    oldStage.tasks = removeItem(oldStage.tasks || [], oldIndex);
+    newStage.tasks = insertItem(newStage.tasks || [], newIndex, task.id);
+
+    phase.stageDetails[oldStage.id] = oldStage;
+    phase.stageDetails[newStage.id] = newStage;
+    project.phases[phase.id] = phase;
+
     yield put(sync(project));
   } catch (e) {
     yield put(showToast(e.message));

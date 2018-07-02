@@ -26,7 +26,10 @@ export default class MkHome extends MkScreen {
       </style>`;
     return html`
       ${style}
-      Home
+      <div>
+        <img src="../../images/landing/arrow.svg" alt="" width="50%" height="50%">
+        <div style="width: 100%; text-align: center">Start by clicking this</div>
+      </div>
     `;
   }
 }

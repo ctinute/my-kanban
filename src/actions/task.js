@@ -23,8 +23,8 @@ export const deleteTaskAction = (task) => ({
   },
 });
 
-export const moveTaskAction = (task, newIndex, newColumn) => ({
+export const moveTaskAction = (task, newStageId, oldIndex, newIndex) => ({
   type: MOVE_TASK,
-  payload: {task, newIndex, newColumn},
+  payload: {task, newStageId, oldIndex, newIndex},
 });
 

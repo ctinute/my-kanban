@@ -5,6 +5,7 @@ import './components/mk-dialog-create-phase';
 import {MkScreen} from './mk-screen';
 import {createPhaseAction, deletePhaseAction} from '../actions/phase';
 import {showDialog} from '../actions/app';
+import {navigate} from "../actions/route";
 
 export default class MkProject extends MkScreen {
   constructor() {
@@ -32,11 +33,29 @@ export default class MkProject extends MkScreen {
     super._didRender(props, oldProps, changedProps);
     this._requireDefaultToolbar();
     this._setDefaultToolbar(html`
-      <div main-title>
+      <div class="page-title">
         <a href="/u/${props.project.id}">${props.project.name}</a>
       </div>
     `);
     this._showToolbar();
+    this._requireDrawerShorcuts([
+      {
+        icon: 'icons:dashboard',
+        title: 'Dashboard',
+        action: () => this._dispatch(navigate('Dashboard', '/u')),
+      },
+      {
+        icon: 'icons:view-agenda',
+        title: 'Phases',
+        active: true,
+        action: () => this._dispatch(navigate('Dashboard', `/u/${this.project.id}`)),
+      },
+      {
+        icon: 'icons:view-day',
+        title: 'Current phase',
+        action: () => this._dispatch(navigate('Dashboard', `/u/${this.project.id}/${this.project.currentPhase}`)),
+      },
+    ]);
   }
 
   _openCreatePhaseDialog() {
