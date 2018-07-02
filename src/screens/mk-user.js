@@ -25,8 +25,8 @@ export default class MkUser extends MkScreen {
     super._didRender(props, oldProps, changedProps);
     this._requireDefaultToolbar();
     this._setDefaultToolbar(html`
-      <div main-title>
-        <h3 class="page-title">Dashboard</h3>
+      <div class="page-title">
+        Dashboard
       </div>
     `);
     this._showToolbar();

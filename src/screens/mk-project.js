@@ -33,27 +33,6 @@ export default class MkProject extends MkScreen {
     super._didRender(props, oldProps, changedProps);
     this._requireDefaultToolbar();
     this._setDefaultToolbar(html`
-      <style>
-        .page-title {
-          width: auto;
-          height: 32px;
-          box-sizing: border-box;
-          margin: 8px 0;
-          padding: 4px 16px;
-          line-height: 24px;
-          border-radius: 16px;
-          background-color: white;
-          box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.4);;
-        }
-        a, a:visited {
-          text-decoration: none;
-          color: black;
-          font-size: 16px;
-        }
-        a:hover {
-          color: #2f4fb7;
-        }
-      </style>
       <div class="page-title">
         <a href="/u/${props.project.id}">${props.project.name}</a>
       </div>
@@ -66,15 +45,15 @@ export default class MkProject extends MkScreen {
         action: () => this._dispatch(navigate('Dashboard', '/u')),
       },
       {
-        icon: 'icons:view-day',
-        title: 'Current phase',
-        action: () => this._dispatch(navigate('Dashboard', `/u/${this.project.id}/${this.project.currentPhase}`)),
-      },
-      {
         icon: 'icons:view-agenda',
         title: 'Phases',
         active: true,
         action: () => this._dispatch(navigate('Dashboard', `/u/${this.project.id}`)),
+      },
+      {
+        icon: 'icons:view-day',
+        title: 'Current phase',
+        action: () => this._dispatch(navigate('Dashboard', `/u/${this.project.id}/${this.project.currentPhase}`)),
       },
     ]);
   }

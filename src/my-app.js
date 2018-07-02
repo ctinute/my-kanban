@@ -298,6 +298,30 @@ class MyApp extends connect(store)(LitElement) {
           width: 100%;
           height: 0;
         }
+        app-toolbar .page-title {
+          width: auto;
+          height: 32px;
+          box-sizing: border-box;
+          margin: 12px 0;
+          padding: 4px 16px;
+          line-height: 24px;
+          border-radius: 16px;
+          background-color: #607D8B;
+          color: #ECEFF1;
+          box-shadow: var(--shadow-elevation-2dp_-_box-shadow);
+        }
+        app-toolbar a, a:visited {
+          text-decoration: none;
+          color: #ECEFF1;
+          font-size: 16px;
+        }
+        app-toolbar a:hover {
+          color: #FFFFFF;
+        }
+        app-toolbar .title-separator {
+          margin: 0 4px;
+          font-size: 0.8em;
+        }
       </style>
       <div id="drawer-content">
         <div class="section pinned-top">
