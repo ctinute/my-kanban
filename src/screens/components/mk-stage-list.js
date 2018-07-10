@@ -2,14 +2,19 @@ import {html, LitElement} from '@polymer/lit-element';
 import 'sortablejs';
 import './mk-stage-column';
 import './mk-task-item';
+import './mk-stage-editor';
 
 class MkStageList extends LitElement {
   constructor() {
     super();
     this.shouldMoveTaskEventFire = true;
     this.shouldRerender = true;
+
     this.selectedStageId = null;
+    this.selectedStage = null;
     this.selectedTaskId = null;
+    this.selectedTask = null;
+    this.editMode = false;
   }
 
   static get properties() {
@@ -20,7 +25,10 @@ class MkStageList extends LitElement {
       shouldMoveTaskEventFire: Boolean,
       shouldRerender: Boolean,
       selectedTaskId: String,
+      selectedTask: Object,
       selectedStageId: String,
+      selectedStage: Object,
+      editMode: Boolean,
     };
   }
 
@@ -224,6 +232,18 @@ class MkStageList extends LitElement {
         .column-content {
           min-height: 16px;
         }
+        .column-editor {
+          padding: 16px;
+          max-height: 999px;
+          opacity: 1;
+          transition: padding, opacity, max-height;
+          transition-duration: 0.3s;
+        }
+        .column-editor.hidden {
+          padding: 0;
+          max-height: 0;
+          opacity: 0;
+        }
         .task {
           width: 100%;
           margin: 8px 0;
@@ -245,7 +265,7 @@ class MkStageList extends LitElement {
     `;
   }
 
-  _renderStage(stage, selectedStageId, selectedTaskId) {
+  _renderStage(stage, selectedStageId, selectedTaskId, editMode) {
     let classes = `column ${selectedStageId !== null ? (stage.id === selectedStageId ? 'active' : 'inactive') : ''}`;
     let taskList = stage.tasks || [];
     return html`
@@ -257,6 +277,9 @@ class MkStageList extends LitElement {
           on-create-task-button-click="${() => this._fireCreateTaskEvent(stage.id)}"
           on-select="${() => this._onClickStage(stage.id)}">
           <div class="column-content" id="${stage.id}">
+            <div class$="${(selectedStageId === stage.id && editMode) ? 'column-editor' : 'column-editor hidden'}">
+              <mk-stage-editor class="editor" stage="${stage}"></mk-stage-editor>
+            </div>
             ${taskList.map((task) => html`
               <mk-task-item class="task" task="${task}" selected?=${task.id === selectedTaskId} on-click="${() => this._onClickTask(task.id)}"></mk-task-item>
             `)}
@@ -266,13 +289,13 @@ class MkStageList extends LitElement {
     `;
   }
 
-  _render({phase, selectedStageId, selectedTaskId}) {
+  _render({phase, selectedStageId, selectedTaskId, editMode}) {
     let styles = this._renderStyles();
     let stages = this._createDisplayStages(phase);
     return html`
       ${styles}
       <div id="list">
-        ${stages.map((stage) => this._renderStage(stage, selectedStageId, selectedTaskId))}
+        ${stages.map((stage) => this._renderStage(stage, selectedStageId, selectedTaskId, editMode))}
         <paper-button id="new-stage-btn" hidden?="${selectedStageId || selectedTaskId}" flat on-click="${() => this._fireCreateStageEvent()}">New stage</paper-button>
       </div>
     `;

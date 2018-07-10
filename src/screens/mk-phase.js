@@ -2,6 +2,7 @@ import {html} from '@polymer/lit-element';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-card/paper-card';
 import '@polymer/paper-button/paper-button';
+import '@polymer/iron-icons/iron-icons';
 import './components/mk-stage-list';
 import './components/mk-dialog-create-stage';
 import './components/mk-dialog-create-task';
@@ -9,14 +10,16 @@ import {createStageAction, deleteStageAction, moveStageAction} from '../actions/
 import {MkScreen} from './mk-screen';
 import {showDialog} from '../actions/app';
 import {createTaskAction, moveTaskAction} from '../actions/task';
-import {navigate} from "../actions/route";
+import {navigate} from '../actions/route';
 
 
 export default class MkPhase extends MkScreen {
+
   constructor() {
     super();
     this.selectedStage = null;
     this.firstRender = true;
+    this.editMode = false;
   }
 
   static get properties() {
@@ -25,6 +28,7 @@ export default class MkPhase extends MkScreen {
       phase: Object,
       selectedStage: Object,
       firstRender: Boolean,
+      editMode: Boolean,
     };
   }
 
@@ -83,12 +87,34 @@ export default class MkPhase extends MkScreen {
     this._dispatch(deleteStageAction(this.selectedStage));
   }
 
+  _editStage() {
+    this.editMode = true;
+    const saveChanges = () => {
+      this.editMode = false;
+      this._saveStageChanges();
+      this._deselectStage();
+    };
+    const discardChanges = () => {
+      this.editMode = false;
+      this._deselectStage();
+    };
+    this._setActionToolbar(html`
+      <div main-title>Save changes ?</div>
+      <paper-icon-button icon="icons:done" on-click="${discardChanges}"></paper-icon-button>
+      <paper-icon-button icon="close" on-click="${saveChanges}"></paper-icon-button>
+    `);
+  }
+
+  _saveStageChanges() {
+
+  }
+
   _selectStage(stageId) {
     if (stageId) {
       this.selectedStage = this.phase.stageDetails[stageId];
       this._setActionToolbar(html`
         <div main-title>Select an action</div>
-        <paper-icon-button icon="edit"></paper-icon-button>
+        <paper-icon-button icon="icons:create" on-click="${() => this._editStage()}"></paper-icon-button>
         <paper-icon-button icon="delete" on-click="${() => this._deleteStage()}"></paper-icon-button>
         <paper-icon-button icon="close" on-click="${() => this._deselectStage()}"></paper-icon-button>
       `);
@@ -151,12 +177,13 @@ export default class MkPhase extends MkScreen {
     `;
   }
 
-  _render({phase}) {
+  _render({phase, editMode}) {
     let styles = this._renderStyles();
     return html`
       ${styles}
       <mk-stage-list
         phase="${phase}"
+        editMode="${editMode}"
         on-create-stage="${(e) => this._openCreateStageDialog()}"
         on-create-task="${(e) => this._openCreateTaskDialog(e.detail.stageId)}"
         on-select-stage="${(e) => this._selectStage(e.detail.stageId)}"

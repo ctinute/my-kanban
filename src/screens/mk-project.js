@@ -167,16 +167,9 @@ export default class MkProject extends MkScreen {
     return html`
       <h2 class="sectiom-header">Phases</h2>
       <div class="section-content">
-        <div class="phase current">
-          <h3>Current</h3>
-          ${this._renderPhaseItem(project.phases[project.currentPhase], project.id)}
-        </div>
-        <div id="phase others">
-          <h3>Others</h3>
-          ${phaseList}
-          <div class="list-actions">
-            <paper-button ripple on-click="${() => this._openCreatePhaseDialog(project.id)}">New phase...</paper-button>
-          </div>
+        ${phaseList}
+        <div class="list-actions">
+          <paper-button ripple on-click="${() => this._openCreatePhaseDialog(project.id)}">New phase...</paper-button>
         </div>
       </div>`;
   }
