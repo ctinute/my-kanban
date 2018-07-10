@@ -73,6 +73,9 @@ class MkStageList extends LitElement {
   selectTask(taskId) {
     this.shouldRerender = true;
     this.selectedTaskId = taskId;
+    if (taskId === null) {
+      this.selectedStageId = null;
+    }
   }
 
   selectStage(stageId) {
@@ -107,7 +110,7 @@ class MkStageList extends LitElement {
   }
 
   _fireSelectTaskEvent(taskId) {
-    this.dispatchEvent(new CustomEvent('select-taskId', {detail: {task: taskId}}));
+    this.dispatchEvent(new CustomEvent('select-task', {detail: {taskId}}));
   }
 
   _fireMoveTaskEvent(from, to, oldIndex, newIndex) {
@@ -125,13 +128,15 @@ class MkStageList extends LitElement {
   }
 
   // EVENT HANDLERS
-  _onClickTask(taskId) {
+  _onClickTask(taskId, stageId) {
     if (taskId !== this.selectedTaskId) {
       this.selectTask(taskId);
+      this.selectStage(stageId);
       this._fireSelectTaskEvent(taskId);
     } else {
-      this.selectTask(null);
-      this._fireSelectTaskEvent(null);
+      // this.selectTask(null);
+      // this.selectStage(null);
+      // this._fireSelectTaskEvent(null);
     }
   }
 
@@ -140,8 +145,8 @@ class MkStageList extends LitElement {
       this.selectStage(stageId);
       this._fireSelectStageEvent(stageId);
     } else {
-      this.selectStage(null);
-      this._fireSelectStageEvent(null);
+      // this.selectStage(null);
+      // this._fireSelectStageEvent(null);
     }
   }
 
@@ -235,6 +240,7 @@ class MkStageList extends LitElement {
         .column-editor {
           padding: 16px;
           max-height: 999px;
+          overflow: hidden;
           opacity: 1;
           transition: padding, opacity, max-height;
           transition-duration: 0.3s;
@@ -246,8 +252,18 @@ class MkStageList extends LitElement {
         }
         .task {
           width: 100%;
+          max-height: 999px;
           margin: 8px 0;
           cursor: pointer;
+          transition: max-height, box-shadow, opacity;
+          transition-duration: 0.3s;
+          transition-delay: 0.3s;
+          box-shadow: var(--shadow-elevation-2dp_-_box-shadow);
+        }
+        .column.active .task.OVERVIEW {
+          max-height: 0;
+          opacity: 0;
+          box-shadow: none;
         }
         .no-task {
           text-align: center;
@@ -281,7 +297,11 @@ class MkStageList extends LitElement {
               <mk-stage-editor class="editor" stage="${stage}"></mk-stage-editor>
             </div>
             ${taskList.map((task) => html`
-              <mk-task-item class="task" task="${task}" selected?=${task.id === selectedTaskId} on-click="${() => this._onClickTask(task.id)}"></mk-task-item>
+              <mk-task-item 
+                class$="${'task ' + (selectedTaskId === task.id ? editMode ? 'EDIT' : 'DETAIL' : 'OVERVIEW')}" 
+                task="${task}" 
+                mode="${(selectedTaskId === task.id ? editMode ? 'EDIT' : 'DETAIL' : 'OVERVIEW')}"
+                on-click="${() => this._onClickTask(task.id, stage.id)}"></mk-task-item>
             `)}
           </div>
         </mk-stage-column>

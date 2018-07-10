@@ -9,15 +9,15 @@ import './components/mk-dialog-create-task';
 import {createStageAction, deleteStageAction, moveStageAction} from '../actions/stage';
 import {MkScreen} from './mk-screen';
 import {showDialog} from '../actions/app';
-import {createTaskAction, moveTaskAction} from '../actions/task';
+import {createTaskAction, deleteTaskAction, moveTaskAction} from '../actions/task';
 import {navigate} from '../actions/route';
 
 
 export default class MkPhase extends MkScreen {
-
   constructor() {
     super();
     this.selectedStage = null;
+    this.selectedTask = null;
     this.firstRender = true;
     this.editMode = false;
   }
@@ -27,6 +27,7 @@ export default class MkPhase extends MkScreen {
       project: Object,
       phase: Object,
       selectedStage: Object,
+      selectedTask: Object,
       firstRender: Boolean,
       editMode: Boolean,
     };
@@ -77,21 +78,39 @@ export default class MkPhase extends MkScreen {
     this._dispatch(createStageAction(stage));
   }
 
+  _createTask(task, stageId) {
+    task.projectId = this.project.id;
+    task.phaseId = this.phase.id;
+    task.stageId = stageId;
+    this._dispatch(createTaskAction(task));
+  }
+
   _moveStage(src, des) {
     const stageId = this.phase.stages[src];
     let stage = this.phase.stageDetails[stageId];
     this._dispatch(moveStageAction(stage, src, des));
   }
 
+  _moveTask(from, to, oldIndex, newIndex) {
+    const taskId = this.phase.stageDetails[from].tasks[oldIndex];
+    let task = this.phase.taskDetails[taskId];
+    this._dispatch(moveTaskAction(task, to, oldIndex, newIndex));
+  }
+
   _deleteStage() {
     this._dispatch(deleteStageAction(this.selectedStage));
+  }
+
+  _deleteTask() {
+    this._dispatch(deleteTaskAction(this.selectedTask));
   }
 
   _editStage() {
     this.editMode = true;
     const saveChanges = () => {
       this.editMode = false;
-      this._saveStageChanges();
+      // TODO: implelemt update stage
+      // this._updateStage();
       this._deselectStage();
     };
     const discardChanges = () => {
@@ -105,8 +124,23 @@ export default class MkPhase extends MkScreen {
     `);
   }
 
-  _saveStageChanges() {
-
+  _editTask() {
+    this.editMode = true;
+    const saveChanges = () => {
+      this.editMode = false;
+      // TODO: implelemt update task
+      // this._updateTask();
+      this._deselectTask();
+    };
+    const discardChanges = () => {
+      this.editMode = false;
+      this._deselectTask();
+    };
+    this._setActionToolbar(html`
+      <div main-title>Save changes ?</div>
+      <paper-icon-button icon="icons:done" on-click="${discardChanges}"></paper-icon-button>
+      <paper-icon-button icon="close" on-click="${saveChanges}"></paper-icon-button>
+    `);
   }
 
   _selectStage(stageId) {
@@ -125,23 +159,32 @@ export default class MkPhase extends MkScreen {
     }
   }
 
+  _selectTask(taskId) {
+    if (taskId) {
+      this.selectedTask = this.phase.taskDetails[taskId];
+      this._setActionToolbar(html`
+        <div main-title>Select an action</div>
+        <paper-icon-button icon="icons:create" on-click="${() => this._editTask()}"></paper-icon-button>
+        <paper-icon-button icon="delete" on-click="${() => this._deleteTask()}"></paper-icon-button>
+        <paper-icon-button icon="close" on-click="${() => this._deselectTask()}"></paper-icon-button>
+      `);
+      this._requireActionToolbar();
+    } else {
+      this._setActionToolbar(null);
+      this._requireDefaultToolbar();
+    }
+  }
+
   _deselectStage() {
     this.selectedStage = null;
     this.shadowRoot.querySelector('mk-stage-list').selectStage(null);
     this._requireDefaultToolbar();
   }
 
-  _createTask(task, stageId) {
-    task.projectId = this.project.id;
-    task.phaseId = this.phase.id;
-    task.stageId = stageId;
-    this._dispatch(createTaskAction(task));
-  }
-
-  _moveTask(from, to, oldIndex, newIndex) {
-    const taskId = this.phase.stageDetails[from].tasks[oldIndex];
-    let task = this.phase.taskDetails[taskId];
-    this._dispatch(moveTaskAction(task, to, oldIndex, newIndex));
+  _deselectTask() {
+    this.selectedTask = null;
+    this.shadowRoot.querySelector('mk-stage-list').selectTask(null);
+    this._requireDefaultToolbar();
   }
 
   _openCreateStageDialog() {
