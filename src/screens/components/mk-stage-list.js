@@ -260,7 +260,7 @@ class MkStageList extends LitElement {
           transition-delay: 0.3s;
           box-shadow: var(--shadow-elevation-2dp_-_box-shadow);
         }
-        .column.active .task.OVERVIEW {
+        .column.active.selecting-task .task.OVERVIEW {
           max-height: 0;
           opacity: 0;
           box-shadow: none;
@@ -282,7 +282,17 @@ class MkStageList extends LitElement {
   }
 
   _renderStage(stage, selectedStageId, selectedTaskId, editMode) {
-    let classes = `column ${selectedStageId !== null ? (stage.id === selectedStageId ? 'active' : 'inactive') : ''}`;
+    let classes = 'column';
+    if (selectedTaskId !== null) {
+      classes += ' selecting-task';
+    }
+    if (selectedStageId !== null) {
+      if (selectedStageId === stage.id) {
+        classes += ' active';
+      } else {
+        classes += ' inactive';
+      }
+    }
     let taskList = stage.tasks || [];
     return html`
       <div class$="${classes}">
