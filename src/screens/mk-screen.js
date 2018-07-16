@@ -45,34 +45,6 @@ export class MkScreen extends connect(store)(PageViewElement) {
     this._dispatch(hideActionToolbar());
   }
 
-  // ANOTHER WAY TO SETUP TOOLBAR
-  // _setDefaultToolbar(toolbarContent) {
-  //   return setDefaultToolbar(toolbarContent);
-  // }
-  // _setActionToolbar(toolbarContent) {
-  //   return setActionToolbar(toolbarContent);
-  // }
-  // _showToolbar() {
-  //   return showToolbar();
-  // }
-  // _hideToolbar() {
-  //   return hideToolbar();
-  // }
-  // _requireActionToolbar() {
-  //   return showActionToolbar();
-  // }
-  // _requireDefaultToolbar() {
-  //   return hideActionToolbar();
-  // }
-  // _setupToolbar() {
-  //   this._dispatchChain([
-  //     this._setDefaultToolbar(null),
-  //     this._setActionToolbar(null),
-  //     this._requireDefaultToolbar(),
-  //     this._hideToolbar(),
-  //   ]);
-  // }
-
   _requireDrawerShorcuts(items) {
     this._dispatch(setDrawerItems(items));
   }

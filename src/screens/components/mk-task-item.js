@@ -3,16 +3,15 @@ import {html, LitElement} from '@polymer/lit-element';
 class MkTaskItem extends LitElement {
   constructor() {
     super();
-    this.selected = true;
+    this.mode = 'OVERVIEW';
   }
 
   static get properties() {
     return {
       task: Object,
-      selected: {
-        type: Boolean,
+      mode: {
+        type: String,
         reflectToAttribute: true,
-        notify: true,
       },
     };
   }
@@ -42,31 +41,44 @@ class MkTaskItem extends LitElement {
         :host {
           display: block;
           box-sizing: border-box;
-        }
-        :host([selected]) {
-          
+          border-radius: 8px;
+          padding: 0 8px;
+          background-color: white;
+          overflow: hidden;
         }
         .container {
+          width: 100%;
+        }
+        #title {
           height: 48px;
           line-height: 48px;
-          padding: 0 8px;
-          width: 100%;
-          border-radius: 8px;
-          background-color: white;
+        }
+        #description {
+          overflow: hidden;
+          max-height: 999px;
+          transition: max-height;
+          transition-duration: 0.3s;
+          transition-delay: 0.3s;
+        }
+        .OVERVIEW #description {
+          max-height: 0;
         }
       </style>
     `;
   }
 
-  _render({task, selected}) {
+  _render({task, selected, mode}) {
     let styles = this._renderStyles();
     return html`
       ${styles}
-      <paper-card class="container">
-        <div>
+      <div class$="${'container ' + mode}" elevation="0">
+        <div id="title">
           ${task.name}
         </div>
-      </paper-card>
+        <div id="description">
+          ${task.description}
+        </div>
+      </div>
     `;
   }
 }

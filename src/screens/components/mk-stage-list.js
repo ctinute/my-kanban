@@ -2,14 +2,19 @@ import {html, LitElement} from '@polymer/lit-element';
 import 'sortablejs';
 import './mk-stage-column';
 import './mk-task-item';
+import './mk-stage-editor';
 
 class MkStageList extends LitElement {
   constructor() {
     super();
     this.shouldMoveTaskEventFire = true;
     this.shouldRerender = true;
+
     this.selectedStageId = null;
+    this.selectedStage = null;
     this.selectedTaskId = null;
+    this.selectedTask = null;
+    this.editMode = false;
   }
 
   static get properties() {
@@ -20,7 +25,10 @@ class MkStageList extends LitElement {
       shouldMoveTaskEventFire: Boolean,
       shouldRerender: Boolean,
       selectedTaskId: String,
+      selectedTask: Object,
       selectedStageId: String,
+      selectedStage: Object,
+      editMode: Boolean,
     };
   }
 
@@ -65,6 +73,9 @@ class MkStageList extends LitElement {
   selectTask(taskId) {
     this.shouldRerender = true;
     this.selectedTaskId = taskId;
+    if (taskId === null) {
+      this.selectedStageId = null;
+    }
   }
 
   selectStage(stageId) {
@@ -99,7 +110,7 @@ class MkStageList extends LitElement {
   }
 
   _fireSelectTaskEvent(taskId) {
-    this.dispatchEvent(new CustomEvent('select-taskId', {detail: {task: taskId}}));
+    this.dispatchEvent(new CustomEvent('select-task', {detail: {taskId}}));
   }
 
   _fireMoveTaskEvent(from, to, oldIndex, newIndex) {
@@ -117,13 +128,15 @@ class MkStageList extends LitElement {
   }
 
   // EVENT HANDLERS
-  _onClickTask(taskId) {
+  _onClickTask(taskId, stageId) {
     if (taskId !== this.selectedTaskId) {
       this.selectTask(taskId);
+      this.selectStage(stageId);
       this._fireSelectTaskEvent(taskId);
     } else {
-      this.selectTask(null);
-      this._fireSelectTaskEvent(null);
+      // this.selectTask(null);
+      // this.selectStage(null);
+      // this._fireSelectTaskEvent(null);
     }
   }
 
@@ -132,8 +145,8 @@ class MkStageList extends LitElement {
       this.selectStage(stageId);
       this._fireSelectStageEvent(stageId);
     } else {
-      this.selectStage(null);
-      this._fireSelectStageEvent(null);
+      // this.selectStage(null);
+      // this._fireSelectStageEvent(null);
     }
   }
 
@@ -224,10 +237,33 @@ class MkStageList extends LitElement {
         .column-content {
           min-height: 16px;
         }
+        .column-editor {
+          padding: 16px;
+          max-height: 999px;
+          overflow: hidden;
+          opacity: 1;
+          transition: padding, opacity, max-height;
+          transition-duration: 0.3s;
+        }
+        .column-editor.hidden {
+          padding: 0;
+          max-height: 0;
+          opacity: 0;
+        }
         .task {
           width: 100%;
+          max-height: 999px;
           margin: 8px 0;
           cursor: pointer;
+          transition: max-height, box-shadow, opacity;
+          transition-duration: 0.3s;
+          transition-delay: 0.3s;
+          box-shadow: var(--shadow-elevation-2dp_-_box-shadow);
+        }
+        .column.active.selecting-task .task.OVERVIEW {
+          max-height: 0;
+          opacity: 0;
+          box-shadow: none;
         }
         .no-task {
           text-align: center;
@@ -245,8 +281,18 @@ class MkStageList extends LitElement {
     `;
   }
 
-  _renderStage(stage, selectedStageId, selectedTaskId) {
-    let classes = `column ${selectedStageId !== null ? (stage.id === selectedStageId ? 'active' : 'inactive') : ''}`;
+  _renderStage(stage, selectedStageId, selectedTaskId, editMode) {
+    let classes = 'column';
+    if (selectedTaskId !== null) {
+      classes += ' selecting-task';
+    }
+    if (selectedStageId !== null) {
+      if (selectedStageId === stage.id) {
+        classes += ' active';
+      } else {
+        classes += ' inactive';
+      }
+    }
     let taskList = stage.tasks || [];
     return html`
       <div class$="${classes}">
@@ -257,8 +303,15 @@ class MkStageList extends LitElement {
           on-create-task-button-click="${() => this._fireCreateTaskEvent(stage.id)}"
           on-select="${() => this._onClickStage(stage.id)}">
           <div class="column-content" id="${stage.id}">
+            <div class$="${(selectedStageId === stage.id && editMode) ? 'column-editor' : 'column-editor hidden'}">
+              <mk-stage-editor class="editor" stage="${stage}"></mk-stage-editor>
+            </div>
             ${taskList.map((task) => html`
-              <mk-task-item class="task" task="${task}" selected?=${task.id === selectedTaskId} on-click="${() => this._onClickTask(task.id)}"></mk-task-item>
+              <mk-task-item 
+                class$="${'task ' + (selectedTaskId === task.id ? editMode ? 'EDIT' : 'DETAIL' : 'OVERVIEW')}" 
+                task="${task}" 
+                mode="${(selectedTaskId === task.id ? editMode ? 'EDIT' : 'DETAIL' : 'OVERVIEW')}"
+                on-click="${() => this._onClickTask(task.id, stage.id)}"></mk-task-item>
             `)}
           </div>
         </mk-stage-column>
@@ -266,13 +319,13 @@ class MkStageList extends LitElement {
     `;
   }
 
-  _render({phase, selectedStageId, selectedTaskId}) {
+  _render({phase, selectedStageId, selectedTaskId, editMode}) {
     let styles = this._renderStyles();
     let stages = this._createDisplayStages(phase);
     return html`
       ${styles}
       <div id="list">
-        ${stages.map((stage) => this._renderStage(stage, selectedStageId, selectedTaskId))}
+        ${stages.map((stage) => this._renderStage(stage, selectedStageId, selectedTaskId, editMode))}
         <paper-button id="new-stage-btn" hidden?="${selectedStageId || selectedTaskId}" flat on-click="${() => this._fireCreateStageEvent()}">New stage</paper-button>
       </div>
     `;
