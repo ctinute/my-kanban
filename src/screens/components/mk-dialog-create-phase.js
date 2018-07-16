@@ -27,7 +27,12 @@ export default class MkDialogCreatePhase extends LitElement {
 
   // noinspection JSMethodCanBeStatic
   _renderStyles() {
-    return html`<style>:host{display: block;}</style>`;
+    return html`
+      <style>
+        :host{
+          display: block;
+        }
+      </style>`;
   }
 
   _render({phase, projectId}) {

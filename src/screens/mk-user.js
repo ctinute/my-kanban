@@ -45,6 +45,7 @@ export default class MkUser extends MkScreen {
     this._dispatch(showDialog(html`<mk-dialog-create-project on-submit="${(e) => createNweProject(e.detail.project)}"></mk-dialog-create-project>`));
   }
 
+  // noinspection JSMethodCanBeStatic
   _renderStyles() {
     return html`
       <style>
