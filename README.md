@@ -1,22 +1,5 @@
-# Polymer App Toolbox - Starter Kit
-
-[![Build Status](https://travis-ci.org/Polymer/polymer-starter-kit.svg?branch=master)](https://travis-ci.org/Polymer/polymer-starter-kit)
-
-This template is a starting point for building apps using a drawer-based
-layout. The layout is provided by `app-layout` elements.
-
-This template, along with the `polymer-cli` toolchain, also demonstrates use
-of the "PRPL pattern" This pattern allows fast first delivery and interaction with
-the content at the initial route requested by the user, along with fast subsequent
-navigation by pre-caching the remaining components required by the app and
-progressively loading them on-demand as the user navigates through the app.
-
-The PRPL pattern, in a nutshell:
-
-* **Push** components required for the initial route
-* **Render** initial route ASAP
-* **Pre-cache** components for remaining routes
-* **Lazy-load** and progressively upgrade next routes on-demand
+# Project My Kanban
+Personal task management Web Apllication
 
 ### Setup
 
@@ -27,11 +10,11 @@ Install [Polymer CLI](https://github.com/Polymer/polymer-cli) using
 
     npm install -g polymer-cli@next
 
-##### Initialize project from template
+##### Initialize project from source
 
-    mkdir my-app
-    cd my-app
-    polymer init polymer-3-starter-kit
+    git clone https://github.com/tinnguyen263/my-kanban
+    cd my-kanban
+    npm install
 
 ### Start the development server
 
@@ -65,22 +48,3 @@ Run `polymer help build` for the full list of available options and optimization
 
 This command serves your app. Replace `build-folder-name` with the folder name of the build you want to serve.
 
-    npm start build/build-folder-name/
-
-### Run tests
-
-This command will run [Web Component Tester](https://github.com/Polymer/web-component-tester)
-against the browsers currently installed on your machine:
-
-    npm test
-
-If running Windows you will need to set the following environment variables:
-
-- LAUNCHPAD_BROWSERS
-- LAUNCHPAD_CHROME
-
-Read More here [daffl/launchpad](https://github.com/daffl/launchpad#environment-variables-impacting-local-browsers-detection)
-
----
-
-Looking for our older PSK2 Polycast or migration blog post? See [the previous README](https://github.com/Polymer/polymer-starter-kit/blob/v3.2.1/README.md).
