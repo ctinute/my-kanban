@@ -1,4 +1,5 @@
 import {html, LitElement} from '@polymer/lit-element';
+import './mk-task-editor';
 
 class MkTaskItem extends LitElement {
   constructor() {
@@ -63,6 +64,26 @@ class MkTaskItem extends LitElement {
         .OVERVIEW #description {
           max-height: 0;
         }
+        .info {
+          overflow: hidden;
+          transition: max-height;
+          transition-duration: 0.3s;
+          transition-delay: 0.3s;
+          max-height: 999px;
+        }
+        .EDIT .info {
+          max-height: 0;
+        }
+        mk-task-editor {
+          overflow: hidden;
+          transition: max-height;
+          transition-duration: 0.3s;
+          transition-delay: 0.3s;
+          max-height: 0;
+        }
+        .EDIT mk-task-editor {
+          max-height: 999px;
+        }
       </style>
     `;
   }
@@ -72,12 +93,15 @@ class MkTaskItem extends LitElement {
     return html`
       ${styles}
       <div class$="${'container ' + mode}" elevation="0">
-        <div id="title">
-          ${task.name}
+        <div class="info">
+          <div id="title">
+            ${task.name}
+          </div>
+          <div id="description">
+            ${task.description}
+          </div>
         </div>
-        <div id="description">
-          ${task.description}
-        </div>
+        <mk-task-editor></mk-task-editor>
       </div>
     `;
   }
