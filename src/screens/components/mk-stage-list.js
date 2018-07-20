@@ -298,12 +298,11 @@ class MkStageList extends LitElement {
       <div class$="${classes}">
         <mk-stage-column 
           class="stage" 
-          stage="${stage}" 
-          canCreateTask="${stage.canCreateTask}" 
+          stage="${stage}"  
           on-create-task-button-click="${() => this._fireCreateTaskEvent(stage.id)}"
           on-select="${() => this._onClickStage(stage.id)}">
           <div class="column-content" id="${stage.id}">
-            <div class$="${(selectedStageId === stage.id && editMode) ? 'column-editor' : 'column-editor hidden'}">
+            <div class$="${(selectedStageId === stage.id && selectedTaskId === null && editMode) ? 'column-editor' : 'column-editor hidden'}">
               <mk-stage-editor class="editor" stage="${stage}"></mk-stage-editor>
             </div>
             ${taskList.map((task) => html`

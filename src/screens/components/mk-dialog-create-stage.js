@@ -1,7 +1,5 @@
 import {html, LitElement} from '@polymer/lit-element';
 import '@polymer/paper-button/paper-button.js';
-import '@polymer/paper-input/paper-input.js';
-import '@polymer/paper-toggle-button';
 import './mk-stage-editor';
 
 export default class MkDialogCreateStage extends LitElement {

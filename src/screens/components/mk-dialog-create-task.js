@@ -1,7 +1,6 @@
 import {html, LitElement} from '@polymer/lit-element';
-import '@polymer/paper-input/paper-input';
-import '@polymer/paper-input/paper-textarea';
 import '@polymer/paper-button/paper-button';
+import './mk-task-editor';
 
 export default class MkDialogCreateTask extends LitElement {
   static get properties() {
@@ -52,23 +51,7 @@ export default class MkDialogCreateTask extends LitElement {
         <h2>New task</h2>
       </div>
       <div class="body">
-        <paper-input
-          label="Name"
-          always-float-label
-          value="${task.name}"
-          on-change="${(e) => task.name = e.target.value})"
-          required
-          error-message="This field is required !!!">
-        </paper-input>
-        <paper-textarea
-          label="Description"
-          rows="3"
-          always-float-label
-          value="${task.description}"
-          on-change="${(e) => task.description = e.target.value})"
-          required
-          error-message="This field is required !!!">
-        </paper-textarea>
+        <mk-task-editor task="${task}"></mk-task-editor>
       </div>
       <div class="actions">
         <paper-button dialog-dismiss on-click="${() => this._cancel()}">Cancel</paper-button>
