@@ -1,6 +1,6 @@
 /* eslint-disable brace-style */
 import {html, LitElement} from '@polymer/lit-element';
-import '@polymer/paper-input/paper-input.js';
+import '@polymer/paper-input/paper-input';
 import '@polymer/paper-toggle-button';
 
 // noinspection JSUnusedGlobalSymbols
