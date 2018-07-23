@@ -18,7 +18,7 @@ export default class MkUser extends MkScreen {
 
   _stateChanged(state) {
     this._user = state.auth.user;
-    this._projects = state.userData.projects;
+    this._projects = state.userData.projects || [];
   }
 
   _didRender(props, oldProps, changedProps) {

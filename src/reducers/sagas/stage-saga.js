@@ -25,6 +25,10 @@ export function* createStage(action) {
     let project = yield select((state) => state.userData.projects[stage.projectId]);
     let phase = project.phases[stage.phaseId];
 
+    if (!phase.hasOwnProperty('stageDetails')) {
+      phase.stageDetails = {};
+    }
+
     stage.id = computeId(phase, stage);
     phase.stageDetails[stage.id] = stage;
     phase.stages.push(stage.id);

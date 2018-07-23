@@ -11,6 +11,9 @@ export default class MkHome extends MkScreen {
   }
 
   _stateChanged(state) {
+    // if (this.active) {
+    //
+    // }
   }
 
   _render(props) {
