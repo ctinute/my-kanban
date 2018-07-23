@@ -35,25 +35,28 @@ export default class MkTaskEditor extends LitElement {
       <style>
         :host {
           display: block;
+          overflow: hidden;
         }
       </style>
-      <paper-input
-        label="Title"
-        always-float-label
-        value="${task.name}"
-        on-change="${(e) => task.name = e.target.value})"
-        required
-        error-message="This field is required !!!">
-      </paper-input>
-      <paper-textarea
-        label="Description"
-        rows="3"
-        always-float-label
-        value="${task.description}"
-        on-change="${(e) => task.description = e.target.value})"
-        required
-        error-message="This field is required !!!">
-      </paper-textarea>`;
+      <div class="container">
+        <paper-input
+          label="Title"
+          always-float-label
+          value="${task.name}"
+          on-change="${(e) => task.name = e.target.value})"
+          required
+          error-message="This field is required !!!">
+        </paper-input>
+        <paper-textarea
+          label="Description"
+          rows="3"
+          always-float-label
+          value="${task.description}"
+          on-change="${(e) => task.description = e.target.value})"
+          required
+          error-message="This field is required !!!">
+        </paper-textarea>
+      </div>`;
   }
 }
 
