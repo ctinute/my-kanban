@@ -74,14 +74,14 @@ class MkTaskItem extends LitElement {
         .EDIT .info {
           max-height: 0;
         }
-        mk-task-editor {
+        .editor {
           overflow: hidden;
           transition: max-height;
           transition-duration: 0.3s;
           transition-delay: 0.3s;
           max-height: 0;
         }
-        .EDIT mk-task-editor {
+        .EDIT .editor {
           max-height: 999px;
         }
       </style>
@@ -89,10 +89,11 @@ class MkTaskItem extends LitElement {
   }
 
   _render({task, selected, mode}) {
+    let editor = mode === 'EDIT' ? html`<mk-task-editor task="${task}"></mk-task-editor>` : null;
     let styles = this._renderStyles();
     return html`
       ${styles}
-      <div class$="${'container ' + mode}" elevation="0">
+      <div class$="${'container ' + mode}">
         <div class="info">
           <div id="title">
             ${task.name}
@@ -101,7 +102,9 @@ class MkTaskItem extends LitElement {
             ${task.description}
           </div>
         </div>
-        <mk-task-editor></mk-task-editor>
+        <div class="editor">
+          ${editor}
+        </div>
       </div>
     `;
   }
