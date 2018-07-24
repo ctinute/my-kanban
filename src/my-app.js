@@ -59,16 +59,18 @@ class MyApp extends connect(store)(LitElement) {
   }
 
   _stateChanged(state) {
-    this._ready = state.app.ready;
-    this._page = state.route.page;
-    this._path = state.route.path;
-    this._user = state.auth.user;
-    this._smallScreen = state.app.smallScreen;
-    this._drawer = state.app.drawer;
-    this._toolbar = state.app.toolbar;
-    this._offline = state.app.offline;
-    this._globalToast = state.app.globalToast;
-    this._globalDialog = state.app.globalDialog;
+    this._nextTick(() => {
+      this._ready = state.app.ready;
+      this._page = state.route.page;
+      this._path = state.route.path;
+      this._user = state.auth.user;
+      this._smallScreen = state.app.smallScreen;
+      this._drawer = state.app.drawer;
+      this._toolbar = state.app.toolbar;
+      this._offline = state.app.offline;
+      this._globalToast = state.app.globalToast;
+      this._globalDialog = state.app.globalDialog;
+    });
   }
 
   _shouldRender(props, changedProps, oldProps) {
@@ -405,6 +407,10 @@ class MyApp extends connect(store)(LitElement) {
         horizontal-align="right">
       </paper-toast>
     `;
+  }
+
+  _nextTick(callback) {
+    setTimeout(callback, 0);
   }
 
   _onDialogVisibilityChanged(e) {

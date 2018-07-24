@@ -71,7 +71,9 @@ export default class MkPhase extends MkScreen {
           action: () => this._dispatch(navigate('Dashboard', `/u/${this.project.id}/${this.project.currentPhase}`)),
         },
       ]);
-      this.firstRender = false;
+      this._nextTick(() => {
+        this.firstRender = false;
+      });
     }
   }
 

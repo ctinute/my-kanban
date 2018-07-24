@@ -24,9 +24,11 @@ export default class MkProject extends MkScreen {
   }
 
   _stateChanged(state) {
-    this.user = state.auth.user;
-    this.projectId = state.route.data.projectId || null;
-    this.project = this.projectId ? state.userData.projects[this.projectId] : {};
+    this._nextTick(() => {
+      this.user = state.auth.user;
+      this.projectId = state.route.data.projectId || null;
+      this.project = this.projectId ? state.userData.projects[this.projectId] : {};
+    });
   }
 
   _didRender(props, oldProps, changedProps) {

@@ -49,6 +49,10 @@ export class MkScreen extends connect(store)(PageViewElement) {
     this._dispatch(setDrawerItems(items));
   }
 
+  _nextTick(callback) {
+    setTimeout(callback, 0);
+  }
+
   _didRender(props, oldProps, changedProps) {
     super._didRender(props, oldProps, changedProps);
     this._setDefaultToolbar(null);
