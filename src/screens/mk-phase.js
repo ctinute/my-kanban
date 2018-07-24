@@ -34,8 +34,11 @@ export default class MkPhase extends MkScreen {
   }
 
   _stateChanged(state) {
-    this.project = state.userData.projects[state.route.data.projectId];
-    this.phase = this.project ? this.project.phases[state.route.data.phaseId] : null;
+    this.project = state.route.data.projectId && state.userData.projects[state.route.data.projectId] || {};
+    if (!this.project.hasOwnProperty('phases')) {
+      this.project.phases = {};
+    }
+    this.phase = this.project.phases.hasOwnProperty(state.route.data.phaseId) ? this.project.phases[state.route.data.phaseId] : {};
   }
 
   _didRender(props, changedProps, oldProps) {

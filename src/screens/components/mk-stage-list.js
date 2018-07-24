@@ -153,6 +153,9 @@ class MkStageList extends LitElement {
   // noinspection JSMethodCanBeStatic
   _createDisplayStages(phase) {
     // console.log('_createDisplayStages');
+    if (!phase.stages) {
+      phase.stages = [];
+    }
     let stages = [];
     // re-order stage details
     for (let i = 0; i < phase.stages.length; i++) {

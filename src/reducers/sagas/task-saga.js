@@ -14,9 +14,12 @@ export function* addTask(action) {
     let project = yield select((state) => state.userData.projects[task.projectId]);
     let phase = project.phases[task.phaseId];
     let stage = phase.stageDetails[task.stageId];
-
+    if (!phase.hasOwnProperty('taskDetails')) {
+      phase.taskDetails = [];
+    }
     task.id = computeId(phase);
     phase.taskDetails.push(task);
+
     if (!stage.tasks) {
       stage.tasks = [];
     }

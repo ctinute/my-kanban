@@ -5,7 +5,7 @@ import './components/mk-dialog-create-phase';
 import {MkScreen} from './mk-screen';
 import {createPhaseAction, deletePhaseAction} from '../actions/phase';
 import {showDialog} from '../actions/app';
-import {navigate} from "../actions/route";
+import {navigate} from '../actions/route';
 
 export default class MkProject extends MkScreen {
   constructor() {
@@ -25,8 +25,8 @@ export default class MkProject extends MkScreen {
 
   _stateChanged(state) {
     this.user = state.auth.user;
-    this.projectId = state.route.data.projectId;
-    this.project = state.userData.projects[this.projectId];
+    this.projectId = state.route.data.projectId || null;
+    this.project = this.projectId ? state.userData.projects[this.projectId] : {};
   }
 
   _didRender(props, oldProps, changedProps) {
@@ -50,11 +50,11 @@ export default class MkProject extends MkScreen {
         active: true,
         action: () => this._dispatch(navigate('Dashboard', `/u/${this.project.id}`)),
       },
-      {
-        icon: 'icons:view-day',
-        title: 'Current phase',
-        action: () => this._dispatch(navigate('Dashboard', `/u/${this.project.id}/${this.project.currentPhase}`)),
-      },
+      // {
+      //   icon: 'icons:view-day',
+      //   title: 'Current phase',
+      //   action: () => this._dispatch(navigate('Dashboard', `/u/${this.project.id}/${this.project.currentPhase}`)),
+      // },
     ]);
   }
 
@@ -130,7 +130,7 @@ export default class MkProject extends MkScreen {
   }
 
   _navigateProjectDetailPage(projectName, projectId, phaseId) {
-    this._dispatch(Actions.route.navigate(projectName, `/u/${projectId}/${phaseId}`));
+    this._dispatch(navigate(projectName, `/u/${projectId}/${phaseId}`));
   }
 
   _renderOverview(project) {
@@ -158,16 +158,16 @@ export default class MkProject extends MkScreen {
   }
 
   _renderPhases(project) {
-    let phaseList = project.phases ?
-      html`
-        <div class="list phases">
-          ${Object.values(project.phases).map((phase) => this._renderPhaseItem(phase, project.id))}
-        </div>` :
+    let phases = project.phases || {};
+    let phaseList = phases ?
+      Object.values(phases).map((phase) => this._renderPhaseItem(phase, project.id)) :
       html`You don't have any phase yet.<br/> Press button bellow to create new one.`;
     return html`
       <h2 class="sectiom-header">Phases</h2>
       <div class="section-content">
-        ${phaseList}
+        <div class="list phases">
+          ${phaseList}
+        </div>
         <div class="list-actions">
           <paper-button ripple on-click="${() => this._openCreatePhaseDialog(project.id)}">New phase...</paper-button>
         </div>
