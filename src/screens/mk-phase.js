@@ -6,10 +6,10 @@ import '@polymer/iron-icons/iron-icons';
 import './components/mk-stage-list';
 import './components/mk-dialog-create-stage';
 import './components/mk-dialog-create-task';
-import {createStageAction, deleteStageAction, moveStageAction} from '../actions/stage';
+import {createStageAction, deleteStageAction, moveStageAction, updateStageAction} from '../actions/stage';
 import {MkScreen} from './mk-screen';
 import {showDialog} from '../actions/app';
-import {createTaskAction, deleteTaskAction, moveTaskAction} from '../actions/task';
+import {createTaskAction, deleteTaskAction, moveTaskAction, updateTaskAction} from '../actions/task';
 import {navigate} from '../actions/route';
 
 
@@ -104,18 +104,19 @@ export default class MkPhase extends MkScreen {
 
   _deleteStage() {
     this._dispatch(deleteStageAction(this.selectedStage));
+    this._deselectStage();
   }
 
   _deleteTask() {
     this._dispatch(deleteTaskAction(this.selectedTask));
+    this._deselectTask();
   }
 
   _editStage() {
     this.editMode = true;
     const saveChanges = () => {
+      this._dispatch(updateStageAction(this.selectedStage));
       this.editMode = false;
-      // TODO: implelemt update stage
-      // this._updateStage();
       this._deselectStage();
     };
     const discardChanges = () => {
@@ -124,17 +125,16 @@ export default class MkPhase extends MkScreen {
     };
     this._setActionToolbar(html`
       <div main-title>Save changes ?</div>
-      <paper-icon-button icon="icons:done" on-click="${discardChanges}"></paper-icon-button>
-      <paper-icon-button icon="close" on-click="${saveChanges}"></paper-icon-button>
+      <paper-icon-button icon="icons:done" on-click="${saveChanges}"></paper-icon-button>
+      <paper-icon-button icon="close" on-click="${discardChanges}"></paper-icon-button>
     `);
   }
 
   _editTask() {
     this.editMode = true;
     const saveChanges = () => {
+      this._dispatch(updateTaskAction(this.selectedTask));
       this.editMode = false;
-      // TODO: implelemt update task
-      // this._updateTask();
       this._deselectTask();
     };
     const discardChanges = () => {
@@ -143,8 +143,8 @@ export default class MkPhase extends MkScreen {
     };
     this._setActionToolbar(html`
       <div main-title>Save changes ?</div>
-      <paper-icon-button icon="icons:done" on-click="${discardChanges}"></paper-icon-button>
-      <paper-icon-button icon="close" on-click="${saveChanges}"></paper-icon-button>
+      <paper-icon-button icon="icons:done" on-click="${saveChanges}"></paper-icon-button>
+      <paper-icon-button icon="close" on-click="${discardChanges}"></paper-icon-button>
     `);
   }
 
@@ -192,11 +192,20 @@ export default class MkPhase extends MkScreen {
     this._requireDefaultToolbar();
   }
 
+  _updateSelectedStage(stage) {
+    this.selectedStage = stage;
+  }
+
+  _updateSelectedTask(task) {
+    this.selectedTask = task;
+  }
+
   _openCreateStageDialog() {
     let dialog = html`
       <mk-dialog-create-stage
         on-submit="${(e) => this._createStage(e.detail.stage)}"
-        on-cancel="${() => console.log('cancelled')}"></mk-dialog-create-stage>`;
+        on-cancel="${() => {
+    }}"></mk-dialog-create-stage>`;
     this._dispatch(showDialog(dialog, null));
   }
 
@@ -204,7 +213,8 @@ export default class MkPhase extends MkScreen {
     let dialog = html`
       <mk-dialog-create-task
         on-submit="${(e) => this._createTask(e.detail.task, stageId)}"
-        on-cancel="${() => console.log('cancelled')}"></mk-dialog-create-task>`;
+        on-cancel="${() => {
+    }}"></mk-dialog-create-task>`;
     this._dispatch(showDialog(dialog, null));
   }
 
@@ -237,7 +247,9 @@ export default class MkPhase extends MkScreen {
         on-select-stage="${(e) => this._selectStage(e.detail.stageId)}"
         on-select-task="${(e) => this._selectTask(e.detail.taskId)}"   
         on-move-stage="${(e) => this._moveStage(e.detail.oldIndex, e.detail.newIndex)}"
-        on-move-task="${(e) => this._moveTask(e.detail.from, e.detail.to, e.detail.oldIndex, e.detail.newIndex)}">
+        on-move-task="${(e) => this._moveTask(e.detail.from, e.detail.to, e.detail.oldIndex, e.detail.newIndex)}"
+        on-edit-stage="${(e) => this._updateSelectedStage(e.detail.stage)}"
+        on-edit-task="${(e) => this._updateSelectedTask(e.detail.task)}">
       </mk-stage-list>
     `;
   }

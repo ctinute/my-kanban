@@ -99,6 +99,12 @@ class MkStageList extends LitElement {
     this.dispatchEvent(new CustomEvent('move-stage', {detail: {oldIndex, newIndex}}));
   }
 
+  _fireEditStageEvent(stage) {
+    // console.log('set skip next render');
+    this.shouldRerender = true;
+    this.dispatchEvent(new CustomEvent('edit-stage', {detail: {stage}}));
+  }
+
   // TASK EVENTS
   _fireCreateTaskEvent(stageId) {
     this.shouldRerender = true;
@@ -125,6 +131,12 @@ class MkStageList extends LitElement {
     if (this.shouldMoveTaskEventFire) {
       this.dispatchEvent(new CustomEvent('move-task', {detail: {from, to, oldIndex, newIndex}}));
     }
+  }
+
+  _fireEditTaskEvent(task) {
+    // console.log('set skip next render');
+    this.shouldRerender = true;
+    this.dispatchEvent(new CustomEvent('edit-task', {detail: {task}}));
   }
 
   // EVENT HANDLERS
@@ -238,7 +250,7 @@ class MkStageList extends LitElement {
           box-shadow: none;
         }
         .column-content {
-          min-height: 16px;
+          min-height: 24px;
         }
         .column-editor {
           padding: 16px;
@@ -297,6 +309,14 @@ class MkStageList extends LitElement {
       }
     }
     let taskList = stage.tasks || [];
+    let taskListView = taskList.map((task) => task ? html`
+              <mk-task-item 
+                class$="${'task ' + (selectedTaskId === task.id ? editMode ? 'EDIT' : 'DETAIL' : 'OVERVIEW')}" 
+                task="${task}" 
+                mode="${(selectedTaskId === task.id ? editMode ? 'EDIT' : 'DETAIL' : 'OVERVIEW')}"
+                on-click="${() => this._onClickTask(task.id, stage.id)}"
+                on-edit-task="${(e) => this._fireEditTaskEvent(e.detail.task)}"></mk-task-item>
+            ` : null);
     return html`
       <div class$="${classes}">
         <mk-stage-column 
@@ -306,15 +326,9 @@ class MkStageList extends LitElement {
           on-select="${() => this._onClickStage(stage.id)}">
           <div class="column-content" id="${stage.id}">
             <div class$="${(selectedStageId === stage.id && selectedTaskId === null && editMode) ? 'column-editor' : 'column-editor hidden'}">
-              <mk-stage-editor class="editor" stage="${stage}"></mk-stage-editor>
+              <mk-stage-editor class="editor" stage="${stage}" on-edit-stage="${(e) => this._fireEditStageEvent(e.detail.stage)}"></mk-stage-editor>
             </div>
-            ${taskList.map((task) => html`
-              <mk-task-item 
-                class$="${'task ' + (selectedTaskId === task.id ? editMode ? 'EDIT' : 'DETAIL' : 'OVERVIEW')}" 
-                task="${task}" 
-                mode="${(selectedTaskId === task.id ? editMode ? 'EDIT' : 'DETAIL' : 'OVERVIEW')}"
-                on-click="${() => this._onClickTask(task.id, stage.id)}"></mk-task-item>
-            `)}
+            ${taskListView}
           </div>
         </mk-stage-column>
       </div>

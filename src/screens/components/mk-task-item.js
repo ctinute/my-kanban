@@ -22,6 +22,11 @@ class MkTaskItem extends LitElement {
     this.dispatchEvent(new CustomEvent('select-task', {detail: {task: this.task}}));
   }
 
+  _fireEditTaskEvent(task) {
+    this.dispatchEvent(new CustomEvent('edit-task', {detail: {task}}));
+  }
+
+
   _fireUpdate(task) {
     // TODO: implement edit/update
     this.dispatchEvent(new CustomEvent('update-task', {detail: {task}}));
@@ -89,7 +94,7 @@ class MkTaskItem extends LitElement {
   }
 
   _render({task, selected, mode}) {
-    let editor = mode === 'EDIT' ? html`<mk-task-editor task="${task}"></mk-task-editor>` : null;
+    let editor = mode === 'EDIT' ? html`<mk-task-editor task="${task}" on-edit-task="${(e) => this._fireEditTaskEvent(e.detail.task)}"></mk-task-editor>` : null;
     let styles = this._renderStyles();
     return html`
       ${styles}

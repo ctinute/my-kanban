@@ -45,6 +45,8 @@ export function* updateStage(action) {
     let project = yield select((state) => state.userData.projects[stage.projectId]);
     let phase = project.phases[stage.phaseId];
 
+    let oldStage = phase.stageDetails[stage.id];
+    stage.tasks = oldStage.tasks;
     phase.stageDetails[stage.id] = stage;
     project.phases[phase.id] = phase;
 

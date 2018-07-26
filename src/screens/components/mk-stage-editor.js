@@ -26,7 +26,7 @@ export default class MkStageEditor extends LitElement {
 
   // noinspection JSUnusedGlobalSymbols
   _notifyChange(stage) {
-    this.dispatchEvent(new CustomEvent('change', {detail: {stage}}));
+    this.dispatchEvent(new CustomEvent('edit-stage', {detail: {stage}}));
   }
 
   _render({stage}) {

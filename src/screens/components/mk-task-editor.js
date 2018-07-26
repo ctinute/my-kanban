@@ -25,9 +25,8 @@ export default class MkTaskEditor extends LitElement {
     };
   }
 
-  // noinspection JSUnusedGlobalSymbols
   _notifyChange(task) {
-    this.dispatchEvent(new CustomEvent('change', {detail: {task}}));
+    this.dispatchEvent(new CustomEvent('edit-task', {detail: {task}}));
   }
 
   _render({task}) {
@@ -43,7 +42,10 @@ export default class MkTaskEditor extends LitElement {
           label="Title"
           always-float-label
           value="${task.name}"
-          on-change="${(e) => task.name = e.target.value})"
+          on-change="${(e) => {
+      task.name = e.target.value;
+      this._notifyChange(task);
+    }})"
           required
           error-message="This field is required !!!">
         </paper-input>
@@ -52,7 +54,10 @@ export default class MkTaskEditor extends LitElement {
           rows="3"
           always-float-label
           value="${task.description}"
-          on-change="${(e) => task.description = e.target.value})"
+          on-blur="${(e) => {
+      task.description = e.target.value;
+      this._notifyChange(task);
+    }}"
           required
           error-message="This field is required !!!">
         </paper-textarea>

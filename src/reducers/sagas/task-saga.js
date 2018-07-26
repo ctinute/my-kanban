@@ -36,7 +36,14 @@ export function* addTask(action) {
 
 export function* updateTask(action) {
   try {
-    console.log(action);
+    let task = action.payload.task;
+    let project = yield select((state) => state.userData.projects[task.projectId]);
+    let phase = project.phases[task.phaseId];
+
+    phase.taskDetails[task.id] = task;
+    project.phases[phase.id] = phase;
+
+    yield put(sync(project));
   } catch (e) {
     yield put(showToast(e.message));
   }
@@ -44,7 +51,22 @@ export function* updateTask(action) {
 
 export function* deleteTask(action) {
   try {
-    console.log(action);
+    let task = action.payload.task;
+    let project = yield select((state) => state.userData.projects[task.projectId]);
+    let phase = project.phases[task.phaseId];
+    let stage = phase.stageDetails[task.stageId];
+
+    for (let i = 0; i < stage.tasks.length; i++) {
+      if (stage.tasks[i] === task.id) {
+        stage.tasks = removeItem(stage.task, i);
+        break;
+      }
+    }
+    phase.stageDetails[task.stageId] = stage;
+    delete phase.taskDetails[task.id];
+    project.phases[phase.id] = phase;
+
+    yield put(sync(project));
   } catch (e) {
     yield put(showToast(e.message));
   }

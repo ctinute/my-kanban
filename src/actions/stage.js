@@ -10,7 +10,7 @@ export const createStageAction = (stage) => ({
 });
 
 export const updateStageAction = (stage) => ({
-  type: CREATE_STAGE,
+  type: UPDATE_STAGE,
   payload: {
     stage: stage,
   },
